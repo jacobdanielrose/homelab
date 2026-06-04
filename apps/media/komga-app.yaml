@@ -9,9 +9,9 @@ spec:
     repoURL: https://repo.helmforge.dev
     chart: komga
     targetRevision: 1.4.11
-    helm:
-      valueFiles:
-        - apps/media/komga/values.yaml
+    #helm:
+    #valueFiles:
+    #  - apps/media/komga/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media
