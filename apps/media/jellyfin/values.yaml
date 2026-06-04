@@ -6,7 +6,6 @@ ingress:
         - path: /
           pathType: Prefix
   ingressClassName: "traefik"
-
 persistence:
   config:
     enabled: true

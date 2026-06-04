@@ -1,0 +1,3 @@
+persistence:
+  library:
+    existingClaim: immich-library

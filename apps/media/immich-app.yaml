@@ -9,9 +9,9 @@ spec:
     repoURL: oci://ghcr.io/immich-app/immich-charts/immich
     chart: immich
     targetRevision: 0.12.0
-    #helm:
-    #valueFiles:
-    #  - apps/media/immich/values.yaml
+    helm:
+    valueFiles:
+      - apps/media/immich/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media
