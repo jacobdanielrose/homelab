@@ -6,6 +6,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+
 persistence:
   config:
     existingClaim: audiobookshelf-config-pvc
