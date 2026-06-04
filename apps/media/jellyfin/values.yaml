@@ -1,11 +1,11 @@
 ingress:
   enabled: true
+  className: "traefik"
   hosts:
-    - name: "jellyfin.home.example.com"
+    - host: "jellyfin.home.example.com"
       paths:
         - path: /
           pathType: Prefix
-  ingressClassName: "traefik"
 persistence:
   config:
     enabled: true
