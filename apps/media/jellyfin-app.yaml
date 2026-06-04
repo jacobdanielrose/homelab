@@ -10,25 +10,8 @@ spec:
     chart: jellyfin
     targetRevision: 3.2.0
     helm:
-      releaseName: jellyfin
-      values: |
-        ingress:
-          enabled: true
-          hosts:
-            - name: "jellyfin.home.example.com"
-              paths:
-                - path: /
-                  pathType: Prefix
-          ingressClassName: "traefik"
-        persistence:
-          config:
-            enabled: true
-            size: 5Gi
-            storageClass: standard
-          media:
-            enabled: true
-            size: 1Gi
-            storageClass: standard
+      valueFiles:
+        - apps/media/jellyfin/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media

@@ -1,0 +1,18 @@
+ingress:
+  enabled: true
+  hosts:
+    - name: "jellyfin.home.example.com"
+      paths:
+        - path: /
+          pathType: Prefix
+  ingressClassName: "traefik"
+
+persistence:
+  config:
+    enabled: true
+    size: 5Gi
+    storageClass: standard
+  media:
+    enabled: true
+    size: 1Gi
+    storageClass: standard
