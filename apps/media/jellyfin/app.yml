@@ -16,6 +16,9 @@ spec:
           enabled: true
           hosts:
             - name: "jellyfin.home.example.com"
+              paths:
+                - path: /
+                  pathType: Prefix
           ingressClassName: "traefik"
         persistence:
           config:
