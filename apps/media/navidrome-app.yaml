@@ -1,17 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: readarr
+  name: navidrome
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: oci://ghcr.io/bjw-s-labs/charts/
-    chart: readarr
-    targetRevision: 5.0.1
+    repoURL: oci://oci.trueforge.org/truecharts/navidrome
+    chart: navidrome
+    targetRevision: 23.4.0
     #helm:
-    #  valueFiles:
-    #    - apps/media/arr-stack/readarr/values.yaml
+    # valueFiles:
+    #  - apps/media/navidrome/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media

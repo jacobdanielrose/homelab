@@ -8,9 +8,10 @@ spec:
   source:
     repoURL: oci://ghcr.io/bjw-s-labs/charts/
     chart: sonarr
-    helm:
-      valueFiles:
-        - apps/media/arr-stack/sonarr/values.yaml
+    targetRevision: 5.0.1
+    #helm:
+    #  valueFiles:
+    #    - apps/media/arr-stack/sonarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media

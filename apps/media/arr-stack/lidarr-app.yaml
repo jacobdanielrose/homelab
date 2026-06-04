@@ -8,9 +8,10 @@ spec:
   source:
     repoURL: oci://ghcr.io/bjw-s-labs/charts/
     chart: lidarr
-    helm:
-      valueFiles:
-        - apps/media/arr-stack/lidarr/values.yaml
+    targetRevision: 5.0.1
+    #helm:
+    #  valueFiles:
+    #    - apps/media/arr-stack/lidarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media

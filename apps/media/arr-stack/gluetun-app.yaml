@@ -8,9 +8,10 @@ spec:
   source:
     repoURL: oci://ghcr.io/bjw-s-labs/charts/
     chart: gluetun
-    helm:
-      valueFiles:
-        - apps/media/arr-stack/gluetun/values.yaml
+    targetRevision: 4.6.2
+    #helm:
+    #  valueFiles:
+    #    - apps/media/arr-stack/gluetun/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: media
