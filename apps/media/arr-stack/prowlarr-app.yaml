@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: oci://ghcr.io/bjw-s-labs/charts/
+    repoURL: oci://ghcr.io/bjw-s-labs/charts
     chart: prowlarr
     targetRevision: 5.0.1
     #helm:
