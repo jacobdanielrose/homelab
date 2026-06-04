@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: komga
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://repo.helmforge.dev
+    chart: komga
+    helm:
+      valueFiles:
+        - apps/media/komga/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: media
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

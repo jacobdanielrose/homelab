@@ -1,0 +1,13 @@
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: audiobooks.home.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+persistence:
+  config:
+    existingClaim: audiobookshelf-config-pvc
+  media:
+    existingClaim: media-nfs-pvc
