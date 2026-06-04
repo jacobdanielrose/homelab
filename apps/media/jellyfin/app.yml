@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://jellyfin.github.io/jellyfin-helm
     chart: jellyfin
-    targetRevision: 0.3.0   # pick your version
+    targetRevision: 0.3.0 # pick your version
     helm:
       releaseName: jellyfin
       values: |
@@ -17,6 +17,15 @@ spec:
           hosts:
             - name: "jellyfin.home.example.com"
           ingressClassName: "traefik"
+        persistence:
+          config:
+            enabled: true
+            size: 5Gi
+            storageClass: standard
+          media:
+            enabled: true
+            size: 1Gi
+            storageClass: standard
   destination:
     server: https://kubernetes.default.svc
     namespace: media
