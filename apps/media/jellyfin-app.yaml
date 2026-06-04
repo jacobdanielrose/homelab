@@ -5,13 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://jellyfin.github.io/jellyfin-helm
-    chart: jellyfin
-    targetRevision: 3.2.0
-    helm:
-      valueFiles:
-        - apps/media/jellyfin/values.yaml
+  sources:
+    - repoURL: https://jellyfin.github.io/jellyfin-helm
+      chart: jellyfin
+      targetRevision: 3.2.0
+      helm:
+        valueFiles:
+          - $values/apps/media/jellyfin/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: media
