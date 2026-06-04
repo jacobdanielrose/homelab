@@ -17,11 +17,6 @@ spec:
           hosts:
             - name: "jellyfin.home.example.com"
           ingressClassName: "traefik"
-        persistence:
-          config:
-            existingClaim: jellyfin-config-pvc
-          media:
-            existingClaim: media-nfs-pvc
   destination:
     server: https://kubernetes.default.svc
     namespace: media
