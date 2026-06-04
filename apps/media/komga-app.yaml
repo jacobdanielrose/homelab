@@ -8,6 +8,7 @@ spec:
   source:
     repoURL: https://repo.helmforge.dev
     chart: komga
+    targetRevision: 1.4.11
     helm:
       valueFiles:
         - apps/media/komga/values.yaml
