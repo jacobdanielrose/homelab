@@ -31,7 +31,8 @@ metadata:
   namespace: jellyfin
 spec:
   accessModes:
-    - ReadWriteOnce # for actual deployment use: ReadWriteMany
+    # for actual deployment use: ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard
   resources:
     requests:
@@ -83,7 +84,8 @@ metadata:
   namespace: audiobookshelf
 spec:
   accessModes:
-    - ReadWriteOnce # for actual deployment use: ReadWriteMany
+    # for actual deployment use: ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard
   resources:
     requests:
@@ -135,7 +137,8 @@ metadata:
   namespace: navidrome
 spec:
   accessModes:
-    - ReadWriteOnce # for actual deployment use: ReadWriteMany
+    # for actual deployment use: ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard
   resources:
     requests:
@@ -161,7 +164,8 @@ metadata:
   namespace: komga
 spec:
   accessModes:
-    - ReadWriteOnce # for actual deployment use: ReadWriteMany
+    # for actual deployment use: ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard
   resources:
     requests:
