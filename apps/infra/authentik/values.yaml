@@ -1,10 +1,11 @@
 authentik:
   secret_key: "PleaseGenerateA50CharKey"
-  # This sends anonymous usage-data, stack traces on errors and
-  # performance data to authentik.error-reporting.a7k.io, and is fully opt-in
   error_reporting:
     enabled: true
   postgresql:
+    host: authentik-postgresql
+    name: authentik
+    user: authentik
     password: "ThisIsNotASecurePassword"
 
 #server:
@@ -14,6 +15,4 @@ authentik:
 #      - authentik.domain.tld
 
 postgresql:
-  enabled: true
-  auth:
-    password: "ThisIsNotASecurePassword"
+  enabled: false

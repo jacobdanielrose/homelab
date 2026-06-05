@@ -56,6 +56,7 @@ Three different OCI/HTTP Helm registries are used:
 | `https://jellyfin.github.io/jellyfin-helm` | jellyfin |
 | `https://christianhuth.github.io/helm-charts` | audiobookshelf |
 | `https://repo.helmforge.dev` | komga |
+| `oci://registry-1.docker.io/bitnamicharts` | authentik PostgreSQL |
 
 ---
 
