@@ -1,12 +1,12 @@
-ingress:
-  main:
-    enabled: true
-    ingressClassName: traefik
-    hosts:
-      - host: navidrome.home.example.com
-        paths:
-          - path: /
-            pathType: Prefix
+#ingress:
+#  main:
+#    enabled: true
+#    ingressClassName: traefik
+#    hosts:
+#      - host: navidrome.home.example.com
+#        paths:
+#          - path: /
+#            pathType: Prefix
 persistence:
   data:
     enabled: true

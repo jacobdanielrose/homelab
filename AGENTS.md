@@ -30,7 +30,8 @@ apps/
     adguard/                   # Empty — planned, not yet implemented
     authentik/                 # Empty — planned, not yet implemented
   media/
-    namespace-media.yaml       # Creates the `media` namespace
+    namespaces.yaml            # Creates one namespace per active media app
+    storage/pvcs.yaml          # PVCs colocated in each app namespace
     *-app.yaml                 # ArgoCD Application per media service
     arr-stack/
       *-app.yaml               # ArgoCD Applications for *arr + gluetun
@@ -89,17 +90,15 @@ The commented-out path shows the *intended* location for values when customizati
 ## Conventions
 
 - **File naming**: `{appname}-app.yaml` for ArgoCD Application manifests.
-- **Namespace**: All deployed apps target namespace `media`, including infra and productivity apps (appears to be a copy-paste default — verify before adding new category apps).
+- **Namespace**: Media apps deploy into per-app namespaces (`jellyfin`, `immich`, `audiobookshelf`, `navidrome`, `komga`). Each app gets `syncOptions: CreateNamespace=true`.
 - **Ingress**: Traefik is the ingress controller (`ingressClassName: traefik`).
 - **Hostnames follow**: `{service}.home.example.com` (placeholder — real hostnames differ on the actual cluster).
-- **PVCs**: Either `existingClaim` (pre-provisioned externally) or dynamic provisioning with `storageClass: standard`.
+- **PVCs**: PVCs are declared in `apps/media/storage/pvcs.yaml`. Kubernetes PVCs are namespace-scoped, so shared claim names such as `media-nfs-pvc` are repeated in each app namespace that mounts them.
 - **Sync policy**: Always `automated` with `prune: true` and `selfHeal: true` — every push to `main` is immediately applied.
 
 ---
 
 ## Known Issues / Gotchas
-
-- **`immich-app.yaml` has a YAML bug**: `helm:` appears on its own line without indented children — `valueFiles` is a sibling instead of a child. This means ArgoCD ignores the values file. The correct structure needs `helm:` and `valueFiles:` properly nested (see jellyfin-app.yaml for the correct pattern).
 
 - **`argocd/infra.yaml` and `argocd/productivity.yaml` have `namespace: media`** in their destination — this is likely a copy-paste error and should be `infra` / `productivity` respectively when those categories have real apps.
 

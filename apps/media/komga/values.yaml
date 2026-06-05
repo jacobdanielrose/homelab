@@ -1,11 +1,11 @@
-ingress:
-  enabled: true
-  ingressClassName: traefik
-  hosts:
-    - host: komga.home.example.com
-      paths:
-        - path: /
-          pathType: Prefix
+#ingress:
+#  enabled: true
+#  ingressClassName: traefik
+#  hosts:
+#    - host: komga.home.example.com
+#      paths:
+#        - path: /
+#          pathType: Prefix
 persistence:
   config:
     enabled: true
