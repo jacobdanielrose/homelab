@@ -18,6 +18,7 @@ metadata:
   namespace: komga
 spec:
   accessModes:
+    # for actual deployment use: ReadWriteMany
     - ReadWriteOnce
   storageClassName: standard
   resources:

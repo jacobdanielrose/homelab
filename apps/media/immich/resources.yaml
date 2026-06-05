@@ -5,6 +5,7 @@ metadata:
   namespace: immich
 spec:
   accessModes:
+    # for actual deployment use: ReadWriteMany
     - ReadWriteOnce
   storageClassName: standard
   resources:
