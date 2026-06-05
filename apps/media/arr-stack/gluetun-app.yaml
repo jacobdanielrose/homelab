@@ -14,8 +14,10 @@ spec:
     #    - apps/media/arr-stack/gluetun/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: gluetun
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

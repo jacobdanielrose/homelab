@@ -14,8 +14,10 @@ spec:
     #    - apps/media/arr-stack/readarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: readarr
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

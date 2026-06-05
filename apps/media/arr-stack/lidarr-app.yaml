@@ -14,8 +14,10 @@ spec:
     #    - apps/media/arr-stack/lidarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: lidarr
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

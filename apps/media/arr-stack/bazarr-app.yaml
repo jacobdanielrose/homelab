@@ -14,8 +14,10 @@ spec:
     #    - apps/media/arr-stack/bazarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: bazarr
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

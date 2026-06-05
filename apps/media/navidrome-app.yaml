@@ -17,8 +17,10 @@ spec:
       ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: navidrome
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

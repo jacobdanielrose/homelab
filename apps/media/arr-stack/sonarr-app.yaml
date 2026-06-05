@@ -14,8 +14,10 @@ spec:
     #    - apps/media/arr-stack/sonarr/values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: sonarr
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
