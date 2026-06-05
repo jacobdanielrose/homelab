@@ -12,13 +12,6 @@ spec:
       helm:
         valueFiles:
           - $values/apps/infra/authentik/values.yaml
-    - repoURL: oci://registry-1.docker.io/bitnamicharts
-      chart: postgresql
-      targetRevision: 18.7.0
-      helm:
-        releaseName: authentik-postgresql
-        valueFiles:
-          - $values/apps/infra/authentik/postgresql-values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values

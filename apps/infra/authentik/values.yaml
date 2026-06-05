@@ -17,4 +17,9 @@ authentik:
 postgresql:
   enabled: true
   auth:
+    database: "authentik"
     password: ThisIsNotASecurePassword
+  image:
+    registry: "docker.io"
+    repository: "postgres"
+    tag: "16"
