@@ -7,7 +7,7 @@ spec:
   project: default
   sources:
     - repoURL: https://helm-charts.rm3l.org
-      chart: adguard
+      chart: adguard-home
       targetRevision: 0.24.0
       #helm:
       #  valueFiles:
