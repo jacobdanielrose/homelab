@@ -9,9 +9,7 @@ ingress:
 persistence:
   config:
     enabled: true
-    size: 5Gi
-    storageClass: standard
+    existingClaim: jellyfin-config-pvc
   media:
     enabled: true
-    size: 1Gi
-    storageClass: standard
+    existingClaim: media-nfs-pvc
