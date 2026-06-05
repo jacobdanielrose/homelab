@@ -24,3 +24,6 @@ postgresql:
     registry: "docker.io"
     repository: "postgres"
     tag: "18.4-bookworm"
+  primary:
+    extendedConfiguration: |
+      password_encryption = md5
