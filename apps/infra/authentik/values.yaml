@@ -17,5 +17,5 @@ postgresql:
   enabled: true
   image:
     registry: "docker.io"
-    repository: postgres"
-    tag: "14.23"
+    repository: "postgres"
+    tag: "18.4-bookworm"
