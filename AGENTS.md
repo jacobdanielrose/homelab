@@ -50,7 +50,7 @@ Three different OCI/HTTP Helm registries are used:
 
 | Registry | Used by |
 |---|---|
-| `oci://ghcr.io/bjw-s-labs/helm` | *arr apps and gluetun via `app-template` |
+| `oci://ghcr.io/bjw-s-labs/helm/app-template` | *arr apps and gluetun via `app-template` |
 | `oci://ghcr.io/immich-app/immich-charts/immich` | immich |
 | `oci://oci.trueforge.org/truecharts/navidrome` | navidrome |
 | `https://jellyfin.github.io/jellyfin-helm` | jellyfin |
@@ -76,7 +76,7 @@ The `values.yaml` lives at `apps/media/<appname>/values.yaml`. Active apps use A
 **Arr-stack apps** — use bjw-s `app-template`; there are no individual bjw-s charts named `sonarr`, `radarr`, etc.:
 ```yaml
 sources:
-  - repoURL: oci://ghcr.io/bjw-s-labs/helm
+  - repoURL: oci://ghcr.io/bjw-s-labs/helm/app-template
     chart: app-template
     targetRevision: 5.0.1
     helm:
