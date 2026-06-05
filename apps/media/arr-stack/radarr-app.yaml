@@ -5,13 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: oci://ghcr.io/bjw-s-labs/charts
-    chart: radarr
-    targetRevision: 5.0.1
-    #helm:
-    #  valueFiles:
-    #    - apps/media/arr-stack/radarr/values.yaml
+  sources:
+    - repoURL: oci://ghcr.io/bjw-s-labs/helm
+      chart: app-template
+      targetRevision: 5.0.1
+      helm:
+        valueFiles:
+          - $values/apps/media/arr-stack/radarr/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: radarr

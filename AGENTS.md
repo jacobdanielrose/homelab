@@ -50,7 +50,7 @@ Three different OCI/HTTP Helm registries are used:
 
 | Registry | Used by |
 |---|---|
-| `oci://ghcr.io/bjw-s-labs/charts` | All *arr apps, gluetun, bazarr |
+| `oci://ghcr.io/bjw-s-labs/helm` | *arr apps and gluetun via `app-template` |
 | `oci://ghcr.io/immich-app/immich-charts/immich` | immich |
 | `oci://oci.trueforge.org/truecharts/navidrome` | navidrome |
 | `https://jellyfin.github.io/jellyfin-helm` | jellyfin |
@@ -73,17 +73,20 @@ source:
 ```
 The `values.yaml` lives at `apps/media/<appname>/values.yaml`. Active apps use ArgoCD multi-source Applications: one Helm chart source, one `$values` repo source, and one app resource path (`apps/media/<appname>`) for PVCs/support manifests.
 
-**Without custom values** — `helm:` block is commented out (most *arr apps):
+**Arr-stack apps** — use bjw-s `app-template`; there are no individual bjw-s charts named `sonarr`, `radarr`, etc.:
 ```yaml
-source:
-  repoURL: oci://ghcr.io/bjw-s-labs/charts
-  chart: sonarr
-  targetRevision: 5.0.1
-  #helm:
-  #  valueFiles:
-  #    - apps/media/arr-stack/sonarr/values.yaml
+sources:
+  - repoURL: oci://ghcr.io/bjw-s-labs/helm
+    chart: app-template
+    targetRevision: 5.0.1
+    helm:
+      valueFiles:
+        - $values/apps/media/arr-stack/sonarr/values.yaml
+  - repoURL: https://github.com/jacobdanielrose/homelab.git
+    targetRevision: HEAD
+    ref: values
 ```
-The commented-out path shows the *intended* location for values when customization is needed later.
+Each app defines its image, service port, and persistence in `apps/media/arr-stack/<app>/values.yaml`.
 
 ---
 

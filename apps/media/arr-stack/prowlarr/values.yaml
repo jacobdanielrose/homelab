@@ -1,0 +1,26 @@
+controllers:
+  main:
+    containers:
+      main:
+        image:
+          repository: ghcr.io/linuxserver/prowlarr
+          tag: latest
+        env:
+          TZ: Etc/UTC
+          PUID: "1000"
+          PGID: "1000"
+
+service:
+  main:
+    controller: main
+    ports:
+      http:
+        port: 9696
+
+persistence:
+  config:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    globalMounts:
+      - path: /config
