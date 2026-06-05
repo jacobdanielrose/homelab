@@ -1,0 +1,16 @@
+ingress:
+  main:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: navidrome.home.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+persistence:
+  data:
+    enabled: true
+    existingClaim: navidrome-data-pvc
+  music:
+    enabled: true
+    existingClaim: media-nfs-pvc

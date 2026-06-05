@@ -5,13 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://christianhuth.github.io/helm-charts
-    chart: audiobookshelf
-    targetRevision: 2.3.1
-    helm:
-      valueFiles:
-        - apps/media/audiobookshelf/values.yaml
+  sources:
+    - repoURL: https://christianhuth.github.io/helm-charts
+      chart: audiobookshelf
+      targetRevision: 2.3.1
+      helm:
+        valueFiles:
+          - $values/apps/media/audiobookshelf/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: media

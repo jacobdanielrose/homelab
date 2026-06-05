@@ -8,9 +8,15 @@ ingress:
           pathType: Prefix
 
 audiobookshelf:
+  backup:
+    persistence:
+      existingClaim: audiobookshelf-backup-pvc
   config:
     persistence:
       existingClaim: audiobookshelf-config-pvc
   library:
     persistence:
       existingClaim: media-nfs-pvc
+  metadata:
+    persistence:
+      existingClaim: audiobookshelf-metadata-pvc

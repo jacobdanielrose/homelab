@@ -1,18 +1,15 @@
 ingress:
   enabled: true
-  className: "traefik"
+  ingressClassName: traefik
   hosts:
-    - host: "jellyfin.home.example.com"
+    - host: komga.home.example.com
       paths:
         - path: /
           pathType: Prefix
 persistence:
   config:
     enabled: true
-    existingClaim: jellyfin-config-pvc
-  media:
+    existingClaim: komga-config-pvc
+  data:
     enabled: true
     existingClaim: media-nfs-pvc
-  cache:
-    enabled: true
-    existingClaim: jellyfin-cache-pvc

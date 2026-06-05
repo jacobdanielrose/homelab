@@ -5,13 +5,16 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://repo.helmforge.dev
-    chart: komga
-    targetRevision: 1.4.11
-    #helm:
-    #valueFiles:
-    #  - apps/media/komga/values.yaml
+  sources:
+    - repoURL: https://repo.helmforge.dev
+      chart: komga
+      targetRevision: 1.4.11
+      helm:
+        valueFiles:
+          - $values/apps/media/komga/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: media

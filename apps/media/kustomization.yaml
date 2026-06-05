@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - namespace-media.yaml
+  - storage/pvcs.yaml
   #- arrstack-app.yaml
   - jellyfin-app.yaml
   - immich-app.yaml
