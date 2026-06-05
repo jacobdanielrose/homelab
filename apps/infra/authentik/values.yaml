@@ -2,11 +2,6 @@ authentik:
   secret_key: "PleaseGenerateA50CharKey"
   error_reporting:
     enabled: true
-  postgresql:
-    host: authentik-postgresql
-    name: authentik
-    user: authentik
-    password: "ThisIsNotASecurePassword"
 
 #server:
 #  ingress:
@@ -15,10 +10,11 @@ authentik:
 #      - authentik.domain.tld
 
 postgresql:
+  host: authentik-postgresql
+  name: authentik
+  user: authentik
+  password: "ThisIsNotASecurePassword"
   enabled: true
-  auth:
-    database: "authentik"
-    password: ThisIsNotASecurePassword
   image:
     registry: "docker.io"
     repository: library/postgres"
