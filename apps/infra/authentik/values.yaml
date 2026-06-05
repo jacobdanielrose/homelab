@@ -27,3 +27,6 @@ postgresql:
   primary:
     extendedConfiguration: |
       password_encryption = md5
+    pgHbaConfiguration: |
+      host all all all md5
+      local all all md5
