@@ -2,6 +2,12 @@ authentik:
   secret_key: "PleaseGenerateA50CharKey"
   error_reporting:
     enabled: true
+  postgresql:
+    host: authentik-postgresql
+    name: authentik
+    user: authentik
+    password: "ThisIsNotASecurePassword"
+    port: 5432
 
 #server:
 #  ingress:
