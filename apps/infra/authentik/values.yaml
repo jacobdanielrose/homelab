@@ -15,4 +15,6 @@ authentik:
 #      - authentik.domain.tld
 
 postgresql:
-  enabled: false
+  enabled: true
+  auth:
+    password: ThisIsNotASecurePassword
