@@ -7,7 +7,6 @@ authentik:
     name: authentik
     user: authentik
     password: "ThisIsNotASecurePassword"
-    port: 5432
 
 #server:
 #  ingress:
