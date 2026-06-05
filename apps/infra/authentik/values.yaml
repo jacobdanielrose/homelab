@@ -18,4 +18,4 @@ postgresql:
   image:
     registry: "docker.io"
     repository: postgres"
-    tag: "14.23-trixie"
+    tag: "14.23"
