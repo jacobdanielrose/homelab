@@ -71,7 +71,7 @@ source:
     valueFiles:
       - apps/media/jellyfin/values.yaml
 ```
-The `values.yaml` lives at `apps/media/<appname>/values.yaml`.
+The `values.yaml` lives at `apps/media/<appname>/values.yaml`. Active apps use ArgoCD multi-source Applications: one Helm chart source, one `$values` repo source, and one app resource path (`apps/media/<appname>`) for PVCs/support manifests.
 
 **Without custom values** — `helm:` block is commented out (most *arr apps):
 ```yaml
@@ -93,7 +93,7 @@ The commented-out path shows the *intended* location for values when customizati
 - **Namespace**: Media apps deploy into per-app namespaces (`jellyfin`, `immich`, `audiobookshelf`, `navidrome`, `komga`). Each app gets `syncOptions: CreateNamespace=true`.
 - **Ingress**: Traefik is the ingress controller (`ingressClassName: traefik`).
 - **Hostnames follow**: `{service}.home.example.com` (placeholder — real hostnames differ on the actual cluster).
-- **PVCs**: PVCs are declared in `apps/media/storage/pvcs.yaml`. Kubernetes PVCs are namespace-scoped, so shared claim names such as `media-nfs-pvc` are repeated in each app namespace that mounts them.
+- **PVCs and app-owned resources**: Each active app has `apps/media/<app>/resources.yaml` plus `kustomization.yaml`; the app `Application` includes that path as an additional ArgoCD source so PVCs and support resources appear inside the same Argo dashboard as the Helm release. Kubernetes PVCs are namespace-scoped, so shared claim names such as `media-nfs-pvc` are repeated in each app namespace that mounts them.
 - **Sync policy**: Always `automated` with `prune: true` and `selfHeal: true` — every push to `main` is immediately applied.
 
 ---

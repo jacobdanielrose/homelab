@@ -3,8 +3,6 @@ kind: Kustomization
 
 resources:
   - namespaces.yaml
-  - storage/pvcs.yaml
-  - immich/database.yaml
   #- arrstack-app.yaml
   - jellyfin-app.yaml
   - immich-app.yaml
