@@ -15,9 +15,9 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/jacobdanielrose/homelab.git
-      targetRevision: HEAD
-      path: apps/infra/adguard
+    # - repoURL: https://github.com/jacobdanielrose/homelab.git
+    #   targetRevision: HEAD
+    #   path: apps/infra/adguard
   destination:
     server: https://kubernetes.default.svc
     namespace: adguard
