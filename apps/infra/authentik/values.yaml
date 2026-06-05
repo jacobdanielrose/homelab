@@ -15,18 +15,12 @@ authentik:
 #      - authentik.domain.tld
 
 postgresql:
-  host: authentik-postgresql
-  name: authentik
-  user: authentik
-  password: "ThisIsNotASecurePassword"
   enabled: true
-  image:
-    registry: "docker.io"
-    repository: "postgres"
-    tag: "18.4-bookworm"
+  auth:
+    database: authentik
+    username: authentik
+    password: "ThisIsNotASecurePassword"
   primary:
-    extendedConfiguration: |
-      password_encryption = md5
     pgHbaConfiguration: |
       host all all all md5
       local all all md5

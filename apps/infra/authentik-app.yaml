@@ -15,9 +15,6 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/jacobdanielrose/homelab.git
-      targetRevision: HEAD
-      path: apps/infra/authentik
   destination:
     server: https://kubernetes.default.svc
     namespace: authentik
