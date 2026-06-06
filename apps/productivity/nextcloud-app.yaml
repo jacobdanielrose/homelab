@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: wikijs
+  name: nextcloud
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: https://charts.js.wiki
-      chart: wiki
-      targetRevision: 3.0.0
+    - repoURL: https://nextcloud.github.io/helm/
+      chart: nextcloud
+      targetRevision: 9.1.2
       helm:
         valueFiles:
-          - $values/apps/productivity/wikijs/values.yaml
+          - $values/apps/productivity/nextcloud/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: wikijs
+    namespace: nextcloud
   syncPolicy:
     automated:
       prune: true
