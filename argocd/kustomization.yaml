@@ -5,4 +5,4 @@ resources:
   - root-app.yaml
   - infra.yaml
   #- media.yaml
-  #- productivity.yaml
+  - productivity.yaml
