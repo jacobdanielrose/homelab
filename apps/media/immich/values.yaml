@@ -3,6 +3,12 @@ ingress:
   ingressClassName: traefik
   hosts:
     - host: immich.home
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
+  tls:
+    - hosts:
+        - immich.home
+      secretName: immich-tls
 
 controllers:
   main:

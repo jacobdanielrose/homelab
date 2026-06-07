@@ -10,3 +10,7 @@ ingress:
     - name: nextcloud.home
       path: /
       tls: []
+  tls:
+    - secretName: nextcloud-tls
+      hosts:
+        - nextcloud.home

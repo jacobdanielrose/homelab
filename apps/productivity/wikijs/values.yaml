@@ -8,3 +8,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+  tls:
+    - hosts:
+        - wikijs.home
+      secretName: wikijs-tls

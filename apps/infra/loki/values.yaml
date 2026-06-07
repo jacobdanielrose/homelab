@@ -38,3 +38,7 @@ gateway:
     ingressClassName: traefik
     hosts:
       - loki.home
+    tls:
+      - hosts:
+          - loki.home
+        secretName: loki-tls

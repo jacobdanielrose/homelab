@@ -7,6 +7,12 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      - hosts:
+          - radarr.home
+        secretName: radarr-tls
 
 controllers:
   main:

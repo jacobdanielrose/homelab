@@ -1,4 +1,4 @@
-# Grafana Helm chart values
+# Grafana values
 
 adminPassword: admin
 
@@ -7,6 +7,12 @@ ingress:
   ingressClassName: traefik
   hosts:
     - grafana.home
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
+  tls:
+    - hosts:
+        - grafana.home
+      secretName: grafana-tls
 
 persistence:
   enabled: true

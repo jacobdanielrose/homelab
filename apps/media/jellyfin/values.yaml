@@ -6,6 +6,12 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
+  tls:
+    - hosts:
+        - jellyfin.home
+      secretName: jellyfin-tls
 
 persistence:
   config:

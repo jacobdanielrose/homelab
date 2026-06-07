@@ -7,6 +7,12 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      - hosts:
+          - prowlarr.home
+        secretName: prowlarr-tls
 
 controllers:
   main:

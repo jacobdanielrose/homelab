@@ -7,6 +7,12 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      - hosts:
+          - sonarr.home
+        secretName: sonarr-tls
 
 controllers:
   main:

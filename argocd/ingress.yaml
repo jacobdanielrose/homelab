@@ -11,9 +11,11 @@ kind: IngressRoute
 metadata:
   name: argocd-server
   namespace: argocd
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
 spec:
   entryPoints:
-    - web
+    - websecure
   routes:
     - kind: Rule
       match: Host(`argocd.home`)
@@ -21,3 +23,5 @@ spec:
         - name: argocd-server
           port: 443
           serversTransport: argocd-transport
+  tls:
+    secretName: argocd-tls
