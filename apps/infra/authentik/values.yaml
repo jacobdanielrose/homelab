@@ -8,11 +8,15 @@ authentik:
     user: authentik
     password: "ThisIsNotASecurePassword"
 
-#server:
-#  ingress:
-#    enabled: true
-#    hosts:
-#      - authentik.domain.tld
+blueprints:
+  configMaps:
+    - authentik-blueprints
+
+server:
+  ingress:
+    enabled: true
+    hosts:
+      - authentik.home
 
 postgresql:
   enabled: true
@@ -24,3 +28,5 @@ postgresql:
     pgHbaConfiguration: |
       host all all all md5
       local all all md5
+    persistence:
+      existingClaim: authentik-postgresql-pvc

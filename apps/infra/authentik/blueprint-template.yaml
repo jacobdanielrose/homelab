@@ -1,0 +1,59 @@
+# Authentik SSO Blueprint Template
+#
+# Copy this into the authentik-blueprints ConfigMap (apps/infra/authentik/resources.yaml)
+# for each new application you want to enable SSO for.
+#
+# Required changes per app:
+#   1. Replace all "myapp" references with your app's slug name
+#   2. Set redirect_uris.url to your app's SSO callback URL
+#   3. Set client_id and client_secret (or leave them to be auto-generated)
+#   4. Set meta_launch_url for the tile in Authentik's user interface
+#   5. Set the grant_types your app supports
+
+# Jellyfin:
+#   callback:  https://jellyfin.home/SSO/OID/redirect/authentik
+#   grant:     authorization_code + refresh_token
+
+# Wiki.js:
+#   callback:  https://wikijs.home/login/authentik/callback
+#   grant:     authorization_code + refresh_token
+
+# Grafana:
+#   callback:  https://grafana.home/login/generic_oauth
+#   grant:     authorization_code + refresh_token
+
+# --- Cut below this line and add to the ConfigMap data ---
+#   myapp.yaml: |
+#     version: 1
+#     metadata:
+#       name: MyApp SSO Provider
+#     entries:
+#       - model: authentik_providers_oauth2.oauth2provider
+#         id: myapp
+#         identifiers:
+#           name: myapp
+#         attrs:
+#           authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+#           invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+#           client_id: "__REPLACE_ME__"
+#           client_secret: "__REPLACE_ME__"
+#           redirect_uris:
+#             - matching_mode: strict
+#               url: https://myapp.home/SSO/OID/redirect/authentik
+#               redirect_uri_type: authorization
+#           grant_types:
+#             - authorization_code
+#             - refresh_token
+#           property_mappings:
+#             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-openid]]
+#             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-email]]
+#             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-profile]]
+#             - !Find [authentik_providers_oauth2.scopemapping, [managed, goauthentik.io/providers/oauth2/scope-offline_access]]
+#           signing_key: !Find [authentik_crypto.certificatekeypair, [name, authentik Self-signed Certificate]]
+#       - model: authentik_core.application
+#         identifiers:
+#           slug: myapp
+#         attrs:
+#           provider: !KeyOf myapp
+#           name: MyApp
+#           meta_launch_url: https://myapp.home

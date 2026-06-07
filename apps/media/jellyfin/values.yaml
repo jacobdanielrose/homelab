@@ -23,3 +23,44 @@ persistence:
   cache:
     enabled: true
     existingClaim: jellyfin-cache-pvc
+
+extraInitContainers:
+  - name: install-sso-plugin
+    image: alpine:latest
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        PLUGIN_DIR="/config/plugins/SSO-Authentication"
+        CONFIG_DIR="/config/plugins/configurations"
+        CONFIG_FILE="${CONFIG_DIR}/SSO-Auth.xml"
+
+        # Install plugin DLLs if not already present
+        if [ ! -f "${PLUGIN_DIR}/Jellyfin.Plugin.SSO_Auth.dll" ]; then
+          echo "Downloading SSO plugin..."
+          mkdir -p "${PLUGIN_DIR}"
+          apk add unzip >/dev/null 2>&1
+          curl -sL -o /tmp/plugin.zip \
+            "https://github.com/9p4/jellyfin-plugin-sso/releases/download/v4.0.0.4/sso-authentication_4.0.0.4.zip"
+          unzip -o /tmp/plugin.zip -d "${PLUGIN_DIR}/"
+          rm /tmp/plugin.zip
+          echo "Plugin installed."
+        else
+          echo "Plugin already installed, skipping download."
+        fi
+
+        # Pre-seed SSO config if it doesn't exist yet
+        # Replace __CLIENT_ID__ and __CLIENT_SECRET__ with the real values from Authentik.
+        if [ ! -f "${CONFIG_FILE}" ]; then
+          echo "Creating SSO-Auth.xml with placeholder config..."
+          mkdir -p "${CONFIG_DIR}"
+          printf '<?xml version="1.0" encoding="utf-8"?>\n<PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n  <SamlConfigs />\n  <OidConfigs>\n    <item>\n      <key>\n        <string>authentik</string>\n      </key>\n      <value>\n        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>\n        <OidClientId>__CLIENT_ID__</OidClientId>\n        <OidSecret>__CLIENT_SECRET__</OidSecret>\n        <Enabled>true</Enabled>\n        <EnableAllFolders>true</EnableAllFolders>\n        <OidScopes>\n          <string>openid</string>\n          <string>profile</string>\n          <string>email</string>\n        </OidScopes>\n        <NewPath>true</NewPath>\n        <DisableHttps>false</DisableHttps>\n        <DisablePushedAuthorization>false</DisablePushedAuthorization>\n        <DoNotValidateEndpoints>false</DoNotValidateEndpoints>\n        <DoNotValidateIssuerName>false</DoNotValidateIssuerName>\n        <DoNotLoadProfile>false</DoNotLoadProfile>\n        <CanonicalLinks />\n      </value>\n    </item>\n  </OidConfigs>\n</PluginConfiguration>\n' > "${CONFIG_FILE}"
+          echo "Config created with placeholders."
+          echo "!!! Replace __CLIENT_ID__ and __CLIENT_SECRET__ in ${CONFIG_FILE} then restart the pod !!!"
+        else
+          echo "Config already exists, skipping."
+        fi
+    volumeMounts:
+      - name: config
+        mountPath: /config
