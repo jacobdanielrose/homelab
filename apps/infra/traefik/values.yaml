@@ -3,11 +3,13 @@
 ports:
   web:
     port: 80
-    expose: true
+    expose:
+      default: true
     exposedPort: 80
   websecure:
     port: 443
-    expose: true
+    expose:
+      default: true
     exposedPort: 443
 
 ingressClass:
@@ -21,8 +23,16 @@ providers:
   kubernetesIngress:
     enabled: true
 
-dashboard:
-  enabled: false
+api:
+  dashboard: true
+
+ingressRoute:
+  dashboard:
+    enabled: true
+    ingressClassName: traefik
+    matchRule: Host(`traefik.home`)
+    entryPoints:
+      - web
 
 metrics:
   prometheus:
