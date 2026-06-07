@@ -25,6 +25,17 @@ grafana:
     storageClassName: ""
     accessModes: ["ReadWriteOnce"]
     size: 5Gi
+  sidecar:
+    datasources:
+      enabled: false
+  datasource:
+    prometheusUrl: http://localhost:9090
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki-gateway.loki.svc.cluster.local
+      isDefault: false
 
 alertmanager:
   enabled: true

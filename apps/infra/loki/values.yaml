@@ -18,19 +18,19 @@ loki:
 singleBinary:
   replicas: 1
 
-blocks_storage:
-  tsdb:
-    bucket_folder: default
-  s3:
-    bucketnames: loki-data
-    endpoint: ""
-    access_key_id: ""
-    secret_access_key: ""
+#blocks_storage:
+#  tsdb:
+#    bucket_folder: default
+#  s3:
+#    bucketnames: loki-data
+#    endpoint: ""
+#    access_key_id: ""
+#    secret_access_key: ""
 
-gateway:
-  enabled: true
-  ingress:
-    enabled: true
-    ingressClassName: traefik
-    hosts:
-      - loki.home
+#gateway:
+#  enabled: true
+#  ingress:
+#    enabled: true
+#    ingressClassName: traefik
+#    hosts:
+#      - loki.home
