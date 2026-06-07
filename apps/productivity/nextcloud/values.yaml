@@ -1,1 +1,12 @@
 replicaCount: 1
+
+nextcloud:
+  host: nextcloud.home
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - name: nextcloud.home
+      path: /
+      tls: []

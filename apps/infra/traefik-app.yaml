@@ -1,23 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki
+  name: traefik
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: https://grafana.github.io/helm-charts
-      chart: loki
-      targetRevision: 7.0.0
+    - repoURL: https://helm.traefik.io/traefik
+      chart: traefik
+      targetRevision: 40.2.0
       helm:
         valueFiles:
-          - $values/apps/infra/loki/values.yaml
+          - $values/apps/infra/traefik/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
   destination:
     server: https://kubernetes.default.svc
-    namespace: loki
+    namespace: traefik
   syncPolicy:
     automated:
       prune: true

@@ -29,6 +29,12 @@ apps/
   infra/
     adguard/                   # Empty — planned, not yet implemented
     authentik/                 # Empty — planned, not yet implemented
+    grafana/values.yaml        # Helm overrides for Grafana
+    loki/values.yaml           # Helm overrides for Loki
+    prometheus/values.yaml     # Helm overrides for kube-prometheus-stack
+    rustfs/                    # RustFS S3 object store for Loki
+    traefik-app.yaml           # Traefik ingress controller (deployed via Helm)
+    traefik/values.yaml        # Helm overrides for Traefik
   media/
     namespaces.yaml            # Creates one namespace per active media app
     storage/pvcs.yaml          # PVCs colocated in each app namespace
@@ -57,6 +63,11 @@ Three different OCI/HTTP Helm registries are used:
 | `https://christianhuth.github.io/helm-charts` | audiobookshelf |
 | `https://repo.helmforge.dev` | komga |
 | `oci://registry-1.docker.io/bitnamicharts` | authentik PostgreSQL |
+| `https://grafana.github.io/helm-charts` | loki, grafana |
+| `https://prometheus-community.github.io/helm-charts` | kube-prometheus-stack |
+| `https://helm.traefik.io/traefik` | traefik |
+| `https://nextcloud.github.io/helm/` | nextcloud |
+| `https://charts.js.wiki` | wikijs |
 
 ---
 
@@ -95,8 +106,10 @@ Each app defines its image, service port, and persistence in `apps/media/arr-sta
 
 - **File naming**: `{appname}-app.yaml` for ArgoCD Application manifests.
 - **Namespace**: Media apps deploy into per-app namespaces (`jellyfin`, `immich`, `audiobookshelf`, `navidrome`, `komga`). Each app gets `syncOptions: CreateNamespace=true`.
-- **Ingress**: Traefik is the ingress controller (`ingressClassName: traefik`).
-- **Hostnames follow**: `{service}.home.example.com` (placeholder — real hostnames differ on the actual cluster).
+- **Ingress**: Traefik is deployed by this repo as an ArgoCD Application (`apps/infra/traefik-app.yaml`). It uses `ingressClassName: traefik`.
+- **Hostnames follow**: `{app}.home` — every app with an active ingress is exposed at `{name}.home` (e.g. `grafana.home`, `jellyfin.home`, `sonarr.home`). This is a local DNS domain handled by your router or Pi-hole — no public DNS or TLS is configured.
+- **Traefik proxy**: Traefik v3 deployed via Helm chart `traefik` from `https://helm.traefik.io/traefik`. Both Kubernetes Ingress and CRD providers are enabled. Dashboard is off by default.
+- **Metrics**: Prometheus metrics are enabled on Traefik (`addRoutersLabels`, `addServicesLabels`), scraped by kube-prometheus-stack.
 - **PVCs and app-owned resources**: Each active app has `apps/media/<app>/resources.yaml` plus `kustomization.yaml`; the app `Application` includes that path as an additional ArgoCD source so PVCs and support resources appear inside the same Argo dashboard as the Helm release. Kubernetes PVCs are namespace-scoped, so shared claim names such as `media-nfs-pvc` are repeated in each app namespace that mounts them.
 - **Sync policy**: Always `automated` with `prune: true` and `selfHeal: true` — every push to `main` is immediately applied.
 

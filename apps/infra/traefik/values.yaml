@@ -1,0 +1,30 @@
+# Traefik values
+
+ports:
+  web:
+    port: 80
+    expose: true
+    exposedPort: 80
+  websecure:
+    port: 443
+    expose: true
+    exposedPort: 443
+
+ingressClass:
+  enabled: true
+  name: traefik
+  isDefaultClass: true
+
+providers:
+  kubernetesCRD:
+    enabled: true
+  kubernetesIngress:
+    enabled: true
+
+dashboard:
+  enabled: false
+
+metrics:
+  prometheus:
+    addRoutersLabels: true
+    addServicesLabels: true

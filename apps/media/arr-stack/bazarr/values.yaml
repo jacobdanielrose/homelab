@@ -1,3 +1,13 @@
+ingress:
+  main:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: bazarr.home
+        paths:
+          - path: /
+            pathType: Prefix
+
 controllers:
   main:
     containers:

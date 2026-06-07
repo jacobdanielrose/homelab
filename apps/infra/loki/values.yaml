@@ -31,10 +31,10 @@ loki:
 minio:
   enabled: false
 
-#gateway:
-#  enabled: true
-#  ingress:
-#    enabled: true
-#    ingressClassName: traefik
-#    hosts:
-#      - loki.home
+gateway:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - loki.home

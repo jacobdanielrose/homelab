@@ -1,1 +1,10 @@
 replicaCount: 1
+
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: wikijs.home
+      paths:
+        - path: /
+          pathType: Prefix

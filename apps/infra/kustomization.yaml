@@ -7,3 +7,5 @@ resources:
   - prometheus-app.yaml
   - rustfs-app.yaml
   - loki-app.yaml
+  - grafana-app.yaml
+  - traefik-app.yaml

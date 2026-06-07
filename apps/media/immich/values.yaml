@@ -1,3 +1,9 @@
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - host: immich.home
+
 controllers:
   main:
     containers:

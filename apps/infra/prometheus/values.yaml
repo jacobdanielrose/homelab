@@ -12,30 +12,7 @@ prometheus:
               storage: 20Gi
 
 grafana:
-  enabled: true
-  adminPassword: admin
-  ingress:
-    enabled: true
-    ingressClassName: traefik
-    hosts:
-      - grafana.home
-  persistence:
-    enabled: true
-    type: statefulset
-    storageClassName: ""
-    accessModes: ["ReadWriteOnce"]
-    size: 5Gi
-  sidecar:
-    datasources:
-      enabled: false
-  datasource:
-    prometheusUrl: http://localhost:9090
-  additionalDataSources:
-    - name: Loki
-      type: loki
-      access: proxy
-      url: http://loki-gateway.loki.svc.cluster.local
-      isDefault: false
+  enabled: false
 
 alertmanager:
   enabled: true
