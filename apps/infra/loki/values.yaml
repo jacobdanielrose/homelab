@@ -38,6 +38,9 @@ gateway:
     ingressClassName: traefik
     hosts:
       - host: loki.home
+        paths:
+          - path: /
+            pathType: Prefix
     tls:
       - hosts:
           - loki.home
