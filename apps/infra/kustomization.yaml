@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - adguard-app.yaml
   - authentik-app.yaml
+  - prometheus-app.yaml
+  - loki-app.yaml

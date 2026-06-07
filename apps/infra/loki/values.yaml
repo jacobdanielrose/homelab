@@ -1,0 +1,36 @@
+# Loki values
+
+loki:
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: fs
+  schemaConfig:
+    configs:
+      - from: "2024-01-01"
+        store: tsdb
+        object_store: s3
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
+singleBinary:
+  replicas: 1
+
+blocks_storage:
+  tsdb:
+    bucket_folder: default
+  s3:
+    bucketnames: loki-data
+    endpoint: ""
+    access_key_id: ""
+    secret_access_key: ""
+
+gateway:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - loki.home
