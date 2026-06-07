@@ -1,0 +1,32 @@
+# RustFS values — S3-compatible object storage for Loki
+# Deployed in the loki namespace; replaces the deprecated bundled minio.
+
+fullnameOverride: rustfs
+
+mode:
+  standalone:
+    enabled: true
+  distributed:
+    enabled: false
+
+# S3 credentials (also referenced by apps/infra/loki/values.yaml)
+secret:
+  rustfs:
+    access_key: loki
+    secret_key: loki-rustfs-objectstore
+
+# Internal only — no ingress, reachable in-cluster at rustfs-svc:9000
+ingress:
+  enabled: false
+
+storageclass:
+  name: standard
+  size: 2Gi
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi

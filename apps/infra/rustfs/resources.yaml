@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rustfs-create-buckets
+  namespace: loki
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 20
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: create-buckets
+          image: amazon/aws-cli:2.17.0
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: rustfs-secret
+                  key: RUSTFS_ACCESS_KEY
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: rustfs-secret
+                  key: RUSTFS_SECRET_KEY
+            - name: AWS_DEFAULT_REGION
+              value: us-east-1
+            - name: AWS_EC2_METADATA_DISABLED
+              value: "true"
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              endpoint=http://rustfs-svc:9000
+              echo "waiting for rustfs at $endpoint..."
+              until aws --endpoint-url "$endpoint" s3 ls >/dev/null 2>&1; do
+                sleep 5
+              done
+              for b in loki-chunks loki-ruler loki-admin; do
+                aws --endpoint-url "$endpoint" s3 mb "s3://$b" 2>/dev/null || true
+                echo "ensured bucket $b"
+              done

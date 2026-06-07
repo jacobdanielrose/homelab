@@ -1,20 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: loki
+  name: rustfs
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/grafana-community/helm-charts
-      chart: loki
-      targetRevision: 17.1.7
+    - repoURL: https://charts.rustfs.com
+      chart: rustfs
+      targetRevision: 0.0.70
       helm:
         valueFiles:
-          - $values/apps/infra/loki/values.yaml
+          - $values/apps/infra/rustfs/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/infra/rustfs
   destination:
     server: https://kubernetes.default.svc
     namespace: loki
