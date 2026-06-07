@@ -5,5 +5,5 @@ resources:
   - root-app.yaml
   - infra.yaml
   - ingress.yaml
-  #- media.yaml
-  #- productivity.yaml
+  - media.yaml
+  - productivity.yaml
