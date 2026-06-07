@@ -1,18 +1,23 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: argocd-transport
+  namespace: argocd
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
   name: argocd-server
   namespace: argocd
 spec:
-  ingressClassName: traefik
-  rules:
-    - host: argocd.home
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: argocd-server
-                port:
-                  number: 80
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: Host(`argocd.home`)
+      services:
+        - name: argocd-server
+          port: 443
+          serversTransport: argocd-transport
