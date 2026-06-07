@@ -9,4 +9,4 @@ resources:
   - loki-app.yaml
   - grafana-app.yaml
   - traefik-app.yaml
-  - metallb-app.yaml
+  #- metallb-app.yaml    # Uncomment when deploying on real hardware (not Docker/Kind)
