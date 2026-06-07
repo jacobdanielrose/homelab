@@ -2,20 +2,25 @@
 
 ports:
   web:
-    port: 80
-    redirect:
-      entryPoint: websecure
+    port: 8000
+    expose:
+      default: true
+    exposedPort: 80
+    protocol: TCP
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
   websecure:
-    port: 443
+    port: 8443
     expose:
       default: true
     exposedPort: 443
-    tls:
-      enabled: true
-
-certificatesResolvers:
-  selfsigned:
-    resolver: selfsigned
+    protocol: TCP
+    http:
+      tls:
+        enabled: true
 
 ingressClass:
   enabled: true
@@ -34,14 +39,11 @@ api:
 ingressRoute:
   dashboard:
     enabled: true
-    ingressClassName: traefik
     matchRule: Host(`traefik.home`)
     entryPoints:
       - websecure
     tls:
       secretName: traefik-tls
-    annotations:
-      cert-manager.io/cluster-issuer: selfsigned
 
 metrics:
   prometheus:
