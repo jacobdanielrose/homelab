@@ -6,3 +6,8 @@ ingress:
     paths: 
       - path: / 
         pathType: Prefix
+
+ollama:
+  models:
+    pull:
+      - tinyllama
