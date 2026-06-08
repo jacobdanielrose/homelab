@@ -15,11 +15,14 @@ nextcloud:
 
 ingress:
   enabled: true
-  ingressClassName: traefik
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned
   hosts:
-    - name: nextcloud.home
-      path: /
-      tls: []
+    - host: nextcloud.home
+      paths:
+        - path: /
+          pathType: Prefix
   tls:
     - secretName: nextcloud-tls
       hosts:
