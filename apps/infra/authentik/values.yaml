@@ -1,5 +1,8 @@
 authentik:
   secret_key: "PleaseGenerateA50CharKey"
+  bootstrap_password: "changeme"
+  bootstrap_email: "admin@home.local"
+  bootstrap_token: "changeme-admin-token"
   error_reporting:
     enabled: true
   postgresql:
