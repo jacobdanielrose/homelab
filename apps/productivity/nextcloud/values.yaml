@@ -34,7 +34,6 @@ ingress:
   className: traefik
   annotations:
     cert-manager.io/cluster-issuer: selfsigned
-    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
   hosts:
     - host: nextcloud.home
       paths:
