@@ -16,8 +16,14 @@ server:
   ingress:
     enabled: true
     ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
     hosts:
       - authentik.home
+    tls:
+      - secretName: authentik-tls
+        hosts:
+          - authentik.home
 
 postgresql:
   enabled: true
