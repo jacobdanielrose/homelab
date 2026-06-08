@@ -2,12 +2,10 @@ replicaCount: 1
 
 ingress:
   enabled: true
-  ingressClassName: traefik
-  hosts: 
-  - host: openweb.home
-    paths: 
-      - path: / 
-        pathType: Prefix
+  class: traefik
+  host: openweb.home
+  path: /
+  pathType: Prefix
 
 ollama:
   enabled: false

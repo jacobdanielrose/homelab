@@ -1,14 +1,24 @@
-ingress:
-  enabled: true
-  ingressClassName: traefik
-  hosts:
-    - host: immich.home
-  annotations:
-    cert-manager.io/cluster-issuer: selfsigned
-  tls:
-    - hosts:
-        - immich.home
-      secretName: immich-tls
+server:
+  ingress:
+    main:
+      enabled: true
+      ingressClassName: traefik
+      hosts:
+        - host: immich.home
+          paths:
+            - path: /
+              pathType: Prefix
+      annotations:
+        cert-manager.io/cluster-issuer: selfsigned
+      tls:
+        - hosts:
+            - immich.home
+          secretName: immich-tls
+
+machine-learning:
+  ingress:
+    main:
+      enabled: false
 
 controllers:
   main:
@@ -28,3 +38,6 @@ immich:
 
 valkey:
   enabled: true
+  ingress:
+    main:
+      enabled: false
