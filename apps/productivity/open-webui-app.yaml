@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: open-webui 
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://open-webui.github.io/helm-charts 
+      chart: open-webui 
+      targetRevision: 1.60.0 
+      helm:
+        valueFiles:
+          - $values/apps/productivity/open-webui/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: open-webui
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
