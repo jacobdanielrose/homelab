@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audiobookshelf-setup
+  namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+data:
+  setup.sh: |
+    #!/bin/sh
+    set -e
+
+    URL="${URL:-http://audiobookshelf.audiobookshelf.svc.cluster.local:80}"
+    ADMIN_EMAIL="${ADMIN_EMAIL:-admin@home.local}"
+    ADMIN_PASSWORD="${ADMIN_PASSWORD:-changeme}"
+    ADMIN_USERNAME="${ADMIN_USERNAME:-admin}"
+
+    echo "Waiting for Audiobookshelf to be ready..."
+    for i in $(seq 1 60); do
+      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${URL}/health" 2>/dev/null || echo "000")
+      if [ "${HTTP_CODE}" = "200" ] || [ "${HTTP_CODE}" = "302" ] || [ "${HTTP_CODE}" = "000" ]; then
+        echo "Audiobookshelf is reachable! (HTTP ${HTTP_CODE})"
+        break
+      fi
+      echo "Waiting... ($i/60)"
+      sleep 5
+    done
+
+    echo "Attempting to create first admin user..."
+    RESPONSE=$(curl -s -X POST "${URL}/api/authorize/register" \
+      -H "Content-Type: application/json" \
+      -d "$(printf '{"username": "%s", "password": "%s", "email": "%s", "isRoot": true}' \
+        "${ADMIN_USERNAME}" "${ADMIN_PASSWORD}" "${ADMIN_EMAIL}")")
+
+    if echo "${RESPONSE}" | grep -q '"user"'; then
+      echo "Admin user created successfully!"
+    elif echo "${RESPONSE}" | grep -q 'already\|exists\|409'; then
+      echo "Admin user appears to already exist. Skipping."
+    else
+      echo "Response: ${RESPONSE}"
+      echo "Note: First-time setup may have been completed already or registration may be disabled."
+    fi
+
+    echo ""
+    echo "======================================================="
+    echo "  AUDIOBOOKSHELF SETUP"
+    echo "======================================================="
+    echo "  URL:      https://audiobooks.home"
+    echo "  Email:    ${ADMIN_EMAIL}"
+    echo "  Username: ${ADMIN_USERNAME}"
+    echo "  Password: ${ADMIN_PASSWORD}"
+    echo "======================================================="
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: audiobookshelf-setup
+  namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: setup
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              source /scripts/setup.sh
+          env:
+            - name: ADMIN_EMAIL
+              value: "admin@home.local"
+            - name: ADMIN_PASSWORD
+              value: "changeme"
+            - name: ADMIN_USERNAME
+              value: "admin"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: audiobookshelf-setup
+  ttlSecondsAfterFinished: 3600

@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jellyfin-setup
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+data:
+  setup.sh: |
+    #!/bin/sh
+    set -e
+
+    JELLYFIN_URL="${JELLYFIN_URL:-http://jellyfin.jellyfin.svc.cluster.local:8096}"
+    ADMIN_NAME="${ADMIN_NAME:-admin}"
+    ADMIN_PASSWORD="${ADMIN_PASSWORD:-changeme}"
+
+    echo "Waiting for Jellyfin to be ready..."
+    for i in $(seq 1 60); do
+      if curl -sf "${JELLYFIN_URL}/system/ping" > /dev/null 2>&1; then
+        echo "Jellyfin is ready!"
+        break
+      fi
+      echo "Waiting... ($i/60)"
+      sleep 5
+    done
+
+    echo "Checking if admin user already exists..."
+    PUBLIC_USERS=$(curl -sf "${JELLYFIN_URL}/Users/Public" 2>/dev/null || echo "[]")
+    USER_COUNT=$(echo "$PUBLIC_USERS" | grep -c '"Id"' || true)
+
+    if [ "$USER_COUNT" -gt 0 ]; then
+      echo "Users already exist ($USER_COUNT found), skipping admin creation."
+      exit 0
+    fi
+
+    echo "Creating first admin user via API..."
+    RESPONSE=$(curl -s -X POST "${JELLYFIN_URL}/Users/New" \
+      -H "Content-Type: application/json" \
+      -d "$(printf '{"Name": "%s", "Password": "%s"}' "${ADMIN_NAME}" "${ADMIN_PASSWORD}")")
+
+    if echo "$RESPONSE" | grep -q '"Id"'; then
+      echo "Admin user created successfully."
+    else
+      echo "Admin creation response: $RESPONSE"
+    fi
+
+    echo ""
+    echo "======================================================="
+    echo "  JELLYFIN SETUP COMPLETE"
+    echo "======================================================="
+    echo "  URL:      https://jellyfin.home"
+    echo "  Username: ${ADMIN_NAME}"
+    echo "  Password: ${ADMIN_PASSWORD}"
+    echo "======================================================="
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jellyfin-setup
+  namespace: jellyfin
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: setup
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              source /scripts/setup.sh
+          env:
+            - name: ADMIN_NAME
+              value: "admin"
+            - name: ADMIN_PASSWORD
+              value: "changeme"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: jellyfin-setup
+  ttlSecondsAfterFinished: 3600

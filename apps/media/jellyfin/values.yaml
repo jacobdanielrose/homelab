@@ -61,6 +61,42 @@ extraInitContainers:
         else
           echo "Config already exists, skipping."
         fi
+
+        # Pre-seed system.xml to skip Jellyfin setup wizard
+        # The wizard normally creates this file. Pre-creating it tells Jellyfin
+        # that setup is complete, so it boots straight into the login page.
+        SYSXML="/config/config/system.xml"
+        if [ ! -f "${SYSXML}" ]; then
+          echo "Creating system.xml to skip first-run wizard..."
+          mkdir -p "$(dirname "${SYSXML}")"
+          cat > "${SYSXML}" << 'XMLEOF'
+<?xml version="1.0" encoding="utf-8"?>
+<ServerConfiguration>
+  <IsStartupWizardCompleted>true</IsStartupWizardCompleted>
+  <EnableRemoteAccess>true</EnableRemoteAccess>
+  <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
+  <MetadataCountryCode>US</MetadataCountryCode>
+  <UICulture>en-US</UICulture>
+  <EnableDashboardResponseCaching>true</EnableDashboardResponseCaching>
+  <DashboardSourcePath />
+</ServerConfiguration>
+XMLEOF
+          echo "system.xml created - wizard will be skipped."
+          echo ""
+          echo "======================================================="
+          echo "  JELLYFIN SETUP"
+          echo "======================================================="
+          echo "  First admin user must be created on first login."
+          echo "  Visit https://jellyfin.home and register the first"
+          echo "  account - it will be granted admin privileges."
+          echo ""
+          echo "  Default credentials (if configured):"
+          echo "    Email:    admin@home.local"
+          echo "    Password: changeme"
+          echo "======================================================="
+        else
+          echo "system.xml already exists, skipping wizard setup."
+        fi
     volumeMounts:
       - name: config
         mountPath: /config

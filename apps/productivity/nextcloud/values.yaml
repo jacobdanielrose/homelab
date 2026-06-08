@@ -2,6 +2,16 @@ replicaCount: 1
 
 nextcloud:
   host: nextcloud.home
+  username: admin
+  password: changeme
+  # Uncomment and configure to use an existing secret instead:
+  # existingSecret:
+  #   enabled: true
+  #   secretName: nextcloud-admin
+  #   usernameKey: nextcloud-username
+  #   passwordKey: nextcloud-password
+  trustedDomains:
+    - nextcloud.home
 
 ingress:
   enabled: true

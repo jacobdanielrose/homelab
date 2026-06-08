@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wikijs-setup
+  namespace: wikijs
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+data:
+  setup.sh: |
+    set -e
+
+    WIKI_URL="${WIKI_URL:-http://wikijs.wikijs.svc.cluster.local:3000}"
+    ADMIN_EMAIL="${ADMIN_EMAIL:-admin@home.local}"
+    ADMIN_PASSWORD="${ADMIN_PASSWORD:-changeme}"
+    ADMIN_NAME="${ADMIN_NAME:-Admin}"
+
+    echo "Waiting for Wiki.js to be ready..."
+    for i in $(seq 1 60); do
+      if curl -sf "${WIKI_URL}/healthz" > /dev/null 2>&1; then
+        echo "Wiki.js is ready!"
+        break
+      fi
+      echo "Waiting... ($i/60)"
+      sleep 5
+    done
+
+    echo "Checking if setup has already been completed..."
+    HEALTH=$(curl -sf "${WIKI_URL}/healthz" 2>/dev/null || echo "")
+    if echo "$HEALTH" | grep -q '"status":"OK"'; then
+      echo "Wiki.js is operational."
+    fi
+
+    echo "Attempting to register initial admin user..."
+    RESPONSE=$(curl -s "${WIKI_URL}/graphql" \
+      -H "Content-Type: application/json" \
+      -d "$(printf '{
+        "query": "mutation { authentication { register(email: \"%s\", password: \"%s\", name: \"%s\") { responseResult { slug } jwt } } }"
+      }' "${ADMIN_EMAIL}" "${ADMIN_PASSWORD}" "${ADMIN_NAME}")")
+
+    if echo "$RESPONSE" | grep -q '"jwt"'; then
+      echo "Admin user registered successfully!"
+    elif echo "$RESPONSE" | grep -q 'already\|exists'; then
+      echo "User already exists, setup was already completed."
+    elif echo "$RESPONSE" | grep -q '"errors"'; then
+      echo "Note: Setup may already be complete. Response: $RESPONSE"
+    else
+      echo "Response: $RESPONSE"
+    fi
+
+    echo ""
+    echo "======================================================"
+    echo "  WIKI.JS SETUP"
+    echo "======================================================"
+    echo "  URL:      https://wikijs.home"
+    echo "  Email:    ${ADMIN_EMAIL}"
+    echo "  Password: ${ADMIN_PASSWORD}"
+    echo "======================================================"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wikijs-setup
+  namespace: wikijs
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: setup
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              source /scripts/setup.sh
+          env:
+            - name: ADMIN_EMAIL
+              value: "admin@home.local"
+            - name: ADMIN_PASSWORD
+              value: "changeme"
+            - name: ADMIN_NAME
+              value: "Admin"
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+      volumes:
+        - name: scripts
+          configMap:
+            name: wikijs-setup
+  ttlSecondsAfterFinished: 3600
