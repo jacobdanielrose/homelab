@@ -54,38 +54,34 @@ extraInitContainers:
         if [ ! -f "${CONFIG_FILE}" ]; then
           echo "Creating SSO-Auth.xml with placeholder config..."
           mkdir -p "${CONFIG_DIR}"
-          cat > "${CONFIG_FILE}" << 'XMLEOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SamlConfigs />
-            <OidConfigs>
-              <item>
-                <key>
-                  <string>authentik</string>
-                </key>
-                <value>
-                  <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>
-                  <OidClientId>CHANGE_ME</OidClientId>
-                  <OidSecret>CHANGE_ME</OidSecret>
-                  <Enabled>true</Enabled>
-                  <EnableAllFolders>true</EnableAllFolders>
-                  <OidScopes>
-                    <string>openid</string>
-                    <string>profile</string>
-                    <string>email</string>
-                  </OidScopes>
-                  <NewPath>true</NewPath>
-                  <DisableHttps>false</DisableHttps>
-                  <DisablePushedAuthorization>false</DisablePushedAuthorization>
-                  <DoNotValidateEndpoints>false</DoNotValidateEndpoints>
-                  <DoNotValidateIssuerName>false</DoNotValidateIssuerName>
-                  <DoNotLoadProfile>false</DoNotLoadProfile>
-                  <CanonicalLinks />
-                </value>
-              </item>
-            </OidConfigs>
-          </PluginConfiguration>
-          XMLEOF
+          echo '<?xml version="1.0" encoding="utf-8"?>' > "${CONFIG_FILE}"
+          echo '<PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">' >> "${CONFIG_FILE}"
+          echo '  <SamlConfigs />' >> "${CONFIG_FILE}"
+          echo '  <OidConfigs>' >> "${CONFIG_FILE}"
+          echo '    <item>' >> "${CONFIG_FILE}"
+          echo '      <key><string>authentik</string></key>' >> "${CONFIG_FILE}"
+          echo '      <value>' >> "${CONFIG_FILE}"
+          echo '        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>' >> "${CONFIG_FILE}"
+          echo '        <OidClientId>CHANGE_ME</OidClientId>' >> "${CONFIG_FILE}"
+          echo '        <OidSecret>CHANGE_ME</OidSecret>' >> "${CONFIG_FILE}"
+          echo '        <Enabled>true</Enabled>' >> "${CONFIG_FILE}"
+          echo '        <EnableAllFolders>true</EnableAllFolders>' >> "${CONFIG_FILE}"
+          echo '        <OidScopes>' >> "${CONFIG_FILE}"
+          echo '          <string>openid</string>' >> "${CONFIG_FILE}"
+          echo '          <string>profile</string>' >> "${CONFIG_FILE}"
+          echo '          <string>email</string>' >> "${CONFIG_FILE}"
+          echo '        </OidScopes>' >> "${CONFIG_FILE}"
+          echo '        <NewPath>true</NewPath>' >> "${CONFIG_FILE}"
+          echo '        <DisableHttps>false</DisableHttps>' >> "${CONFIG_FILE}"
+          echo '        <DisablePushedAuthorization>false</DisablePushedAuthorization>' >> "${CONFIG_FILE}"
+          echo '        <DoNotValidateEndpoints>false</DoNotValidateEndpoints>' >> "${CONFIG_FILE}"
+          echo '        <DoNotValidateIssuerName>false</DoNotValidateIssuerName>' >> "${CONFIG_FILE}"
+          echo '        <DoNotLoadProfile>false</DoNotLoadProfile>' >> "${CONFIG_FILE}"
+          echo '        <CanonicalLinks />' >> "${CONFIG_FILE}"
+          echo '      </value>' >> "${CONFIG_FILE}"
+          echo '    </item>' >> "${CONFIG_FILE}"
+          echo '  </OidConfigs>' >> "${CONFIG_FILE}"
+          echo '</PluginConfiguration>' >> "${CONFIG_FILE}"
           echo "SSO config created. Replace CHANGE_ME values then restart the pod."
         fi
 
@@ -93,16 +89,14 @@ extraInitContainers:
         if [ ! -f "${SYSXML}" ]; then
           echo "Creating system.xml to skip first-run wizard..."
           mkdir -p "$(dirname "${SYSXML}")"
-          cat > "${SYSXML}" << 'XMLEOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <ServerConfiguration>
-            <IsStartupWizardCompleted>true</IsStartupWizardCompleted>
-            <EnableRemoteAccess>true</EnableRemoteAccess>
-            <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
-            <MetadataCountryCode>CH</MetadataCountryCode>
-            <UICulture>en-US</UICulture>
-          </ServerConfiguration>
-          XMLEOF
+          echo '<?xml version="1.0" encoding="utf-8"?>' > "${SYSXML}"
+          echo '<ServerConfiguration>' >> "${SYSXML}"
+          echo '  <IsStartupWizardCompleted>true</IsStartupWizardCompleted>' >> "${SYSXML}"
+          echo '  <EnableRemoteAccess>true</EnableRemoteAccess>' >> "${SYSXML}"
+          echo '  <PreferredMetadataLanguage>en</PreferredMetadataLanguage>' >> "${SYSXML}"
+          echo '  <MetadataCountryCode>CH</MetadataCountryCode>' >> "${SYSXML}"
+          echo '  <UICulture>en-US</UICulture>' >> "${SYSXML}"
+          echo '</ServerConfiguration>' >> "${SYSXML}"
           echo "Wizard skipped. First user to login becomes admin."
         fi
     volumeMounts:
