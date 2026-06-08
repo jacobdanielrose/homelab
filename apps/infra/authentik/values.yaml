@@ -15,6 +15,7 @@ blueprints:
 server:
   ingress:
     enabled: true
+    ingressClassName: traefik
     hosts:
       - authentik.home
 

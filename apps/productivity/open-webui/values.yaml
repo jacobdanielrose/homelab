@@ -2,6 +2,7 @@ replicaCount: 1
 
 ingress:
   enabled: true
+  ingressClassName: traefik
   hosts: 
   - host: openweb.home
     paths: 
