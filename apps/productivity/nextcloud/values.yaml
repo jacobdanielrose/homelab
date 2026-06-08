@@ -50,7 +50,6 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
-    tag: 17.5.0-debian-12-r3
   global:
     postgresql:
       auth:
