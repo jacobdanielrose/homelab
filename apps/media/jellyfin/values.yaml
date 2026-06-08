@@ -32,40 +32,64 @@ extraInitContainers:
       - -c
       - |
         set -e
+
         PLUGIN_DIR="/config/plugins/SSO-Authentication"
         CONFIG_DIR="/config/plugins/configurations"
         CONFIG_FILE="${CONFIG_DIR}/SSO-Auth.xml"
+        SYSXML="/config/config/system.xml"
 
-        # Install plugin DLLs if not already present
+        # ---------- SSO Plugin ----------
         if [ ! -f "${PLUGIN_DIR}/Jellyfin.Plugin.SSO_Auth.dll" ]; then
           echo "Downloading SSO plugin..."
           mkdir -p "${PLUGIN_DIR}"
-          apk add unzip >/dev/null 2>&1
-          curl -sL -o /tmp/plugin.zip \
+          apk add --no-cache unzip curl >/dev/null 2>&1
+          curl -fsSL -o /tmp/plugin.zip \
             "https://github.com/9p4/jellyfin-plugin-sso/releases/download/v4.0.0.4/sso-authentication_4.0.0.4.zip"
           unzip -o /tmp/plugin.zip -d "${PLUGIN_DIR}/"
           rm /tmp/plugin.zip
-          echo "Plugin installed."
-        else
-          echo "Plugin already installed, skipping download."
+          echo "SSO plugin installed."
         fi
 
-        # Pre-seed SSO config if it doesn't exist yet
-        # Replace __CLIENT_ID__ and __CLIENT_SECRET__ with the real values from Authentik.
+        # ---------- SSO Config ----------
         if [ ! -f "${CONFIG_FILE}" ]; then
           echo "Creating SSO-Auth.xml with placeholder config..."
           mkdir -p "${CONFIG_DIR}"
-          printf '<?xml version="1.0" encoding="utf-8"?>\n<PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n  <SamlConfigs />\n  <OidConfigs>\n    <item>\n      <key>\n        <string>authentik</string>\n      </key>\n      <value>\n        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>\n        <OidClientId>__CLIENT_ID__</OidClientId>\n        <OidSecret>__CLIENT_SECRET__</OidSecret>\n        <Enabled>true</Enabled>\n        <EnableAllFolders>true</EnableAllFolders>\n        <OidScopes>\n          <string>openid</string>\n          <string>profile</string>\n          <string>email</string>\n        </OidScopes>\n        <NewPath>true</NewPath>\n        <DisableHttps>false</DisableHttps>\n        <DisablePushedAuthorization>false</DisablePushedAuthorization>\n        <DoNotValidateEndpoints>false</DoNotValidateEndpoints>\n        <DoNotValidateIssuerName>false</DoNotValidateIssuerName>\n        <DoNotLoadProfile>false</DoNotLoadProfile>\n        <CanonicalLinks />\n      </value>\n    </item>\n  </OidConfigs>\n</PluginConfiguration>\n' > "${CONFIG_FILE}"
-          echo "Config created with placeholders."
-          echo "!!! Replace __CLIENT_ID__ and __CLIENT_SECRET__ in ${CONFIG_FILE} then restart the pod !!!"
-        else
-          echo "Config already exists, skipping."
+          cat > "${CONFIG_FILE}" << 'XMLEOF'
+<?xml version="1.0" encoding="utf-8"?>
+<PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SamlConfigs />
+  <OidConfigs>
+    <item>
+      <key>
+        <string>authentik</string>
+      </key>
+      <value>
+        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>
+        <OidClientId>CHANGE_ME</OidClientId>
+        <OidSecret>CHANGE_ME</OidSecret>
+        <Enabled>true</Enabled>
+        <EnableAllFolders>true</EnableAllFolders>
+        <OidScopes>
+          <string>openid</string>
+          <string>profile</string>
+          <string>email</string>
+        </OidScopes>
+        <NewPath>true</NewPath>
+        <DisableHttps>false</DisableHttps>
+        <DisablePushedAuthorization>false</DisablePushedAuthorization>
+        <DoNotValidateEndpoints>false</DoNotValidateEndpoints>
+        <DoNotValidateIssuerName>false</DoNotValidateIssuerName>
+        <DoNotLoadProfile>false</DoNotLoadProfile>
+        <CanonicalLinks />
+      </value>
+    </item>
+  </OidConfigs>
+</PluginConfiguration>
+XMLEOF
+          echo "SSO config created. Replace CHANGE_ME values then restart the pod."
         fi
 
-        # Pre-seed system.xml to skip Jellyfin setup wizard
-        # The wizard normally creates this file. Pre-creating it tells Jellyfin
-        # that setup is complete, so it boots straight into the login page.
-        SYSXML="/config/config/system.xml"
+        # ---------- Skip wizard ----------
         if [ ! -f "${SYSXML}" ]; then
           echo "Creating system.xml to skip first-run wizard..."
           mkdir -p "$(dirname "${SYSXML}")"
@@ -77,25 +101,9 @@ extraInitContainers:
   <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
   <MetadataCountryCode>US</MetadataCountryCode>
   <UICulture>en-US</UICulture>
-  <EnableDashboardResponseCaching>true</EnableDashboardResponseCaching>
-  <DashboardSourcePath />
 </ServerConfiguration>
 XMLEOF
-          echo "system.xml created - wizard will be skipped."
-          echo ""
-          echo "======================================================="
-          echo "  JELLYFIN SETUP"
-          echo "======================================================="
-          echo "  First admin user must be created on first login."
-          echo "  Visit https://jellyfin.home and register the first"
-          echo "  account - it will be granted admin privileges."
-          echo ""
-          echo "  Default credentials (if configured):"
-          echo "    Email:    admin@home.local"
-          echo "    Password: changeme"
-          echo "======================================================="
-        else
-          echo "system.xml already exists, skipping wizard setup."
+          echo "Wizard skipped. First user to login becomes admin."
         fi
     volumeMounts:
       - name: config
