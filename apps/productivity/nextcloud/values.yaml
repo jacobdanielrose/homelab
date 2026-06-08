@@ -13,6 +13,10 @@ nextcloud:
   trustedDomains:
     - nextcloud.home
 
+phpClientHttpsFix:
+  enabled: true
+  protocol: https
+
 ingress:
   enabled: true
   className: traefik
