@@ -55,37 +55,37 @@ extraInitContainers:
           echo "Creating SSO-Auth.xml with placeholder config..."
           mkdir -p "${CONFIG_DIR}"
           cat > "${CONFIG_FILE}" << 'XMLEOF'
-<?xml version="1.0" encoding="utf-8"?>
-<PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SamlConfigs />
-  <OidConfigs>
-    <item>
-      <key>
-        <string>authentik</string>
-      </key>
-      <value>
-        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>
-        <OidClientId>CHANGE_ME</OidClientId>
-        <OidSecret>CHANGE_ME</OidSecret>
-        <Enabled>true</Enabled>
-        <EnableAllFolders>true</EnableAllFolders>
-        <OidScopes>
-          <string>openid</string>
-          <string>profile</string>
-          <string>email</string>
-        </OidScopes>
-        <NewPath>true</NewPath>
-        <DisableHttps>false</DisableHttps>
-        <DisablePushedAuthorization>false</DisablePushedAuthorization>
-        <DoNotValidateEndpoints>false</DoNotValidateEndpoints>
-        <DoNotValidateIssuerName>false</DoNotValidateIssuerName>
-        <DoNotLoadProfile>false</DoNotLoadProfile>
-        <CanonicalLinks />
-      </value>
-    </item>
-  </OidConfigs>
-</PluginConfiguration>
-XMLEOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <PluginConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SamlConfigs />
+            <OidConfigs>
+              <item>
+                <key>
+                  <string>authentik</string>
+                </key>
+                <value>
+                  <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>
+                  <OidClientId>CHANGE_ME</OidClientId>
+                  <OidSecret>CHANGE_ME</OidSecret>
+                  <Enabled>true</Enabled>
+                  <EnableAllFolders>true</EnableAllFolders>
+                  <OidScopes>
+                    <string>openid</string>
+                    <string>profile</string>
+                    <string>email</string>
+                  </OidScopes>
+                  <NewPath>true</NewPath>
+                  <DisableHttps>false</DisableHttps>
+                  <DisablePushedAuthorization>false</DisablePushedAuthorization>
+                  <DoNotValidateEndpoints>false</DoNotValidateEndpoints>
+                  <DoNotValidateIssuerName>false</DoNotValidateIssuerName>
+                  <DoNotLoadProfile>false</DoNotLoadProfile>
+                  <CanonicalLinks />
+                </value>
+              </item>
+            </OidConfigs>
+          </PluginConfiguration>
+          XMLEOF
           echo "SSO config created. Replace CHANGE_ME values then restart the pod."
         fi
 
@@ -94,15 +94,15 @@ XMLEOF
           echo "Creating system.xml to skip first-run wizard..."
           mkdir -p "$(dirname "${SYSXML}")"
           cat > "${SYSXML}" << 'XMLEOF'
-<?xml version="1.0" encoding="utf-8"?>
-<ServerConfiguration>
-  <IsStartupWizardCompleted>true</IsStartupWizardCompleted>
-  <EnableRemoteAccess>true</EnableRemoteAccess>
-  <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
-  <MetadataCountryCode>US</MetadataCountryCode>
-  <UICulture>en-US</UICulture>
-</ServerConfiguration>
-XMLEOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <ServerConfiguration>
+            <IsStartupWizardCompleted>true</IsStartupWizardCompleted>
+            <EnableRemoteAccess>true</EnableRemoteAccess>
+            <PreferredMetadataLanguage>en</PreferredMetadataLanguage>
+            <MetadataCountryCode>CH</MetadataCountryCode>
+            <UICulture>en-US</UICulture>
+          </ServerConfiguration>
+          XMLEOF
           echo "Wizard skipped. First user to login becomes admin."
         fi
     volumeMounts:
