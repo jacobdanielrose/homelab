@@ -1,5 +1,8 @@
 replicaCount: 1
 
+internalDatabase:
+  enabled: false
+
 nextcloud:
   host: nextcloud.home
   username: admin
@@ -12,6 +15,15 @@ nextcloud:
   #   passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.home
+  configs:
+    proxy.config.php: |-
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' => array('10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'),
+        'overwriteprotocol' => 'https',
+        'maintenance_window_start' => 3,
+        'default_phone_region' => 'US',
+      );
 
 phpClientHttpsFix:
   enabled: true
@@ -22,6 +34,7 @@ ingress:
   className: traefik
   annotations:
     cert-manager.io/cluster-issuer: selfsigned
+    traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
   hosts:
     - host: nextcloud.home
       paths:
@@ -31,3 +44,26 @@ ingress:
     - secretName: nextcloud-tls
       hosts:
         - nextcloud.home
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: nextcloud
+        password: changeme
+        database: nextcloud
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: changeme
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
