@@ -10,4 +10,5 @@ resources:
   #- grafana-app.yaml
   - traefik-app.yaml
   - cert-manager-app.yaml
+  - argocd-ingress-app.yaml
   #- metallb-app.yaml    # Uncomment when deploying on real hardware (not Docker/Kind)
