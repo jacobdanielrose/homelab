@@ -50,6 +50,7 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
+    tag: latest
   global:
     postgresql:
       auth:
