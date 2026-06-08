@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://open-webui.github.io/helm-charts 
       chart: open-webui 
-      targetRevision: 1.60.0 
+      targetRevision: 14.8.0 
       helm:
         valueFiles:
           - $values/apps/productivity/open-webui/values.yaml
