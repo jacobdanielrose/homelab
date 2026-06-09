@@ -6,13 +6,11 @@ internalDatabase:
 nextcloud:
   host: nextcloud.home
   username: admin
-  password: changeme
-  # Uncomment and configure to use an existing secret instead:
-  # existingSecret:
-  #   enabled: true
-  #   secretName: nextcloud-admin
-  #   usernameKey: nextcloud-username
-  #   passwordKey: nextcloud-password
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-secrets
+    usernameKey: nextcloud-username
+    passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.home
   configs:
@@ -54,8 +52,9 @@ postgresql:
     postgresql:
       auth:
         username: nextcloud
-        password: changeme
         database: nextcloud
+        existingSecret: nextcloud-secrets
+        existingSecretPasswordKey: postgres-password
   primary:
     persistence:
       enabled: true
@@ -69,7 +68,8 @@ redis:
     tag: latest
   auth:
     enabled: true
-    password: changeme
+    existingSecret: nextcloud-secrets
+    existingSecretPasswordKey: redis-password
   master:
     persistence:
       enabled: true

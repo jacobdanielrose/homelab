@@ -6,15 +6,18 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://open-webui.github.io/helm-charts 
-      chart: open-webui 
-      targetRevision: 14.8.0 
+    - repoURL: https://open-webui.github.io/helm-charts
+      chart: open-webui
+      targetRevision: 14.8.0
       helm:
         valueFiles:
           - $values/apps/productivity/open-webui/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/open-webui
   destination:
     server: https://kubernetes.default.svc
     namespace: open-webui
@@ -24,3 +27,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true

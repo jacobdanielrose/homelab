@@ -13,10 +13,9 @@ loki:
       # RustFS S3-compatible object store deployed in this namespace
       endpoint: http://rustfs-svc.loki.svc:9000
       region: us-east-1
-      accessKeyId: loki
-      secretAccessKey: loki-rustfs-objectstore
       s3ForcePathStyle: true
       insecure: true
+  existingSecretName: loki-s3-secret
   schemaConfig:
     configs:
       - from: "2024-01-01"

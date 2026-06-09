@@ -1,0 +1,6 @@
+.age/
+sops-age-key.yaml
+age-key.txt
+
+# OS files
+.DS_Store

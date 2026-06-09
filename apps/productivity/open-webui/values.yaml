@@ -22,14 +22,12 @@ websocket:
   redis:
     enabled: true
 
+extraEnvVarsSecret: open-webui-secrets
+
 extraEnvVars:
-  - name: WEBUI_SECRET_KEY
-    value: "changeme-to-a-random-secret"
   - name: ENABLE_INITIAL_ADMIN_SIGNUP
     value: "True"
   - name: WEBUI_ADMIN_EMAIL
     value: "admin@home.local"
-  - name: WEBUI_ADMIN_PASSWORD
-    value: "changeme"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"

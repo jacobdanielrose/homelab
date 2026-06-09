@@ -125,6 +125,74 @@ Each app defines its image, service port, and persistence in `apps/media/arr-sta
 
 ---
 
+## Secrets Management (SOPS + Age)
+
+Secrets are encrypted with [SOPS](https://github.com/getsops/sops) using [age](https://age-encryption.org/). Each app's secrets live in `apps/<category>/<app>/secrets.yaml` as a standard K8s Secret manifest, whole-file encrypted. ArgoCD decrypts them automatically at sync time.
+
+### Key management
+
+- **Private key** (backup this): `$HOME/.config/sops/age/keys.txt`
+- **Public key**: `age1rrmavzfl5aarr7hs9y5yzvxn80szfjhs4xk63d6wsz8v88fcudaqsrpnnj`
+- **Config**: `/.sops.yaml`
+
+### Encrypted files
+
+| File | What it contains |
+|---|---|
+| `apps/media/immich/secrets.yaml` | Immich Postgres credentials |
+| `apps/infra/authentik/secrets.yaml` | Authentik secret key, bootstrap creds, postgres password |
+| `apps/infra/loki/secrets.yaml` | Loki S3 access/secret key |
+| `apps/infra/grafana/secrets.yaml` | Grafana admin password |
+| `apps/infra/rustfs/values.yaml` | RustFS S3 access/secret key (field-level, chart inline) |
+| `apps/productivity/nextcloud/secrets.yaml` | Nextcloud admin, postgres, redis passwords |
+| `apps/productivity/open-webui/secrets.yaml` | Open WebUI secret key, admin password |
+
+### Workflow
+
+**View/edit an encrypted file:**
+```bash
+sops apps/infra/authentik/secrets.yaml
+```
+Opens in `$EDITOR` with decrypted content; re-encrypts on save.
+
+**Encrypt a new secrets.yaml:**
+```bash
+sops --encrypt apps/myapp/secrets.yaml > apps/myapp/secrets.yaml.tmp
+mv apps/myapp/secrets.yaml.tmp apps/myapp/secrets.yaml
+```
+
+**Add a new app with secrets:**
+1. Create `apps/<category>/<app>/secrets.yaml` (plaintext K8s Secret)
+2. Encrypt it: `sops --encrypt apps/.../secrets.yaml > tmp && mv tmp apps/.../secrets.yaml`
+3. Add it to the app's `kustomization.yaml`
+4. If no kustomization dir exists yet, add a 3rd ArgoCD source `path:` to the app manifest
+
+### Cluster bootstrap (one-time)
+
+```bash
+# 1. Create the age key Secret
+kubectl -n argocd create secret generic sops-age-key \
+  --from-file=keys.txt=$HOME/.config/sops/age/keys.txt
+
+# 2. Enable SOPS in ArgoCD
+kubectl -n argocd patch configmap argocd-cm --type merge -p \
+  '{"data": {"sops.enabled": "true"}}'
+
+# 3. Restart repo-server
+kubectl -n argocd rollout restart deployment argocd-repo-server
+kubectl -n argocd rollout status deployment argocd-repo-server
+```
+
+### Key rotation
+
+1. `age-keygen -o ~/.config/sops/age/keys-new.txt`
+2. Add new public key to `/.sops.yaml` under `creation_rules[0].key_groups[0].age`
+3. `sops updatekeys apps/media/immich/secrets.yaml` (repeat per file)
+4. Update cluster Secret with new `keys.txt`
+5. Remove old key from `/.sops.yaml` and `keys.txt`
+
+---
+
 ## Adding a New App
 
 1. Create `apps/<category>/<appname>-app.yaml` as an ArgoCD `Application` manifest.

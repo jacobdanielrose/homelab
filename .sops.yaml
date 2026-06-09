@@ -1,0 +1,14 @@
+keys:
+  - &default_age age1rrmavzfl5aarr7hs9y5yzvxn80szfjhs4xk63d6wsz8v88fcudaqsrpnnj
+creation_rules:
+  # Whole-file encryption for standalone K8s Secret manifests
+  - path_regex: apps/.*/secrets\.yaml
+    key_groups:
+      - age:
+          - *default_age
+  # Field-level encryption for rustfs values.yaml (chart creates native Secret from inline creds)
+  - path_regex: apps/infra/rustfs/values\.yaml
+    encrypted_regex: ^(secret_key|access_key)$
+    key_groups:
+      - age:
+          - *default_age

@@ -1,32 +1,41 @@
 # RustFS values — S3-compatible object storage for Loki
 # Deployed in the loki namespace; replaces the deprecated bundled minio.
-
 fullnameOverride: rustfs
-
 mode:
-  standalone:
-    enabled: true
-  distributed:
-    enabled: false
-
+    standalone:
+        enabled: true
+    distributed:
+        enabled: false
 # S3 credentials (also referenced by apps/infra/loki/values.yaml)
 secret:
-  rustfs:
-    access_key: loki
-    secret_key: loki-rustfs-objectstore
-
+    rustfs:
+        access_key: ENC[AES256_GCM,data:lAowRQ==,iv:bVY6irnDrKm2srZnJ1BJAbTnz8ED0mHur7w3FzzWMdU=,tag:o1VnPW/MYsVKcA2Ouqpp4g==,type:str]
+        secret_key: ENC[AES256_GCM,data:GpbYt6X2q/cyDxdev20aaHbYhd6eNow=,iv:zIP7Hy4fruX/48q73Ppr4YN2qRyLaHuAx1FQBaR4/UY=,tag:gt2AnpzWQd5XYjyTDIOwqw==,type:str]
 # Internal only — no ingress, reachable in-cluster at rustfs-svc:9000
 ingress:
-  enabled: false
-
+    enabled: false
 storageclass:
-  name: standard
-  size: 2Gi
-
+    name: standard
+    size: 2Gi
 resources:
-  limits:
-    cpu: 500m
-    memory: 1Gi
-  requests:
-    cpu: 100m
-    memory: 256Mi
+    limits:
+        cpu: 500m
+        memory: 1Gi
+    requests:
+        cpu: 100m
+        memory: 256Mi
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6d09CRFJGT2s3a3ZFOS9u
+            ZHV3KzRpc0hJa3hpT0x6L0xzMElraDl5TDNNCm44M3d0UUhjRGV6MmdlMzRoUVRN
+            UkxFenNMYnpVeHBKdWpRVHlyM1RLN1EKLS0tIHlxYktPbERvbXFWSndVcTlIeDAy
+            aGNOQUh4KzcyY0tQbFlnUmNuY0JHMmsKkD0ymNtNNZmS0rpRXDj646tQXkdozbz+
+            7fgZcg/3xK0/OhLl5eTJMP/DsHm/9Dmjxl1uqJ+/zJfs2m8LaZp7rw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1rrmavzfl5aarr7hs9y5yzvxn80szfjhs4xk63d6wsz8v88fcudaqsrpnnj
+    encrypted_regex: ^(secret_key|access_key)$
+    lastmodified: "2026-06-09T21:02:59Z"
+    mac: ENC[AES256_GCM,data:rbabkoaLYfUC761u4/oSPhcHp2qHFbzh0RO7TsJB6P/Ja93LqADtXpdVgn+7un4rS1/NmRduHEC1V4n24gSX8tU9zBwQ4sfMxdsiq3q01o7PnfrYi7Y8nbIMWJPXDhDfT6EFQThLM9XrKu/nJYDUHhhgtNu7y45tUaPw0PyzQ4Q=,iv:C87XApwQprNuctDo2YFRNBaA5iuwaHAqHQ+xzTcKZeI=,tag:j8ZvNAHCw5MMHIH3iC8ThA==,type:str]
+    version: 3.13.1

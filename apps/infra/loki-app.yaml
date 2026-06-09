@@ -15,6 +15,9 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/infra/loki
   destination:
     server: https://kubernetes.default.svc
     namespace: loki
@@ -24,3 +27,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
