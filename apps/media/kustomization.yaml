@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
   - jellyfin-app.yaml
   - immich-app.yaml
-  #- audiobookshelf-app.yaml
-  #- navidrome-app.yaml
-  #- komga-app.yaml
+  - audiobookshelf-app.yaml
+  - navidrome-app.yaml
+  - komga-app.yaml
   #- arrstack-app.yaml
