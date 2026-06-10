@@ -74,4 +74,10 @@ redis:
   master:
     persistence:
       enabled: true
+      storageClass: local-path
+      size: 1Gi
+  replica:
+    persistence:
+      enabled: true
+      storageClass: local-path
       size: 1Gi
