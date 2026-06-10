@@ -1,7 +1,9 @@
 authentik:
   existingSecret:
     secretName: authentik-secrets
-  bootstrap_email: "admin@home.local"
+  secret:
+    key: "HHz7uKuv1TZuFPaD345u830TibJABGdF"
+  bootstrap_email: "admin@rostor.local"
   error_reporting:
     enabled: true
   postgresql:
