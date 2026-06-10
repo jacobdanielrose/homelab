@@ -11,7 +11,7 @@ spec:
     path: apps/media
   destination:
     server: https://kubernetes.default.svc
-    namespace: media
+    namespace: default
   syncPolicy:
     automated:
       prune: true

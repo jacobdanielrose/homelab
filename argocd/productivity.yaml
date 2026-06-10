@@ -11,7 +11,7 @@ spec:
     path: apps/productivity
   destination:
     server: https://kubernetes.default.svc
-    namespace: productivity
+    namespace: default
   syncPolicy:
     automated:
       prune: true
