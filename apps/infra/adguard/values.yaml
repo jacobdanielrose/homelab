@@ -7,3 +7,13 @@ persistence:
       requests:
         storage: 1Gi
     storageClassName: local-path
+
+ingresses:
+  http:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: adguard.home
+        paths:
+          - path: /
+            pathType: Prefix
