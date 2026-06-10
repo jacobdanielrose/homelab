@@ -1,15 +1,18 @@
 authentik:
-  existingSecret:
-    secretName: authentik-secrets
-  secret:
-    key: "HHz7uKuv1TZuFPaD345u830TibJABGdF"
-  bootstrap_email: "admin@rostor.local"
   error_reporting:
     enabled: true
   postgresql:
     host: authentik-postgresql
     name: authentik
     user: authentik
+
+global:
+  env:
+    - name: AUTHENTIK_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: secret-key
 
 blueprints:
   configMaps:
