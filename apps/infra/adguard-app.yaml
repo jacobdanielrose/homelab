@@ -9,15 +9,15 @@ spec:
     - repoURL: https://helm-charts.rm3l.org
       chart: adguard-home
       targetRevision: 0.24.0
-      #helm:
-      #  valueFiles:
-      #   - $values/apps/infra/adguard/values.yaml
+      helm:
+        valueFiles:
+          - $values/apps/infra/adguard/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
-    # - repoURL: https://github.com/jacobdanielrose/homelab.git
-    #   targetRevision: HEAD
-    #   path: apps/infra/adguard
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/infra/adguard
   destination:
     server: https://kubernetes.default.svc
     namespace: adguard
