@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-storage
+  storageClassName: local-path
   resources:
     requests:
       storage: 1Gi
@@ -20,7 +20,7 @@ spec:
   accessModes:
     # for actual deployment use: ReadWriteMany
     - ReadWriteOnce
-  storageClassName: local-storage
+  storageClassName: local-path
   resources:
     requests:
       storage: 1Gi
