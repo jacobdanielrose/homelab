@@ -17,3 +17,8 @@ ingresses:
         paths:
           - path: /
             pathType: Prefix
+
+services:
+  dns:
+    enabled: true
+    type: LoadBalancer
