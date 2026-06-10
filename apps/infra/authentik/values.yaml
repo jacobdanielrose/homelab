@@ -13,6 +13,11 @@ global:
         secretKeyRef:
           name: authentik-secrets
           key: secret-key
+    - name: AUTHENTIK_POSTGRESQL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: password
 
 blueprints:
   configMaps:

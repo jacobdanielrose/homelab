@@ -28,6 +28,11 @@ controllers:
           DB_HOSTNAME: immich-postgres
           DB_USERNAME: immich
           DB_DATABASE_NAME: immich
+          DB_PASSWORD:
+            valueFrom:
+              secretKeyRef:
+                name: immich-postgres-secret
+                key: POSTGRES_PASSWORD
           REDIS_HOSTNAME: immich-valkey
         envFrom:
           - secretRef:
