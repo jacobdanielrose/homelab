@@ -1,0 +1,9 @@
+persistence:
+  enabled: true
+  volumeClaimSpec:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    storageClassName: local-path
