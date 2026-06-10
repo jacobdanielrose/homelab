@@ -19,7 +19,7 @@ ingress:
 persistence:
   enabled: true
   type: statefulset
-  storageClassName: ""
+  storageClassName: "local-path"
   accessModes: ["ReadWriteOnce"]
   size: 5Gi
 

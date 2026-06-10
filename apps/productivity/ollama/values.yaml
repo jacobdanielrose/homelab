@@ -11,3 +11,8 @@ ollama:
   models:
     pull:
       - tinyllama
+
+persistentVolume:
+  enabled: true
+  storageClass: local-path
+  size: 30Gi

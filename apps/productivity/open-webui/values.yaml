@@ -7,6 +7,14 @@ ingress:
   path: /
   pathType: Prefix
 
+services:
+  enabled: false
+
+persistence:
+  enabled: true
+  size: 2Gi
+  storageClass: local-path
+
 ollama:
   enabled: false
 

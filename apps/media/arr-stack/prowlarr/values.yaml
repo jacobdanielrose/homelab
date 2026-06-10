@@ -37,7 +37,7 @@ persistence:
   config:
     type: persistentVolumeClaim
     accessMode: ReadWriteOnce
-    storageClass: standard
+    storageClass: local-path
     size: 1Gi
     globalMounts:
       - path: /config
