@@ -4,7 +4,7 @@ internalDatabase:
   enabled: false
 
 nextcloud:
-  host: nextcloud.home
+  host: nextcloud.rostor.local
   username: admin
   existingSecret:
     enabled: true
@@ -12,7 +12,7 @@ nextcloud:
     usernameKey: nextcloud-username
     passwordKey: nextcloud-password
   trustedDomains:
-    - nextcloud.home
+    - nextcloud.rostor.local
   configs:
     proxy.config.php: |-
       <?php
@@ -33,14 +33,14 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: selfsigned
   hosts:
-    - host: nextcloud.home
+    - host: nextcloud.rostor.local
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: nextcloud-tls
       hosts:
-        - nextcloud.home
+        - nextcloud.rostor.local
 
 postgresql:
   enabled: true

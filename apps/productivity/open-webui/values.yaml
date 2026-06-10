@@ -3,7 +3,7 @@ replicaCount: 1
 ingress:
   enabled: true
   class: traefik
-  host: openweb.home
+  host: openweb.rostor.local
   path: /
   pathType: Prefix
 

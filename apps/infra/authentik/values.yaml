@@ -20,11 +20,11 @@ server:
     annotations:
       cert-manager.io/cluster-issuer: selfsigned
     hosts:
-      - authentik.home
+      - authentik.rostor.local
     tls:
       - secretName: authentik-tls
         hosts:
-          - authentik.home
+          - authentik.rostor.local
 
 postgresql:
   enabled: true

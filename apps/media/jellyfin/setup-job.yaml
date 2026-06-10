@@ -49,7 +49,7 @@ data:
     echo "======================================================="
     echo "  JELLYFIN SETUP COMPLETE"
     echo "======================================================="
-    echo "  URL:      https://jellyfin.home"
+    echo "  URL:      https://jellyfin.rostor.local"
     echo "  Username: ${ADMIN_NAME}"
     echo "  Password: ${ADMIN_PASSWORD}"
     echo "======================================================="

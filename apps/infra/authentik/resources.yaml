@@ -50,7 +50,7 @@ data:
           client_secret: "__REPLACE_ME__"
           redirect_uris:
             - matching_mode: strict
-              url: https://jellyfin.home/SSO/OID/redirect/authentik
+              url: https://jellyfin.rostor.local/SSO/OID/redirect/authentik
               redirect_uri_type: authorization
           grant_types:
             - authorization_code
@@ -67,4 +67,4 @@ data:
         attrs:
           provider: !KeyOf jellyfin
           name: Jellyfin
-          meta_launch_url: https://jellyfin.home
+          meta_launch_url: https://jellyfin.rostor.local

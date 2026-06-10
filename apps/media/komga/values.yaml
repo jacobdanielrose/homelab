@@ -2,7 +2,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts:
-    - host: komga.home
+    - host: books.rostor.local
       paths:
         - path: /
           pathType: Prefix
@@ -10,7 +10,7 @@ ingress:
     cert-manager.io/cluster-issuer: selfsigned
   tls:
     - hosts:
-        - komga.home
+        - books.rostor.local
       secretName: komga-tls
 
 persistence:

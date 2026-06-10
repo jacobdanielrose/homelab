@@ -2,7 +2,7 @@ ingress:
   enabled: true
   className: traefik
   hosts:
-    - host: audiobooks.home
+    - host: audiobooks.rostor.local
       paths:
         - path: /
           pathType: Prefix
@@ -10,7 +10,7 @@ ingress:
     cert-manager.io/cluster-issuer: selfsigned
   tls:
     - hosts:
-        - audiobooks.home
+        - audiobooks.rostor.local
       secretName: audiobooks-tls
 
 audiobookshelf:

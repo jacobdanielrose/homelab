@@ -107,7 +107,7 @@ Each app defines its image, service port, and persistence in `apps/media/arr-sta
 - **File naming**: `{appname}-app.yaml` for ArgoCD Application manifests.
 - **Namespace**: Media apps deploy into per-app namespaces (`jellyfin`, `immich`, `audiobookshelf`, `navidrome`, `komga`). Each app gets `syncOptions: CreateNamespace=true`.
 - **Ingress**: Traefik is deployed by this repo as an ArgoCD Application (`apps/infra/traefik-app.yaml`). It uses `ingressClassName: traefik`.
-- **Hostnames follow**: `{app}.home` — every app with an active ingress is exposed at `{name}.home` (e.g. `grafana.home`, `jellyfin.home`, `sonarr.home`). This is a local DNS domain handled by your router or Pi-hole — no public DNS or TLS is configured.
+- **Hostnames follow**: `{app}.rostor.local` — every app with an active ingress is exposed at `{name}.rostor.local` (e.g. `grafana.rostor.local`, `jellyfin.rostor.local`, `sonarr.rostor.local`). This is a local DNS domain handled by your router or Pi-hole — no public DNS or TLS is configured.
 - **Traefik proxy**: Traefik v3 deployed via Helm chart `traefik` from `https://helm.traefik.io/traefik`. Both Kubernetes Ingress and CRD providers are enabled. Dashboard is off by default.
 - **Metrics**: Prometheus metrics are enabled on Traefik (`addRoutersLabels`, `addServicesLabels`), scraped by kube-prometheus-stack.
 - **PVCs and app-owned resources**: Each active app has `apps/media/<app>/resources.yaml` plus `kustomization.yaml`; the app `Application` includes that path as an additional ArgoCD source so PVCs and support resources appear inside the same Argo dashboard as the Helm release. Kubernetes PVCs are namespace-scoped, so shared claim names such as `media-nfs-pvc` are repeated in each app namespace that mounts them.

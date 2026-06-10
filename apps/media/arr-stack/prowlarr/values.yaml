@@ -3,7 +3,7 @@ ingress:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - host: prowlarr.home
+      - host: prowlarr.rostor.local
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - prowlarr.home
+          - prowlarr.rostor.local
         secretName: prowlarr-tls
 
 controllers:

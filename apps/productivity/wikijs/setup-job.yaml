@@ -52,7 +52,7 @@ data:
     echo "======================================================"
     echo "  WIKI.JS SETUP"
     echo "======================================================"
-    echo "  URL:      https://wikijs.home"
+    echo "  URL:      https://wiki.rostor.local"
     echo "  Email:    ${ADMIN_EMAIL}"
     echo "  Password: ${ADMIN_PASSWORD}"
     echo "======================================================"

@@ -4,11 +4,11 @@ ingress:
   enabled: true
   className: traefik
   hosts:
-    - host: wikijs.home
+    - host: wiki.rostor.local
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - wikijs.home
+        - wiki.rostor.local
       secretName: wikijs-tls

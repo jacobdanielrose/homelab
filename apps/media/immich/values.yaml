@@ -4,7 +4,7 @@ server:
       enabled: true
       ingressClassName: traefik
       hosts:
-        - host: immich.home
+        - host: photos.rostor.local
           paths:
             - path: /
               pathType: Prefix
@@ -12,7 +12,7 @@ server:
         cert-manager.io/cluster-issuer: selfsigned
       tls:
         - hosts:
-            - immich.home
+            - photos.rostor.local
           secretName: immich-tls
 
 machine-learning:

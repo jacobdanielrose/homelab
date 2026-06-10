@@ -46,7 +46,7 @@ data:
     echo "======================================================="
     echo "  AUDIOBOOKSHELF SETUP"
     echo "======================================================="
-    echo "  URL:      https://audiobooks.home"
+    echo "  URL:      https://audiobooks.rostor.local"
     echo "  Email:    ${ADMIN_EMAIL}"
     echo "  Username: ${ADMIN_USERNAME}"
     echo "  Password: ${ADMIN_PASSWORD}"

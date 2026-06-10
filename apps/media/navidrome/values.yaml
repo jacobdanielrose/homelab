@@ -3,7 +3,7 @@ ingress:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - host: navidrome.home
+      - host: music.rostor.local
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - navidrome.home
+          - music.rostor.local
         secretName: navidrome-tls
 
 persistence:

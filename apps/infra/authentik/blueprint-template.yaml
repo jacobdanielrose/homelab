@@ -11,15 +11,15 @@
 #   5. Set the grant_types your app supports
 
 # Jellyfin:
-#   callback:  https://jellyfin.home/SSO/OID/redirect/authentik
+#   callback:  https://jellyfin.rostor.local/SSO/OID/redirect/authentik
 #   grant:     authorization_code + refresh_token
 
 # Wiki.js:
-#   callback:  https://wikijs.home/login/authentik/callback
+#   callback:  https://wiki.rostor.local/login/authentik/callback
 #   grant:     authorization_code + refresh_token
 
 # Grafana:
-#   callback:  https://grafana.home/login/generic_oauth
+#   callback:  https://grafana.rostor.local/login/generic_oauth
 #   grant:     authorization_code + refresh_token
 
 # --- Cut below this line and add to the ConfigMap data ---
@@ -39,7 +39,7 @@
 #           client_secret: "__REPLACE_ME__"
 #           redirect_uris:
 #             - matching_mode: strict
-#               url: https://myapp.home/SSO/OID/redirect/authentik
+#               url: https://myapp.rostor.local/SSO/OID/redirect/authentik
 #               redirect_uri_type: authorization
 #           grant_types:
 #             - authorization_code
@@ -56,4 +56,4 @@
 #         attrs:
 #           provider: !KeyOf myapp
 #           name: MyApp
-#           meta_launch_url: https://myapp.home
+#           meta_launch_url: https://myapp.rostor.local

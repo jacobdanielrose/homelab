@@ -59,7 +59,7 @@ data:
     echo "======================================================="
     echo "  KOMGA SETUP"
     echo "======================================================="
-    echo "  URL:      https://komga.home"
+    echo "  URL:      https://books.rostor.local"
     echo "  Email:    ${ADMIN_EMAIL}"
     echo "  Password: ${ADMIN_PASSWORD}"
     echo "======================================================="

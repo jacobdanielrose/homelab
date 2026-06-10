@@ -3,7 +3,7 @@ ingress:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - host: readarr.home
+      - host: readarr.rostor.local
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - readarr.home
+          - readarr.rostor.local
         secretName: readarr-tls
 
 controllers:

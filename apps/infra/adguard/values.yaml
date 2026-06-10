@@ -13,7 +13,7 @@ ingresses:
     enabled: true
     className: traefik
     hosts:
-      - host: adguard.home
+      - host: adguard.rostor.local
         paths:
           - path: /
             pathType: Prefix

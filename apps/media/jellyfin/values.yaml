@@ -2,7 +2,7 @@ ingress:
   enabled: true
   className: "traefik"
   hosts:
-    - host: "jellyfin.home"
+    - host: "jellyfin.rostor.local"
       paths:
         - path: /
           pathType: Prefix
@@ -10,7 +10,7 @@ ingress:
     cert-manager.io/cluster-issuer: selfsigned
   tls:
     - hosts:
-        - jellyfin.home
+        - jellyfin.rostor.local
       secretName: jellyfin-tls
 
 persistence:
@@ -61,7 +61,7 @@ extraInitContainers:
           echo '    <item>' >> "${CONFIG_FILE}"
           echo '      <key><string>authentik</string></key>' >> "${CONFIG_FILE}"
           echo '      <value>' >> "${CONFIG_FILE}"
-          echo '        <OidEndpoint>https://authentik.home/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>' >> "${CONFIG_FILE}"
+          echo '        <OidEndpoint>https://authentik.rostor.local/application/o/jellyfin/.well-known/openid-configuration</OidEndpoint>' >> "${CONFIG_FILE}"
           echo '        <OidClientId>CHANGE_ME</OidClientId>' >> "${CONFIG_FILE}"
           echo '        <OidSecret>CHANGE_ME</OidSecret>' >> "${CONFIG_FILE}"
           echo '        <Enabled>true</Enabled>' >> "${CONFIG_FILE}"

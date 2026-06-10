@@ -2,7 +2,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts: 
-  - host: ollama.home
+  - host: ollama.rostor.local
     paths: 
       - path: / 
         pathType: Prefix
