@@ -55,9 +55,13 @@ postgresql:
         database: nextcloud
         existingSecret: nextcloud-secrets
         existingSecretPasswordKey: postgres-password
+  auth:
+    secretKeys:
+      adminPasswordKey: postgres-password
   primary:
     persistence:
       enabled: true
+      storageClass: local-path
       size: 8Gi
 
 redis:
