@@ -12,3 +12,8 @@ ingress:
     - hosts:
         - wiki.rostor.local
       secretName: wikijs-tls
+
+postgresql:
+  primary:
+    persistence:
+      storageClass: local-path
