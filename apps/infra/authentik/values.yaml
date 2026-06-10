@@ -1,5 +1,6 @@
 authentik:
-  existingSecret: authentik-secrets
+  existingSecret:
+    secretName: authentik-secrets
   bootstrap_email: "admin@home.local"
   error_reporting:
     enabled: true
