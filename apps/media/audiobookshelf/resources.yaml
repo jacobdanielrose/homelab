@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: audiobookshelf-config-pvc
   namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce
@@ -16,6 +18,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: audiobookshelf-backup-pvc
   namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce
@@ -29,6 +33,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: audiobookshelf-metadata-pvc
   namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce
@@ -42,6 +48,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: media-nfs-pvc
   namespace: audiobookshelf
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce

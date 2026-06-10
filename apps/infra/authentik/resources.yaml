@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: authentik-postgresql-pvc
   namespace: authentik
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce

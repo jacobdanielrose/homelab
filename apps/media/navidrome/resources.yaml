@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: navidrome-data-pvc
   namespace: navidrome
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     - ReadWriteOnce
@@ -16,6 +18,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: media-nfs-pvc
   namespace: navidrome
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
     # for actual deployment use: ReadWriteMany
