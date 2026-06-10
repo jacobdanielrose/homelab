@@ -36,7 +36,6 @@ extraInitContainers:
         PLUGIN_DIR="/config/plugins/SSO-Authentication"
         CONFIG_DIR="/config/plugins/configurations"
         CONFIG_FILE="${CONFIG_DIR}/SSO-Auth.xml"
-        SYSXML="/config/config/system.xml"
 
         # ---------- SSO Plugin ----------
         if [ ! -f "${PLUGIN_DIR}/Jellyfin.Plugin.SSO_Auth.dll" ]; then
@@ -83,21 +82,6 @@ extraInitContainers:
           echo '  </OidConfigs>' >> "${CONFIG_FILE}"
           echo '</PluginConfiguration>' >> "${CONFIG_FILE}"
           echo "SSO config created. Replace CHANGE_ME values then restart the pod."
-        fi
-
-        # ---------- Skip wizard ----------
-        if [ ! -f "${SYSXML}" ]; then
-          echo "Creating system.xml to skip first-run wizard..."
-          mkdir -p "$(dirname "${SYSXML}")"
-          echo '<?xml version="1.0" encoding="utf-8"?>' > "${SYSXML}"
-          echo '<ServerConfiguration>' >> "${SYSXML}"
-          echo '  <IsStartupWizardCompleted>true</IsStartupWizardCompleted>' >> "${SYSXML}"
-          echo '  <EnableRemoteAccess>true</EnableRemoteAccess>' >> "${SYSXML}"
-          echo '  <PreferredMetadataLanguage>en</PreferredMetadataLanguage>' >> "${SYSXML}"
-          echo '  <MetadataCountryCode>CH</MetadataCountryCode>' >> "${SYSXML}"
-          echo '  <UICulture>en-US</UICulture>' >> "${SYSXML}"
-          echo '</ServerConfiguration>' >> "${SYSXML}"
-          echo "Wizard skipped. First user to login becomes admin."
         fi
     volumeMounts:
       - name: config
