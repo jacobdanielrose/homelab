@@ -38,7 +38,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: synology-smb-volume2
+  storageClassName: nfs-media
+  volumeName: nfs-media-jellyfin
   resources:
     requests:
       storage: 100Gi
