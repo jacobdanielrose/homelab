@@ -23,6 +23,9 @@ persistence:
   accessModes: ["ReadWriteOnce"]
   size: 5Gi
 
+initChownData:
+  enabled: false
+
 datasources:
   datasources.yaml:
     apiVersion: 1
