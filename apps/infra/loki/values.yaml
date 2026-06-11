@@ -71,3 +71,10 @@ backend:
     - key: node-role.kubernetes.io/control-plane
       operator: Exists
       effect: NoSchedule
+
+chunksCache:
+  allocatedMemory: 256
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
