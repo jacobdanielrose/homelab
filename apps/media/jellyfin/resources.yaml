@@ -42,4 +42,4 @@ spec:
   volumeName: nfs-media-jellyfin
   resources:
     requests:
-      storage: 100Gi
+      storage: 4500Gi
