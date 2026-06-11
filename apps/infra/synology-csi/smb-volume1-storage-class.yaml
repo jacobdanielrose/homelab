@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: synology-smb-volume1
+provisioner: csi.san.synology.com
+parameters:
+  protocol: "smb"
+  dsm: "192.168.3.164"
+  location: "/volume1"
+  csi.storage.k8s.io/node-stage-secret-name: "client-info-secret"
+  csi.storage.k8s.io/node-stage-secret-namespace: "synology-csi"
+reclaimPolicy: Delete
+allowVolumeExpansion: true
