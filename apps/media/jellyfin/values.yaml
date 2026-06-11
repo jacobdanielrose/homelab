@@ -18,6 +18,11 @@ ingress:
     #     - jellyfin.rostor.cloud
     #   secretName: jellyfin-cloud-tls
 
+jellyfin:
+  env:
+    - name: DOTNET_USE_POLLING_FILE_WATCHER
+      value: "1"
+
 persistence:
   config:
     enabled: true
