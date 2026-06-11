@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
   - clusterissuer.yaml
   - certificates.yaml
+  - letsencrypt-staging.yaml
+  - letsencrypt-prod.yaml
+  - cloudflare-api-token.yaml
