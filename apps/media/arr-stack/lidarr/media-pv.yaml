@@ -10,7 +10,9 @@ spec:
   storageClassName: nfs-media
   persistentVolumeReclaimPolicy: Retain
   mountOptions:
-    - nfsvers=4.1
+    - nfsvers=3
+    - uid=1000
+    - gid=1000
   nfs:
     server: 192.168.3.164
     path: /volume2/proxmox2/Media
