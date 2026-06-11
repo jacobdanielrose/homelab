@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - resources.yaml
   - setup-job.yaml
-  - certificates.yaml

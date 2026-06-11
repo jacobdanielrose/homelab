@@ -7,17 +7,12 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
-      - host: music.rostor.cloud
-        paths:
-          - path: /
-            pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
           - music.rostor.local
         secretName: navidrome-tls
-      - hosts:
-          - music.rostor.cloud
-        secretName: navidrome-cloud-tls
 
 persistence:
   data:

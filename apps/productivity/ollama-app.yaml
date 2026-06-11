@@ -15,9 +15,6 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/jacobdanielrose/homelab.git
-      targetRevision: HEAD
-      path: apps/productivity/ollama
   destination:
     server: https://kubernetes.default.svc
     namespace: ollama 
