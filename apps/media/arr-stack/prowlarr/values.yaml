@@ -41,3 +41,8 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /config
+  media:
+    type: persistentVolumeClaim
+    existingClaim: media-nfs-pvc
+    globalMounts:
+      - path: /data

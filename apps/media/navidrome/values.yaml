@@ -1,7 +1,7 @@
 ingress:
   main:
     enabled: true
-    ingressClassName: traefik
+    className: traefik
     hosts:
       - host: music.rostor.local
         paths:

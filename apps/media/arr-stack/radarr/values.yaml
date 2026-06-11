@@ -43,8 +43,6 @@ persistence:
       - path: /config
   media:
     type: persistentVolumeClaim
-    accessMode: ReadWriteOnce
-    storageClass: local-path
-    size: 1Gi
+    existingClaim: media-nfs-pvc
     globalMounts:
       - path: /data

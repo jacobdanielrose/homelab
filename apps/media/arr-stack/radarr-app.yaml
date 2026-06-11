@@ -15,9 +15,17 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/media/arr-stack/radarr
   destination:
     server: https://kubernetes.default.svc
     namespace: radarr
+  ignoreDifferences:
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/volumeName
   syncPolicy:
     automated:
       prune: true

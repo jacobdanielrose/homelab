@@ -1,6 +1,6 @@
 ingress:
   enabled: true
-  ingressClassName: traefik
+  className: traefik
   hosts:
     - host: books.rostor.local
       paths:

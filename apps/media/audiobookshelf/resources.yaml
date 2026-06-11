@@ -52,8 +52,8 @@ metadata:
     argocd.argoproj.io/sync-options: ServerSideApply=true
 spec:
   accessModes:
-    - ReadWriteOnce
-  storageClassName: local-path
+    - ReadWriteMany
+  storageClassName: synology-smb-volume2
   resources:
     requests:
-      storage: 1Gi
+      storage: 100Gi

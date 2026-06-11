@@ -21,6 +21,11 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: jellyfin
+  ignoreDifferences:
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/volumeName
   syncPolicy:
     automated:
       prune: true
