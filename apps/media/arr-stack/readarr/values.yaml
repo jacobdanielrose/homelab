@@ -20,7 +20,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/linuxserver/readarr
-          tag: latest
+          tag: develop-0.4.18.2805-ls157
         env:
           TZ: Etc/UTC
           PUID: "1000"
