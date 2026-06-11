@@ -7,4 +7,4 @@ resources:
   - audiobookshelf-app.yaml
   - navidrome-app.yaml
   - komga-app.yaml
-  #- arrstack-app.yaml
+  - arrstack-app.yaml
