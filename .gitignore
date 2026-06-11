@@ -1,2 +1,5 @@
 # OS files
 .DS_Store
+
+# Config backups
+scripts/config-backups/

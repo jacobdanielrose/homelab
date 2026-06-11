@@ -13,4 +13,3 @@ resources:
   - argocd-ingress-app.yaml
   - sealed-secrets-app.yaml
   - metallb-app.yaml # Uncomment when deploying on real hardware (not Docker/Kind)
-  #- synology-csi-app.yaml
