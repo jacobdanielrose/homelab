@@ -6,4 +6,8 @@ metadata:
   namespace: cert-manager
 spec:
   encryptedData:
-    api-token: PLACEHOLDER_REPLACE_WITH_SEALED_DATA
+    api-token: AgCPOs3cdjQ/e7mb9KSGOVGxwqdpvVJpzWMyc4OZVJd1mKHGw2Uvl6O+i+GAablmzH4GtHN0Andnn0jZFEHDIOoZcEf7lQG3H978vGnuR7h73koPNt2kq/lfFRljNTZQ2o3r9nF/jzXqaS2J7yI0KMtkGj5yuym9FgoK95VhP8lRoP40k3M9c2yb6ZXmykN/ZnWUNsQHzxaP3GlOqyLMMK/KJJV63oAkpT+L4PBfk/6xFYr81oEkgr2JAt5cRPNms+qXg26PxrXlF5cF63QYRXjhI8WOMa4IMT/gbZl47/fSCrFhOsLRiJ8Wp1qf3DMxTSysWk9KZBkSyDy4FgVH8AtOJoIcu6h5Qnc/Bv69eTkcENivaO4avNoKTeJS4xJ2LIb+e+cj9A9o5BfU0ii2a4FQj+t1JqkfmxGpGDMdI+9H5JjlRvnT43eZ6NQ4BlRE41FrD8d0C9wnr5FFjwSruvaf8q/rIxTswZt/07bk0amzgDLs72m6hJRqmY03OClYFRW6Kkqji1hzu2lk/xszFVytvWj78A6bnfbZMzAAgQs9KI35x/AgTSg4iEozIFZnXiYAAOU5OvOsR2aJxEp3SjKTl771+BUwO5HZMGKo+yPTHNdr6L9y+CoHXASRmpniblIPLRIv45g7hCNv/pQwIjN0xmVSRH5Hj81B8I2HE9oo87WV2W1vMm+25Fqieb+mz37R5jbJfDFtLgS4wDJ2QZtDnS6gD1VhivSlvSMk1mgnHOapoxoGLLrHc80V0jueYaRvEaBiGQ==
+  template:
+    metadata:
+      name: cloudflare-api-token
+      namespace: cert-manager

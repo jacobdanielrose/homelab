@@ -14,20 +14,20 @@ spec:
           port: 8080
   tls:
     secretName: openwebui-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: IngressRoute
-metadata:
-  name: open-webui-cloud
-  namespace: open-webui
-spec:
-  entryPoints:
-    - websecure
-  routes:
-    - kind: Rule
-      match: Host(`ai.rostor.cloud`)
-      services:
-        - name: open-webui
-          port: 8080
-  tls:
-    secretName: openwebui-cloud-tls
+# ---
+# apiVersion: traefik.io/v1alpha1
+# kind: IngressRoute
+# metadata:
+#   name: open-webui-cloud
+#   namespace: open-webui
+# spec:
+#   entryPoints:
+#     - websecure
+#   routes:
+#     - kind: Rule
+#       match: Host(`ai.rostor.cloud`)
+#       services:
+#         - name: open-webui
+#           port: 8080
+#   tls:
+#     secretName: openwebui-cloud-tls

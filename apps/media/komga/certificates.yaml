@@ -10,16 +10,16 @@ spec:
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: komga-cloud-tls
-  namespace: komga
-spec:
-  secretName: komga-cloud-tls
-  dnsNames:
-    - books.rostor.cloud
-  issuerRef:
-    name: letsencrypt-staging
-    kind: ClusterIssuer
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: komga-cloud-tls
+#   namespace: komga
+# spec:
+#   secretName: komga-cloud-tls
+#   dnsNames:
+#     - books.rostor.cloud
+#   issuerRef:
+#     name: letsencrypt-staging
+#     kind: ClusterIssuer
