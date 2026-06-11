@@ -10,6 +10,9 @@ controllers:
           VPN_SERVICE_PROVIDER: custom
           VPN_TYPE: wireguard
           FIREWALL_INPUT_PORTS: "8888,8388,8388/udp"
+        envFrom:
+          - secretRef:
+              name: gluetun-secrets
         securityContext:
           capabilities:
             add:
