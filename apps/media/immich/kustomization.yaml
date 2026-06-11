@@ -5,3 +5,4 @@ resources:
   - resources.yaml
   - database.yaml
   - sealed-secrets.yaml
+  - certificates.yaml
