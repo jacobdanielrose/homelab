@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jellyfin-tls
+  namespace: jellyfin
+spec:
+  secretName: jellyfin-tls
+  dnsNames:
+    - jellyfin.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jellyfin-cloud-tls
+  namespace: jellyfin
+spec:
+  secretName: jellyfin-cloud-tls
+  dnsNames:
+    - jellyfin.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

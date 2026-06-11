@@ -13,6 +13,7 @@ nextcloud:
     passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.rostor.local
+    - nextcloud.rostor.cloud
   configs:
     proxy.config.php: |-
       <?php
@@ -30,10 +31,12 @@ phpClientHttpsFix:
 ingress:
   enabled: true
   className: traefik
-  annotations:
-    cert-manager.io/cluster-issuer: selfsigned
   hosts:
     - host: nextcloud.rostor.local
+      paths:
+        - path: /
+          pathType: Prefix
+    - host: nextcloud.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -41,6 +44,9 @@ ingress:
     - secretName: nextcloud-tls
       hosts:
         - nextcloud.rostor.local
+    - secretName: nextcloud-cloud-tls
+      hosts:
+        - nextcloud.rostor.cloud
 
 postgresql:
   enabled: true
