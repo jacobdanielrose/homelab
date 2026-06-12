@@ -16,4 +16,4 @@ ingress:
 postgresql:
   persistence:
     enabled: true
-    storageClass: local-path
+    storageClass: longhorn

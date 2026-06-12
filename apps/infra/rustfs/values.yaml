@@ -13,7 +13,7 @@ secret:
 ingress:
   enabled: false
 storageclass:
-  name: local-path
+  name: longhorn
   size: 2Gi
 resources:
   limits:

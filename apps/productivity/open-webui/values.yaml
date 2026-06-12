@@ -9,7 +9,7 @@ services:
 persistence:
   enabled: true
   size: 2Gi
-  storageClass: local-path
+  storageClass: longhorn
 
 ollama:
   enabled: false

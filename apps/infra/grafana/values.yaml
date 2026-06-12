@@ -19,7 +19,7 @@ ingress:
 persistence:
   enabled: true
   type: statefulset
-  storageClassName: "local-path"
+  storageClassName: "longhorn"
   accessModes: ["ReadWriteOnce"]
   size: 5Gi
 
