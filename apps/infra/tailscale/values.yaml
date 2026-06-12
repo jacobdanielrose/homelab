@@ -1,0 +1,5 @@
+# Tailscale Operator values
+# OAuth credentials provided via the operator-oauth sealed secret
+oauth:
+  clientId: ""
+  clientSecret: ""

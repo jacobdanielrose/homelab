@@ -78,7 +78,8 @@ scripts/                         # Utility scripts (config backups, etc.)
 ## Storage
 
 - **NFS Media** (`nfs-media` StorageClass): Static NFS PVs backed by a Synology NAS. Each app gets its own PV/PVC pair for the media mount at `/data`.
-- **Local Path** (`local-storage` — default): Config PVCs for app state.
+- **Synology CSI** (`synology-*-*` StorageClasses): ISCSI and SMB volumes provisioned on demand from the Synology NAS, with `Retain` reclaim policy.
+- **Longhorn** (`longhorn` — default for config PVCs): Replicated block storage across both nodes (2 replicas). All app config/data PVCs use this class — survives pod reschedules and ArgoCD redeploys.
 
 ## Secrets
 
@@ -87,4 +88,5 @@ Secrets use [sealed-secrets](https://github.com/bitnami-labs/sealed-secrets). En
 ## Notes
 
 - The control node may need taints removed to run workloads: `kubectl taint nodes --all node-role.kubernetes.io/control-plane-`
-- NFS-backed configs are ephemeral. Use `scripts/backup-arr-configs.sh` to back up *arr app state before node reboots or PVC teardowns.
+- Config PVCs use Longhorn with 2 replicas, so data persists across redeploys. For migration-level backups, see `scripts/backup-*-configs.sh` or `scripts/authentik-migrate.py`.
+- NFS-backed media mounts are stateless from the cluster's perspective — the Synology owns the data.
