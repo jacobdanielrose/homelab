@@ -1,3 +1,7 @@
 defaultSettings:
   defaultReplicaCount: 2
   createDefaultDiskLabeledNodes: false
+
+# Disable pre-upgrade checker job for ArgoCD compatibility
+preUpgradeChecker:
+  jobEnabled: false
