@@ -9,7 +9,7 @@ controllers:
           TZ: Etc/UTC
           VPN_SERVICE_PROVIDER: custom
           VPN_TYPE: wireguard
-          FIREWALL_INPUT_PORTS: "8888,8388"
+          FIREWALL_INPUT_PORTS: "8888,8388,6881"
         envFrom:
           - secretRef:
               name: gluetun-secrets
@@ -17,6 +17,18 @@ controllers:
           capabilities:
             add:
               - NET_ADMIN
+      qbittorrent:
+        image:
+          repository: ghcr.io/linuxserver/qbittorrent
+          tag: latest
+        ports:
+          - name: http
+            containerPort: 8080
+        env:
+          TZ: Etc/UTC
+          PUID: "1000"
+          PGID: "1000"
+          DOCKER_MODS: ghcr.io/gabe565/linuxserver-mod-vuetorrent
 
 service:
   main:
@@ -30,6 +42,27 @@ service:
       shadowsocks-udp:
         port: 8388
         protocol: UDP
+  qbittorrent:
+    controller: main
+    ports:
+      http:
+        port: 8080
+
+ingress:
+  qbittorrent:
+    enabled: true
+    className: traefik
+    hosts:
+      - host: downloads.rostor.local
+        paths:
+          - path: /
+            pathType: Prefix
+    annotations:
+      cert-manager.io/cluster-issuer: selfsigned
+    tls:
+      - hosts:
+          - downloads.rostor.local
+        secretName: qbittorrent-tls
 
 persistence:
   config:
@@ -39,3 +72,15 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /gluetun
+  qbittorrent-config:
+    type: persistentVolumeClaim
+    accessMode: ReadWriteOnce
+    storageClass: local-path
+    size: 1Gi
+    globalMounts:
+      - path: /config
+  media:
+    type: persistentVolumeClaim
+    existingClaim: media-nfs-pvc
+    globalMounts:
+      - path: /data
