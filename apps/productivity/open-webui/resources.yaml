@@ -11,7 +11,7 @@ spec:
       match: Host(`ai.rostor.local`)
       services:
         - name: open-webui
-          port: 8080
+          port: 80
   tls:
     secretName: openwebui-tls
 # ---

@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: oci://ghcr.io/homarr-labs/charts/homarr
       chart: homarr
-      targetRevision: 1.60.0
+      targetRevision: 8.19.0
       helm:
         valueFiles:
           - $values/apps/productivity/homarr/values.yaml
