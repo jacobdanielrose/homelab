@@ -33,6 +33,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             httpGet:
               path: /api/v1/healthz
@@ -65,3 +67,7 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: wealthfolio-data
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
