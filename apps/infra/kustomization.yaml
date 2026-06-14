@@ -13,5 +13,4 @@ resources:
   - argocd-ingress-app.yaml
   - sealed-secrets-app.yaml
   - longhorn-app.yaml
-  - tailscale-app.yaml
   - metallb-app.yaml # Uncomment when deploying on real hardware (not Docker/Kind)
