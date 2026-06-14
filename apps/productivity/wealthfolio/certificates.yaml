@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wealthfolio-tls
+  namespace: wealthfolio
+spec:
+  secretName: wealthfolio-tls
+  dnsNames:
+    - wealthfolio.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer

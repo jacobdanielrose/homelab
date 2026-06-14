@@ -6,3 +6,5 @@ resources:
   - wikijs-app.yaml
   - ollama-app.yaml
   - open-webui-app.yaml
+  - wealthfolio-app.yaml
+  - homarr-app.yaml

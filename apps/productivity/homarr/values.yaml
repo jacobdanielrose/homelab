@@ -1,0 +1,22 @@
+replicaCount: 1
+
+env:
+  TZ: "America/New_York"
+
+service:
+  enabled: true
+  type: ClusterIP
+
+ingress:
+  enabled: false
+
+persistence:
+  homarrDatabase:
+    enabled: true
+    storageClassName: longhorn
+    size: 1Gi
+
+envSecrets:
+  dbEncryption:
+    existingSecret: homarr-secrets
+    key: db-encryption-key

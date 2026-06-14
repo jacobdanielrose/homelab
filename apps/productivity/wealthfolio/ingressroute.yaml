@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: wealthfolio-local
+  namespace: wealthfolio
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`finance.rostor.local`)
+      services:
+        - name: wealthfolio
+          port: 8088
+  tls:
+    secretName: wealthfolio-tls
