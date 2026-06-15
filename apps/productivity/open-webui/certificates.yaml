@@ -1,25 +1,26 @@
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: openwebui-tls
-  namespace: open-webui
-spec:
-  secretName: openwebui-tls
-  dnsNames:
-    - ai.rostor.local
-  issuerRef:
-    name: selfsigned
-    kind: ClusterIssuer
 # ---
 # apiVersion: cert-manager.io/v1
 # kind: Certificate
 # metadata:
-#   name: openwebui-cloud-tls
+#   name: openwebui-tls
 #   namespace: open-webui
 # spec:
-#   secretName: openwebui-cloud-tls
+#   secretName: openwebui-tls
 #   dnsNames:
-#     - ai.rostor.cloud
+#     - ai.rostor.local
 #   issuerRef:
-#     name: letsencrypt-staging
+#     name: selfsigned
 #     kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: openwebui-cloud-tls
+  namespace: open-webui
+spec:
+  secretName: openwebui-cloud-tls
+  dnsNames:
+    - ai.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

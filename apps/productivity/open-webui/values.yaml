@@ -35,12 +35,6 @@ extraEnvVars:
     value: "admin@home.local"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"
-  - name: AIOHTTP_CLIENT_SESSION_SSL
-    value: "False"
-  - name: AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL
-    value: "False"
-  - name: REQUESTS_VERIFY
-    value: "False"
 
 sso:
   enabled: true
@@ -51,6 +45,6 @@ sso:
     clientExistingSecret: open-webui-secrets
     clientIdExistingSecretKey: oidc-client-id
     clientExistingSecretKey: oidc-client-secret
-    providerUrl: "https://authentik.rostor.local/application/o/open-webui/.well-known/openid-configuration"
+    providerUrl: "https://authentik.rostor.cloud/application/o/open-webui/.well-known/openid-configuration"
     providerName: "Authentik"
     scopes: "openid email profile"
