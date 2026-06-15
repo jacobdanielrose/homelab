@@ -44,6 +44,7 @@ controllers:
                 name: immich-postgres-secret
                 key: POSTGRES_PASSWORD
           REDIS_HOSTNAME: immich-valkey
+          NODE_TLS_REJECT_UNAUTHORIZED: "0"
         envFrom:
           - secretRef:
               name: immich-postgres-secret
