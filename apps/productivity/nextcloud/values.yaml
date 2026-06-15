@@ -54,7 +54,7 @@ postgresql:
         username: nextcloud
         database: nextcloud
         existingSecret: nextcloud-secrets
-        existingSecretPasswordKey: postgres-password
+        existingSecretPasswordKey: password
   primary:
     persistence:
       enabled: true
