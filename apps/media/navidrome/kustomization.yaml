@@ -5,3 +5,5 @@ resources:
   - media-pv.yaml
   - resources.yaml
   - certificates.yaml
+  # TODO: uncomment when Authentik ForwardAuth is ready
+  # - middleware.yaml

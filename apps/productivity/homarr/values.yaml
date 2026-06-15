@@ -1,7 +1,14 @@
 replicaCount: 1
 
 env:
-  TZ: "America/New_York"
+  TZ: "Europe/Zurich"
+  AUTH_PROVIDERS: "oidc"
+  AUTH_OIDC_ISSUER: "https://authentik.rostor.local/application/o/homarr/"
+  AUTH_OIDC_CLIENT_NAME: "Authentik"
+  AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile groups"
+  AUTH_OIDC_GROUPS_ATTRIBUTE: "groups"
+  AUTH_OIDC_AUTO_LOGIN: "true"
+  AUTH_LOGOUT_REDIRECT_URL: "https://authentik.rostor.local/application/o/homarr/end-session/"
 
 service:
   enabled: true
@@ -20,3 +27,7 @@ envSecrets:
   dbEncryption:
     existingSecret: homarr-secrets
     key: db-encryption-key
+  authOidcCredentials:
+    existingSecret: homarr-secrets
+    oidcClientId: oidc-client-id
+    oidcClientSecret: oidc-client-secret
