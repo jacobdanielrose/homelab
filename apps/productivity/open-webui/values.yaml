@@ -41,8 +41,9 @@ extraEnvVars:
     value: "true"
   - name: ENABLE_LOGIN_FORM
     value: "true"
-  - name: OAUTH_SSL_INSECURE_TRANSPORT
-    value: "true"
+  - name: REQUESTS_VERIFY
+    value: "false"
+
 
 sso:
   enabled: true
