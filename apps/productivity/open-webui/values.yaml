@@ -37,7 +37,10 @@ extraEnvVars:
     value: "Admin"
   - name: AIOHTTP_CLIENT_SESSION_SSL
     value: "False"
-
+  - name: AIOHTTP_CLIENT_SESSION_TOOL_SERVER_SSL
+    value: "False"
+  - name: REQUESTS_VERIFY
+    value: "False"
 
 sso:
   enabled: true
