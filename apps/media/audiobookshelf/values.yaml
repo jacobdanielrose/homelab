@@ -31,3 +31,11 @@ audiobookshelf:
   metadata:
     persistence:
       existingClaim: audiobookshelf-metadata-pvc
+
+workload:
+  main:
+    podSpec:
+      hostAliases:
+        - ip: "10.107.160.137"
+          hostnames:
+            - "authentik.rostor.local"
