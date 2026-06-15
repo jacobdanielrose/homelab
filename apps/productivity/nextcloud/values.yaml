@@ -13,15 +13,20 @@ nextcloud:
     passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.rostor.local
-  configs:
-    proxy.config.php: |-
-      <?php
-      $CONFIG = array (
-        'trusted_proxies' => array('10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'),
-        'overwriteprotocol' => 'https',
-        'maintenance_window_start' => 3,
-        'default_phone_region' => 'US',
-      );
+  extraEnv:
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: nextcloud-secrets
+          key: password
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 5Gi
+  nextcloudData:
+    enabled: true
+    existingClaim: nextcloud-nfs-pvc
 
 phpClientHttpsFix:
   enabled: true
@@ -48,18 +53,25 @@ postgresql:
     registry: docker.io
     repository: bitnami/postgresql
     tag: latest
-  global:
-    postgresql:
-      auth:
-        username: nextcloud
-        database: nextcloud
-        existingSecret: nextcloud-secrets
-        existingSecretPasswordKey: password
+  auth:
+    existingSecret: nextcloud-secrets
+    existingSecretPasswordKey: password
   primary:
     persistence:
       enabled: true
       storageClass: longhorn
       size: 8Gi
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: nextcloud-postgresql
+  database: nextcloud
+  user: nextcloud
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-secrets
+    passwordKey: password
 
 redis:
   enabled: true
