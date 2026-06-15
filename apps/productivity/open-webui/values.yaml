@@ -35,3 +35,14 @@ extraEnvVars:
     value: "admin@home.local"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"
+
+sso:
+  enabled: true
+  oidc:
+    enabled: true
+    clientExistingSecret: open-webui-secrets
+    clientIdExistingSecretKey: oidc-client-id
+    clientExistingSecretKey: oidc-client-secret
+    providerUrl: "https://authentik.rostor.local/application/o/open-webui/.well-known/openid-configuration"
+    providerName: "Authentik"
+    scopes: "openid email profile"
