@@ -13,4 +13,4 @@ spec:
     - nfsvers=4.1
   nfs:
     server: 192.168.3.164
-    path: /volume2/proxmox2/Media
+    path: /volume1/k8s/immich
