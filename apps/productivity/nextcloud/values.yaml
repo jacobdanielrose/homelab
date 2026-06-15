@@ -13,12 +13,6 @@ nextcloud:
     passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.rostor.local
-  extraEnv:
-    - name: POSTGRES_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: nextcloud-secrets
-          key: password
 
 persistence:
   enabled: true
