@@ -27,6 +27,11 @@ machine-learning:
 
 controllers:
   main:
+    pod:
+      hostAliases:
+        - ip: "10.107.160.137"
+          hostnames:
+            - "authentik.rostor.local"
     containers:
       main:
         env:
