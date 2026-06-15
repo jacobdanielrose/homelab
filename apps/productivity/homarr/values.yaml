@@ -1,5 +1,10 @@
 replicaCount: 1
 
+hostAliases:
+  - ip: "10.107.160.137"
+    hostnames:
+      - "authentik.rostor.local"
+
 env:
   TZ: "Europe/Zurich"
   AUTH_PROVIDERS: "oidc"
