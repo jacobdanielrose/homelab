@@ -18,24 +18,17 @@ ingress:
     #     - audiobooks.rostor.cloud
     #   secretName: audiobooks-cloud-tls
 
-audiobookshelf:
-  backup:
-    persistence:
-      existingClaim: audiobookshelf-backup-pvc
+persistence:
   config:
-    persistence:
-      existingClaim: audiobookshelf-config-pvc
-  library:
-    persistence:
-      existingClaim: media-nfs-pvc
+    enabled: true
+    existingClaim: audiobookshelf-config-pvc
+  audiobooks:
+    enabled: true
+    existingClaim: media-nfs-pvc
   metadata:
-    persistence:
-      existingClaim: audiobookshelf-metadata-pvc
+    enabled: true
+    existingClaim: audiobookshelf-metadata-pvc
 
-workload:
-  main:
-    podSpec:
-      hostAliases:
-        - ip: "10.107.160.137"
-          hostnames:
-            - "authentik.rostor.local"
+extraEnv:
+  - name: NODE_TLS_REJECT_UNAUTHORIZED
+    value: "0"
