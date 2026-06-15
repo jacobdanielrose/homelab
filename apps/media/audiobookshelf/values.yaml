@@ -18,16 +18,19 @@ ingress:
     #     - audiobooks.rostor.cloud
     #   secretName: audiobooks-cloud-tls
 
-persistence:
+audiobookshelf:
+  backup:
+    persistence:
+      existingClaim: audiobookshelf-backup-pvc
   config:
-    enabled: true
-    existingClaim: audiobookshelf-config-pvc
-  audiobooks:
-    enabled: true
-    existingClaim: media-nfs-pvc
+    persistence:
+      existingClaim: audiobookshelf-config-pvc
+  library:
+    persistence:
+      existingClaim: media-nfs-pvc
   metadata:
-    enabled: true
-    existingClaim: audiobookshelf-metadata-pvc
+    persistence:
+      existingClaim: audiobookshelf-metadata-pvc
 
 extraEnv:
   - name: NODE_TLS_REJECT_UNAUTHORIZED
