@@ -7,13 +7,14 @@ hostAliases:
 
 env:
   TZ: "Europe/Zurich"
-  AUTH_PROVIDERS: "oidc"
+  AUTH_PROVIDERS: "credentials,oidc"
   AUTH_OIDC_ISSUER: "https://authentik.rostor.local/application/o/homarr/"
   AUTH_OIDC_CLIENT_NAME: "Authentik"
-  AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile groups"
+  AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile"
   AUTH_OIDC_GROUPS_ATTRIBUTE: "groups"
-  AUTH_OIDC_AUTO_LOGIN: "true"
+  AUTH_OIDC_AUTO_LOGIN: "false"
   AUTH_LOGOUT_REDIRECT_URL: "https://authentik.rostor.local/application/o/homarr/end-session/"
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"
 
 service:
   enabled: true
