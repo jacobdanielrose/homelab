@@ -35,18 +35,14 @@ extraEnvVars:
     value: "admin@home.local"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"
-  - name: ENABLE_OAUTH_SIGNUP
-    value: "true"
-  - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
-    value: "true"
-  - name: ENABLE_LOGIN_FORM
-    value: "true"
-  - name: REQUESTS_VERIFY
-    value: "false"
+  - name: AIOHTTP_CLIENT_SESSION_SSL
+    value: "False"
 
 
 sso:
   enabled: true
+  enableSignup: true
+  mergeAccountsByEmail: true
   oidc:
     enabled: true
     clientExistingSecret: open-webui-secrets
