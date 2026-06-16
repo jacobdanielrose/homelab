@@ -42,6 +42,7 @@ postgresql:
     repository: bitnami/postgresql
     tag: latest
   auth:
+    username: nextcloud
     existingSecret: nextcloud-secrets
     existingSecretPasswordKey: password
   primary:
