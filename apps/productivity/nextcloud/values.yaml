@@ -5,6 +5,8 @@ internalDatabase:
 
 nextcloud:
   host: nextcloud.rostor.cloud
+  username: admin
+  password: changeme
   trustedDomains:
     - nextcloud.rostor.cloud
 
