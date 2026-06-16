@@ -14,4 +14,4 @@ resources:
   - sealed-secrets-app.yaml
   - longhorn-app.yaml
   - metallb-app.yaml # Uncomment when deploying on real hardware (not Docker/Kind)
-  #- hass-app.yaml
+  - hass-app.yaml
