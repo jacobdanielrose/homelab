@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wikijs-cloud-tls
+  namespace: wikijs
+spec:
+  secretName: wikijs-cloud-tls
+  dnsNames:
+    - wiki.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wikijs-tls
+  namespace: wikijs
+spec:
+  secretName: wikijs-tls
+  dnsNames:
+    - wiki.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
