@@ -8,9 +8,9 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`homarr.rostor.local`)
+      match: Host(`homarr.rostor.cloud`)
       services:
         - name: homarr
           port: 7575
   tls:
-    secretName: homarr-tls
+    secretName: homarr-cloud-tls

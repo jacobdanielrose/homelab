@@ -4,7 +4,7 @@ internalDatabase:
   enabled: false
 
 nextcloud:
-  host: nextcloud.rostor.local
+  host: nextcloud.rostor.cloud
   username: admin
   existingSecret:
     enabled: true
@@ -12,7 +12,7 @@ nextcloud:
     usernameKey: nextcloud-username
     passwordKey: nextcloud-password
   trustedDomains:
-    - nextcloud.rostor.local
+    - nextcloud.rostor.cloud
 
 persistence:
   enabled: true
@@ -30,16 +30,16 @@ ingress:
   enabled: true
   className: traefik
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned
+    cert-manager.io/cluster-issuer: letsencrypt-staging
   hosts:
-    - host: nextcloud.rostor.local
+    - host: nextcloud.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
   tls:
-    - secretName: nextcloud-tls
+    - secretName: nextcloud-cloud-tls
       hosts:
-        - nextcloud.rostor.local
+        - nextcloud.rostor.cloud
 
 postgresql:
   enabled: true

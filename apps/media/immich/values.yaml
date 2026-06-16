@@ -4,21 +4,21 @@ server:
       enabled: true
       ingressClassName: traefik
       hosts:
-        - host: photos.rostor.local
+        - host: photos.rostor.cloud
           paths:
             - path: /
               pathType: Prefix
-        # - host: photos.rostor.cloud
+        # - host: photos.rostor.local
         #   paths:
         #     - path: /
         #       pathType: Prefix
       tls:
         - hosts:
-            - photos.rostor.local
-          secretName: immich-tls
+            - photos.rostor.cloud
+          secretName: immich-cloud-tls
         # - hosts:
-        #     - photos.rostor.cloud
-        #   secretName: immich-cloud-tls
+        #     - photos.rostor.local
+        #   secretName: immich-tls
 
 machine-learning:
   ingress:

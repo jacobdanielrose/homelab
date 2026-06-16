@@ -2,7 +2,7 @@ ingress:
   enabled: true
   className: traefik
   hosts:
-    - host: audiobooks.rostor.local
+    - host: audiobooks.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -12,8 +12,8 @@ ingress:
     #       pathType: Prefix
   tls:
     - hosts:
-        - audiobooks.rostor.local
-      secretName: audiobooks-tls
+        - audiobooks.rostor.cloud
+      secretName: audiobooks-cloud-tls
     # - hosts:
     #     - audiobooks.rostor.cloud
     #   secretName: audiobooks-cloud-tls

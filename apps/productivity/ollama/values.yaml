@@ -2,7 +2,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts: 
-  - host: ollama.rostor.local
+  - host: ollama.rostor.cloud
     paths: 
       - path: / 
         pathType: Prefix
@@ -11,9 +11,9 @@ ingress:
   #     - path: /
   #       pathType: Prefix
   tls:
-    - secretName: ollama-tls
+    - secretName: ollama-cloud-tls
       hosts:
-        - ollama.rostor.local
+        - ollama.rostor.cloud
   # - secretName: ollama-cloud-tls
   #   hosts:
   #     - ollama.rostor.cloud

@@ -2,7 +2,7 @@ ingress:
   enabled: true
   className: "traefik"
   hosts:
-    - host: "jellyfin.rostor.local"
+    - host: "jellyfin.rostor.cloud"
       paths:
         - path: /
           pathType: Prefix
@@ -12,8 +12,8 @@ ingress:
     #       pathType: Prefix
   tls:
     - hosts:
-        - jellyfin.rostor.local
-      secretName: jellyfin-tls
+        - jellyfin.rostor.cloud
+      secretName: jellyfin-cloud-tls
     # - hosts:
     #     - jellyfin.rostor.cloud
     #   secretName: jellyfin-cloud-tls

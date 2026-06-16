@@ -1,25 +1,25 @@
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: komga-tls
-  namespace: komga
-spec:
-  secretName: komga-tls
-  dnsNames:
-    - books.rostor.local
-  issuerRef:
-    name: selfsigned
-    kind: ClusterIssuer
-# ---
 # apiVersion: cert-manager.io/v1
 # kind: Certificate
 # metadata:
-#   name: komga-cloud-tls
+#   name: komga-tls
 #   namespace: komga
 # spec:
-#   secretName: komga-cloud-tls
+#   secretName: komga-tls
 #   dnsNames:
-#     - books.rostor.cloud
+#     - books.rostor.local
 #   issuerRef:
-#     name: letsencrypt-staging
+#     name: selfsigned
 #     kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: komga-cloud-tls
+  namespace: komga
+spec:
+  secretName: komga-cloud-tls
+  dnsNames:
+    - books.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

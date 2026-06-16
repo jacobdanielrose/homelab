@@ -2,7 +2,7 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts:
-    - host: books.rostor.local
+    - host: books.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
@@ -12,8 +12,8 @@ ingress:
     #       pathType: Prefix
   tls:
     - hosts:
-        - books.rostor.local
-      secretName: komga-tls
+        - books.rostor.cloud
+      secretName: komga-cloud-tls
     # - hosts:
     #     - books.rostor.cloud
     #   secretName: komga-cloud-tls

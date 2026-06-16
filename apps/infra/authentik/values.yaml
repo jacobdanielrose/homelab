@@ -28,13 +28,13 @@ server:
     enabled: true
     ingressClassName: traefik
     annotations:
-      cert-manager.io/cluster-issuer: selfsigned
+      cert-manager.io/cluster-issuer: letsencrypt-staging
     hosts:
-      - authentik.rostor.local
+      - authentik.rostor.cloud
     tls:
-      - secretName: authentik-tls
+      - secretName: authentik-cloud-tls
         hosts:
-          - authentik.rostor.local
+          - authentik.rostor.cloud
 
 postgresql:
   enabled: true

@@ -3,18 +3,18 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: music.rostor.local
+      - host: music.rostor.cloud
         paths:
           - path: /
             pathType: Prefix
     annotations:
-      cert-manager.io/cluster-issuer: selfsigned
+      cert-manager.io/cluster-issuer: letsencrypt-staging
       # TODO: uncomment for Authentik ForwardAuth
       # traefik.ingress.kubernetes.io/router.middlewares: navidrome-auth-chain@kubernetescrd
     tls:
       - hosts:
-          - music.rostor.local
-        secretName: navidrome-tls
+          - music.rostor.cloud
+        secretName: navidrome-cloud-tls
 
 persistence:
   data:

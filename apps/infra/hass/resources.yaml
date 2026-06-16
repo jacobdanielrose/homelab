@@ -15,6 +15,6 @@ metadata:
   namespace: hass
 subsets:
   - addresses:
-      - ip: REPLACE_ME_WITH_HA_IP
+      - ip: 192.168.2.154
     ports:
       - port: 8123

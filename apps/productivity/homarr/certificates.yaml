@@ -1,12 +1,12 @@
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: homarr-tls
-  namespace: homarr
-spec:
-  secretName: homarr-tls
-  dnsNames:
-    - homarr.rostor.local
-  issuerRef:
-    name: selfsigned
-    kind: ClusterIssuer
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: homarr-tls
+#   namespace: homarr
+# spec:
+#   secretName: homarr-tls
+#   dnsNames:
+#     - homarr.rostor.local
+#   issuerRef:
+#     name: selfsigned
+#     kind: ClusterIssuer
