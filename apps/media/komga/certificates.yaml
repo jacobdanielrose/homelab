@@ -21,5 +21,5 @@ spec:
   dnsNames:
     - books.rostor.cloud
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer

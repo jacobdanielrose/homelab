@@ -8,7 +8,7 @@ ingress:
           - path: /
             pathType: Prefix
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-staging
+      cert-manager.io/cluster-issuer: letsencrypt-prod
       # TODO: uncomment for Authentik ForwardAuth
       # traefik.ingress.kubernetes.io/router.middlewares: navidrome-auth-chain@kubernetescrd
     tls:

@@ -8,7 +8,7 @@ spec:
   dnsNames:
     - wiki.rostor.cloud
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer
 ---
 apiVersion: cert-manager.io/v1

@@ -22,5 +22,5 @@ spec:
   dnsNames:
     - ai.rostor.cloud
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer
