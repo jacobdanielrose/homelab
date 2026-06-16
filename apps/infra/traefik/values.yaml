@@ -1,5 +1,8 @@
 # Traefik values
 
+deployment:
+  replicas: 2
+
 ports:
   web:
     port: 8000
