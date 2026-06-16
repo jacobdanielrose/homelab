@@ -5,12 +5,6 @@ internalDatabase:
 
 nextcloud:
   host: nextcloud.rostor.cloud
-  username: admin
-  existingSecret:
-    enabled: true
-    secretName: nextcloud-secrets
-    usernameKey: nextcloud-username
-    passwordKey: nextcloud-password
   trustedDomains:
     - nextcloud.rostor.cloud
 
