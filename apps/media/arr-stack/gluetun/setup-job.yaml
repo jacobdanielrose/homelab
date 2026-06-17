@@ -1,0 +1,128 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: arr-setup
+  namespace: gluetun
+  annotations:
+    argocd.argoproj.io/hook: PostSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: sonarr
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              APP="http://sonarr.sonarr.svc.cluster.local:8989"
+              KEY="arrstack_qbit_setup_key"
+              sleep 5
+              if curl -sf "$APP/api/v3/downloadclient" -H "X-Api-Key: $KEY" | grep -q "qBittorrent"; then
+                echo "sonarr: already configured"
+              else
+                curl -sf -X POST "$APP/api/v3/downloadclient" \
+                  -H "X-Api-Key: $KEY" \
+                  -H "Content-Type: application/json" \
+                  -d '{"enable":true,"protocol":"torrent","priority":1,"name":"qBittorrent","fields":[{"name":"host","value":"gluetun-qbittorrent.gluetun.svc.cluster.local"},{"name":"port","value":8080},{"name":"urlBase","value":""},{"name":"useSsl","value":false}],"implementation":"QBittorrent","configContract":"QBittorrentSettings"}' \
+                  && echo "sonarr: OK" || echo "sonarr: FAIL"
+              fi
+        - name: radarr
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              APP="http://radarr.radarr.svc.cluster.local:7878"
+              KEY="arrstack_qbit_setup_key"
+              sleep 5
+              if curl -sf "$APP/api/v3/downloadclient" -H "X-Api-Key: $KEY" | grep -q "qBittorrent"; then
+                echo "radarr: already configured"
+              else
+                curl -sf -X POST "$APP/api/v3/downloadclient" \
+                  -H "X-Api-Key: $KEY" \
+                  -H "Content-Type: application/json" \
+                  -d '{"enable":true,"protocol":"torrent","priority":1,"name":"qBittorrent","fields":[{"name":"host","value":"gluetun-qbittorrent.gluetun.svc.cluster.local"},{"name":"port","value":8080},{"name":"urlBase","value":""},{"name":"useSsl","value":false}],"implementation":"QBittorrent","configContract":"QBittorrentSettings"}' \
+                  && echo "radarr: OK" || echo "radarr: FAIL"
+              fi
+        - name: lidarr
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              APP="http://lidarr.lidarr.svc.cluster.local:8686"
+              KEY="arrstack_qbit_setup_key"
+              sleep 5
+              if curl -sf "$APP/api/v3/downloadclient" -H "X-Api-Key: $KEY" | grep -q "qBittorrent"; then
+                echo "lidarr: already configured"
+              else
+                curl -sf -X POST "$APP/api/v3/downloadclient" \
+                  -H "X-Api-Key: $KEY" \
+                  -H "Content-Type: application/json" \
+                  -d '{"enable":true,"protocol":"torrent","priority":1,"name":"qBittorrent","fields":[{"name":"host","value":"gluetun-qbittorrent.gluetun.svc.cluster.local"},{"name":"port","value":8080},{"name":"urlBase","value":""},{"name":"useSsl","value":false}],"implementation":"QBittorrent","configContract":"QBittorrentSettings"}' \
+                  && echo "lidarr: OK" || echo "lidarr: FAIL"
+              fi
+        - name: readarr
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              APP="http://readarr.readarr.svc.cluster.local:8787"
+              KEY="arrstack_qbit_setup_key"
+              sleep 5
+              if curl -sf "$APP/api/v3/downloadclient" -H "X-Api-Key: $KEY" | grep -q "qBittorrent"; then
+                echo "readarr: already configured"
+              else
+                curl -sf -X POST "$APP/api/v3/downloadclient" \
+                  -H "X-Api-Key: $KEY" \
+                  -H "Content-Type: application/json" \
+                  -d '{"enable":true,"protocol":"torrent","priority":1,"name":"qBittorrent","fields":[{"name":"host","value":"gluetun-qbittorrent.gluetun.svc.cluster.local"},{"name":"port","value":8080},{"name":"urlBase","value":""},{"name":"useSsl","value":false}],"implementation":"QBittorrent","configContract":"QBittorrentSettings"}' \
+                  && echo "readarr: OK" || echo "readarr: FAIL"
+              fi
+        - name: prowlarr-sync
+          image: curlimages/curl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              PROWLARR="http://prowlarr.prowlarr.svc.cluster.local:9696/api/v1"
+              KEY="arrstack_qbit_setup_key"
+              sleep 10
+
+              EXISTING=$(curl -sf "$PROWLARR/app" -H "X-Api-Key: $KEY" | grep -o '"name":"[^"]*"' | cut -d'"' -f4)
+
+              for app in sonarr radarr lidarr readarr; do
+                case "$app" in
+                  sonarr) PORT=8989; TYPE="Sonarr";;
+                  radarr) PORT=7878; TYPE="Radarr";;
+                  lidarr) PORT=8686; TYPE="Lidarr";;
+                  readarr) PORT=8787; TYPE="Readarr";;
+                esac
+
+                if echo "$EXISTING" | grep -q "$app"; then
+                  echo "prowlarr: $app already connected"
+                  continue
+                fi
+
+                echo "prowlarr: connecting $app..."
+                curl -sf -X POST "$PROWLARR/app" \
+                  -H "X-Api-Key: $KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "{
+                    \"name\": \"$app\",
+                    \"implementation\": \"${TYPE}IndexerSettings\",
+                    \"configContract\": \"${TYPE}Settings\",
+                    \"fields\": [
+                      {\"name\": \"prowlarrUrl\", \"value\": \"http://prowlarr.prowlarr.svc.cluster.local:9696\"},
+                      {\"name\": \"baseUrl\", \"value\": \"http://${app}.${app}.svc.cluster.local:${PORT}\"},
+                      {\"name\": \"apiKey\", \"value\": \"$KEY\"},
+                      {\"name\": \"syncCategories\", \"value\": [2000, 5000, 7000, 8000]}
+                    ],
+                    \"syncLevel\": \"fullSync\"
+                  }" && echo "  $app: OK" || echo "  $app: FAIL"
+              done
+  ttlSecondsAfterFinished: 3600

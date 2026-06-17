@@ -25,6 +25,11 @@ controllers:
           TZ: Etc/UTC
           PUID: "1000"
           PGID: "1000"
+          PROWLARR__API_KEY:
+            valueFrom:
+              secretKeyRef:
+                name: arr-api-key
+                key: API_KEY
 
 service:
   main:
