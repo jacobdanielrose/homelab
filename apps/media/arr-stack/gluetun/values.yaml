@@ -7,8 +7,8 @@ controllers:
           tag: latest
         env:
           TZ: Etc/UTC
-          VPN_SERVICE_PROVIDER: custom
-          VPN_TYPE: wireguard
+          VPN_SERVICE_PROVIDER: protonvpn
+          VPN_TYPE: openvpn
           FIREWALL_INPUT_PORTS: "8888,8388,6881,8080"
         envFrom:
           - secretRef:
