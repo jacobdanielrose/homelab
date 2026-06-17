@@ -7,10 +7,8 @@ controllers:
           tag: latest
         env:
           TZ: Etc/UTC
-          VPN_SERVICE_PROVIDER: protonvpn
-          VPN_TYPE: openvpn
-          OPENVPN_FLAGS: "--connect-retry-max 3 --connect-retry 5"
-          HEALTH_VPN_DNS_ADDRESSES: "9.9.9.9"
+          VPN_SERVICE_PROVIDER: custom
+          VPN_TYPE: wireguard
           FIREWALL_INPUT_PORTS: "8888,8388,6881,8080"
         envFrom:
           - secretRef:
