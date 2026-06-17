@@ -9,6 +9,7 @@ controllers:
           TZ: Etc/UTC
           VPN_SERVICE_PROVIDER: protonvpn
           VPN_TYPE: openvpn
+          OPENVPN_FLAGS: "--connect-retry-max 3 --connect-retry 5"
           FIREWALL_INPUT_PORTS: "8888,8388,6881,8080"
         envFrom:
           - secretRef:
@@ -28,7 +29,6 @@ controllers:
           TZ: Etc/UTC
           PUID: "1000"
           PGID: "1000"
-          DOCKER_MODS: ghcr.io/gabe565/linuxserver-mod-vuetorrent
 
 service:
   main:
