@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lidarr-tls
+  namespace: lidarr
+spec:
+  secretName: lidarr-tls
+  dnsNames:
+    - lidarr.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: radarr-tls
+  namespace: radarr
+spec:
+  secretName: radarr-tls
+  dnsNames:
+    - radarr.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer

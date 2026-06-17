@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bazarr-tls
+  namespace: bazarr
+spec:
+  secretName: bazarr-tls
+  dnsNames:
+    - bazarr.rostor.local
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
