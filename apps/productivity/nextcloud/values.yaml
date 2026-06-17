@@ -5,10 +5,13 @@ internalDatabase:
 
 nextcloud:
   host: nextcloud.rostor.cloud
+  existingSecret:
+    secretName: nextcloud-user
+    usernameKey: username
+    passwordKey: password
+
   username: admin
   password: changeme
-  trustedDomains:
-    - nextcloud.rostor.cloud
 
 persistence:
   enabled: true
@@ -18,20 +21,14 @@ persistence:
     enabled: true
     existingClaim: nextcloud-nfs-pvc
 
-phpClientHttpsFix:
-  enabled: true
-  protocol: https
-
 ingress:
   enabled: true
   className: traefik
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-  hosts:
-    - host: nextcloud.rostor.cloud
-      paths:
-        - path: /
-          pathType: Prefix
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+  path: /
+  pathType: Prefix
   tls:
     - secretName: nextcloud-cloud-tls
       hosts:
