@@ -30,6 +30,7 @@ controllers:
           TZ: Etc/UTC
           PUID: "1000"
           PGID: "1000"
+          DOCKER_MODS: ghcr.io/gabe565/linuxserver-mod-vuetorrent
 
 service:
   main:
