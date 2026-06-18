@@ -1,17 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: wealthfolio
+  name: outline
   namespace: argocd
 spec:
   project: default
   sources:
+    - repoURL: https://community-charts.github.io/helm-charts
+      chart: outline
+      targetRevision: 0.8.1
+      helm:
+        valueFiles:
+          - $values/apps/productivity/outline/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
-      path: apps/productivity/wealthfolio
+      ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/outline
   destination:
     server: https://kubernetes.default.svc
-    namespace: wealthfolio
+    namespace: outline
   syncPolicy:
     automated:
       prune: true

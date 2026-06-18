@@ -3,7 +3,8 @@ kind: Kustomization
 
 resources:
   - nextcloud-app.yaml
-  - wikijs-app.yaml
+  - outline-app.yaml
+  #- wikijs-app.yaml
   #- ollama-app.yaml
   #- open-webui-app.yaml
   - wealthfolio-app.yaml

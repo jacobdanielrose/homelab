@@ -1,0 +1,75 @@
+replicaCount: 1
+
+url: "https://docs.rostor.cloud"
+
+image:
+  repository: outlinewiki/outline
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: wiki.rostor.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - wiki.rostor.cloud
+      secretName: outline-cloud-tls
+
+postgresql:
+  enabled: true
+  auth:
+    username: outline
+    database: outline
+    existingSecret: outline-postgres-secrets
+    secretKey: password
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+      storageClass: longhorn
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+  master:
+    persistence:
+      enabled: true
+      size: 4Gi
+      storageClass: longhorn
+
+fileStorage:
+  mode: local
+  local:
+    persistence:
+      enabled: true
+      size: 8Gi
+      storageClass: longhorn
+
+auth:
+  oidc:
+    enabled: true
+    clientId: "x5rxmXlUv5ZNROvu511ds0tceU54R88JBYOh4Mpa"
+    clientSecret: ""
+    existingSecret:
+      name: outline-oidc-secrets
+      clientSecretKey: OIDC_CLIENT_SECRET
+    authUri: "https://authentik.rostor.cloud/application/o/authorize/"
+    tokenUri: "https://authentik.rostor.cloud/application/o/token/"
+    userInfoUri: "https://authentik.rostor.cloud/application/o/userinfo/"
+    logoutUri: "https://authentik.rostor.cloud/application/o/outline/end-session/"
+    usernameClaim: "preferred_username"
+    displayName: "Authentik"
+    scopes: "openid email profile"
+
+smtp:
+  host: "smtp"
+
+logging:
+  level: info
