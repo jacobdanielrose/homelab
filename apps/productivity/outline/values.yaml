@@ -26,8 +26,6 @@ postgresql:
   auth:
     username: outline
     database: outline
-    existingSecret: outline-postgres-secrets
-    secretKey: postgres-password
   primary:
     persistence:
       enabled: true
