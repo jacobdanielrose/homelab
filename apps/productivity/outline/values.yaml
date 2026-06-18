@@ -1,6 +1,6 @@
 replicaCount: 1
 
-url: "https://docs.rostor.cloud"
+url: "https://wiki.rostor.cloud"
 
 image:
   repository: outlinewiki/outline
@@ -66,7 +66,10 @@ auth:
     logoutUri: "https://authentik.rostor.cloud/application/o/outline/end-session/"
     usernameClaim: "preferred_username"
     displayName: "Authentik"
-    scopes: "openid email profile"
+    scopes:
+      - openid
+      - email
+      - profile
 
 smtp:
   host: "smtp"
