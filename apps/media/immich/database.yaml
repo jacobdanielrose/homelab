@@ -44,7 +44,13 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
+            - name: dshm
+              mountPath: /dev/shm
       volumes:
         - name: data
           persistentVolumeClaim:
             claimName: immich-postgres-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
