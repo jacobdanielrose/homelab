@@ -1,0 +1,25 @@
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: nextcloud-tls
+#   namespace: nextcloud
+# spec:
+#   secretName: nextcloud-tls
+#   dnsNames:
+#     - nextcloud.rostor.local
+#   issuerRef:
+#     name: selfsigned
+#     kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nextcloud-cloud-tls
+  namespace: nextcloud
+spec:
+  secretName: nextcloud-cloud-tls
+  dnsNames:
+    - nextcloud.rostor.cloud
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
