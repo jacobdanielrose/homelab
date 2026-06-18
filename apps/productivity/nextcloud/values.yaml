@@ -10,9 +10,6 @@ nextcloud:
     usernameKey: username
     passwordKey: password
 
-  username: admin
-  password: changeme
-
 persistence:
   enabled: true
   storageClass: longhorn
