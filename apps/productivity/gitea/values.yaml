@@ -1,0 +1,46 @@
+gitea:
+  admin:
+    existingSecret: gitea-admin-secret
+  config:
+    APP_NAME: "Gitea: With a cup of tea."
+    server:
+      DOMAIN: git.rostor.cloud
+      ROOT_URL: "https://git.rostor.cloud/"
+      SSH_DOMAIN: git.rostor.cloud
+      SSH_PORT: 22
+    repository:
+      ROOT: "~/gitea-repositories"
+    repository.pull-request:
+      WORK_IN_PROGRESS_PREFIXES: "WIP:,[WIP]:"
+  oauth:
+    - name: "Authentik"
+      provider: "openidConnect"
+      existingSecret: gitea-oauth-secret
+      autoDiscoverUrl: "https://authentik.rostor.cloud/application/o/gitea/.well-known/openid-configuration"
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+  hosts:
+    - host: git.rostor.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - git.rostor.cloud
+      secretName: gitea-cloud-tls
+
+service:
+  ssh:
+    type: LoadBalancer
+    port: 22
+    annotations:
+      metallb.universe.tf/allow-shared-ip: gitea-ssh
+    loadBalancerIP: 192.168.3.25
+
+persistence:
+  enabled: true
+  storageClass: longhorn

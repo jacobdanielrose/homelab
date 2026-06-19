@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: gitea-cloud-tls
+  namespace: gitea
+spec:
+  secretName: gitea-cloud-tls
+  dnsNames:
+    - git.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
