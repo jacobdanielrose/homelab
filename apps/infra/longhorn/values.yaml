@@ -1,6 +1,7 @@
 defaultSettings:
   defaultReplicaCount: 2
   createDefaultDiskLabeledNodes: true
+  storageReservedPercentageForDefaultDisk: 5
 
 # Disable pre-upgrade checker job for ArgoCD compatibility
 preUpgradeChecker:
