@@ -8,3 +8,5 @@ resources:
   #- open-webui-app.yaml
   - wealthfolio-app.yaml
   - homarr-app.yaml
+  - gitea-app.yaml
+  - ghost-app.yaml
