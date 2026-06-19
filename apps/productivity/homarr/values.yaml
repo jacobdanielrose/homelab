@@ -3,17 +3,17 @@ replicaCount: 1
 hostAliases:
   - ip: "10.107.160.137"
     hostnames:
-      - "authentik.rostor.local"
+      - "authentik.rostor.cloud"
 
 env:
   TZ: "Europe/Zurich"
   AUTH_PROVIDERS: "credentials,oidc"
-  AUTH_OIDC_ISSUER: "https://authentik.rostor.local/application/o/homarr/"
+  AUTH_OIDC_ISSUER: "https://authentik.rostor.cloud/application/o/homarr/"
   AUTH_OIDC_CLIENT_NAME: "Authentik"
   AUTH_OIDC_SCOPE_OVERWRITE: "openid email profile"
   AUTH_OIDC_GROUPS_ATTRIBUTE: "groups"
   AUTH_OIDC_AUTO_LOGIN: "false"
-  AUTH_LOGOUT_REDIRECT_URL: "https://authentik.rostor.local/application/o/homarr/end-session/"
+  AUTH_LOGOUT_REDIRECT_URL: "https://authentik.rostor.cloud/application/o/homarr/end-session/"
   NODE_TLS_REJECT_UNAUTHORIZED: "0"
 
 service:
