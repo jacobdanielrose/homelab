@@ -26,6 +26,7 @@ postgresql:
   auth:
     username: outline
     database: outline
+    existingSecret: outline-postgres-secrets
   primary:
     persistence:
       enabled: true
@@ -54,7 +55,6 @@ auth:
   oidc:
     enabled: true
     clientId: "x5rxmXlUv5ZNROvu511ds0tceU54R88JBYOh4Mpa"
-    clientSecret: ""
     existingSecret:
       name: outline-oidc-secrets
       clientSecretKey: OIDC_CLIENT_SECRET
