@@ -1,0 +1,13 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ghost-cloud-tls
+  namespace: ghost
+spec:
+  secretName: ghost.rostor.cloud-tls
+  dnsNames:
+    - ghost.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

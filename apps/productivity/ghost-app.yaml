@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ghost
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://registry-1.docker.io/bitnamicharts/ghost
+      chart: ghost
+      targetRevision: 25.0.4
+      helm:
+        valueFiles:
+          - $values/apps/productivity/ghost/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/ghost
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ghost
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

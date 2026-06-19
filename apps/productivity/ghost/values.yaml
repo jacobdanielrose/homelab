@@ -1,0 +1,85 @@
+ghostUsername: admin
+
+existingSecret: ghost-user-secret
+## @param ghostEmail Ghost user email
+##
+ghostEmail: admin@rostor.cloud
+## @param ghostBlogTitle Ghost Blog title
+##
+ghostBlogTitle: Jacob's Blog
+## @param ghostHost Ghost host to create application URLs
+##
+ghostHost: "ghost.rostor.cloud"
+## @param ghostPath URL sub path where to server the Ghost application
+##
+ghostPath: /
+## @param ghostEnableHttps Configure Ghost to build application URLs using https
+##
+ghostEnableHttps: true
+
+allowEmptyPassword: false
+## @param ghostSkipInstall Skip performing the initial bootstrapping for Ghost
+##
+ghostSkipInstall: true
+
+ingress:
+  ## @param ingress.enabled Enable ingress record generation for Ghost
+  ##
+  enabled: true
+  ## @param ingress.pathType Ingress path type
+  ##
+  pathType: ImplementationSpecific
+  ## @param ingress.apiVersion Force Ingress API version (automatically detected if not set)
+  ##
+  apiVersion: ""
+  ## @param ingress.hostname Default host for the ingress record
+  ##
+  hostname: ghost.rostor.cloud
+  ## @param ingress.path Default path for the ingress record
+  ## NOTE: You may need to set this to '/*' in order to use this with ALB ingress controllers
+  ##
+  path: /
+  ## @param ingress.annotations Additional annotations for the Ingress resource. To enable certificate autogeneration, place here your cert-manager annotations.
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md
+  ## Use this parameter to set the required annotations for cert-manager, see
+  ## ref: https://cert-manager.io/docs/usage/ingress/#supported-annotations
+  ##
+  ## e.g:
+  ## annotations:
+  ##   kubernetes.io/ingress.class: nginx
+  ##   cert-manager.io/cluster-issuer: cluster-issuer-name
+  ##
+  annotations: {}
+  ## @param ingress.tls Enable TLS configuration for the host defined at `ingress.hostname` parameter
+  ## TLS certificates will be retrieved from a TLS secret with name: `{{- printf "%s-tls" .Values.ingress.hostname }}`
+  ## You can:
+  ##   - Use the `ingress.secrets` parameter to create this TLS secret
+  ##   - Rely on cert-manager to create it by setting the corresponding annotations
+  ##   - Rely on Helm to create self-signed certificates by setting `ingress.selfSigned=true`
+  ##
+  tls: true
+  ingressClassName: "traefik"
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  accessModes:
+    - ReadWriteOnce
+  size: 8Gi
+
+mysql:
+  enabled: true
+  auth:
+    rootPassword: ""
+    database: bitnami_ghost
+    username: bn_ghost
+    password: ""
+    existingSecret: ""
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
