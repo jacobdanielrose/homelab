@@ -9,6 +9,13 @@ nextcloud:
     secretName: nextcloud-user
     usernameKey: username
     passwordKey: password
+  configs:
+    proxy.config.php: |
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' => array('172.16.0.0/12'),
+        'overwriteprotocol' => 'https',
+      );
 
 persistence:
   enabled: true
