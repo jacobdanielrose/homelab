@@ -36,6 +36,9 @@ postgresql:
       size: 8Gi
       storageClass: longhorn
 
+externalPostgresql:
+  existingSecret: outline-postgres-secrets
+
 redis:
   enabled: true
   auth:
