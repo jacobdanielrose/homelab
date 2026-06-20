@@ -75,6 +75,8 @@ redis:
     enabled: true
     existingSecret: nextcloud-secrets
     existingSecretPasswordKey: redis-password
+  configmap: |-
+    aof-load-corrupt-tail-max-size 100
   master:
     persistence:
       enabled: true
