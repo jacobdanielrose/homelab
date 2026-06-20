@@ -39,6 +39,14 @@ postgresql:
 externalPostgresql:
   existingSecret: outline-postgres-secrets
 
+secretKeyExternalSecret:
+  name: outline-auto-generated-secret
+  key: secret-key
+
+utilsSecretExternalSecret:
+  name: outline-auto-generated-secret
+  key: utils-secret
+
 redis:
   enabled: true
   auth:
