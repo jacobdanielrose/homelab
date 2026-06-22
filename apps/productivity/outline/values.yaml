@@ -68,7 +68,7 @@ fileStorage:
 auth:
   oidc:
     enabled: true
-    clientId: "x5rxmXlUv5ZNROvu511ds0tceU54R88JBYOh4Mpa"
+    clientId: "NdqtGGXahFU6RAzDN7hteyHidG6NtKlDRRLBDdii"
     existingSecret:
       name: outline-oidc-secrets
       clientSecretKey: OIDC_CLIENT_SECRET

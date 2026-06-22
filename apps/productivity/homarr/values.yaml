@@ -1,9 +1,9 @@
 replicaCount: 1
 
-hostAliases:
-  - ip: "10.107.160.137"
-    hostnames:
-      - "authentik.rostor.cloud"
+# hostAliases:
+# - ip: "10.107.160.137"
+#   hostnames:
+#     - "authentik.rostor.cloud"
 
 env:
   TZ: "Europe/Zurich"
@@ -14,7 +14,6 @@ env:
   AUTH_OIDC_GROUPS_ATTRIBUTE: "groups"
   AUTH_OIDC_AUTO_LOGIN: "false"
   AUTH_LOGOUT_REDIRECT_URL: "https://authentik.rostor.cloud/application/o/homarr/end-session/"
-  NODE_TLS_REJECT_UNAUTHORIZED: "0"
 
 service:
   enabled: true
