@@ -2,7 +2,8 @@ defaultSettings:
   defaultReplicaCount: 2
   createDefaultDiskLabeledNodes: true
   storageReservedPercentageForDefaultDisk: 5
-  systemManagedComponentsNodeSelector: "longhorn.io/storage-node: true"
+  systemManagedComponentsNodeSelector:
+    longhorn.io/storage-node: "true"
   defaultDataPath: "/var/lib/longhorn"
 
 persistence:
