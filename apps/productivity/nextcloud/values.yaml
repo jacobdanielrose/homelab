@@ -26,7 +26,6 @@ nextcloud:
           4 => '192.168.3.21',            // node IP or LB IP if you access it directly
         ]
       ];
-
     proxy.config.php: |
       <?php
       $CONFIG = array (
