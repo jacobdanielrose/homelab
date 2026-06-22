@@ -36,7 +36,7 @@ nextcloud:
 persistence:
   enabled: true
   storageClass: longhorn
-  size: 1500Gi
+  size: 5Gi
   nextcloudData:
     enabled: true
     existingClaim: nextcloud-nfs-pvc
