@@ -20,10 +20,10 @@ nextcloud:
       $CONFIG = [
         'trusted_domains' => [
           0 => 'localhost',
-          1 => 'nextcloud.rostor.cloud',       // your external hostname
-          2 => 'nextcloud',               // service name
-          3 => 'nextcloud.nextcloud.svc', // if you want
-          4 => '192.168.3.21',            // node IP or LB IP if you access it directly
+          1 => 'nextcloud.rostor.cloud',
+          2 => 'nextcloud',
+          3 => 'nextcloud.nextcloud.svc',
+          4 => '192.168.3.21',
         ]
       ];
     proxy.config.php: |
