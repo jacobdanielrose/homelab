@@ -15,7 +15,7 @@ nextcloud:
     usernameKey: username
     passwordKey: password
   configs:
-    trusted_domains.config.php: |-
+    trusted_domains.config.php: |
       <?php
       $CONFIG = [
         'trusted_domains' => [
