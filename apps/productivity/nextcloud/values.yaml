@@ -3,6 +3,11 @@ replicaCount: 1
 internalDatabase:
   enabled: false
 
+livenessProbe:
+  enabled: false
+readinessProbe:
+  enabled: false
+
 nextcloud:
   host: nextcloud.rostor.cloud
   existingSecret:
