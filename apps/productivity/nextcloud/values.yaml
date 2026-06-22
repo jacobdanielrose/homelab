@@ -16,6 +16,14 @@ nextcloud:
         'trusted_proxies' => array('172.16.0.0/12'),
         'overwriteprotocol' => 'https',
       );
+    trusted_domains.php: |
+      <?php
+      $CONFIG = array (
+        'trusted_domains' => array(
+          'nextcloud.rostor.cloud',
+          'localhost',
+        ),
+      );
 
 persistence:
   enabled: true
