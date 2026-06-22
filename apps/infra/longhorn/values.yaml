@@ -2,6 +2,8 @@ defaultSettings:
   defaultReplicaCount: 2
   createDefaultDiskLabeledNodes: true
   storageReservedPercentageForDefaultDisk: 5
+  systemManagedComponentsNodeSelector: "longhorn.io/storage-node: true"
+  defaultDataPath: "/var/lib/longhorn"
 
 persistence:
   defaultClassReplicaCount: 2
@@ -9,3 +11,15 @@ persistence:
 # Disable pre-upgrade checker job for ArgoCD compatibility
 preUpgradeChecker:
   jobEnabled: false
+
+longhornManager:
+  nodeSelector:
+    longhorn.io/storage-node: "true"
+
+longhornDriver:
+  nodeSelector:
+    longhorn.io/storage-node: "true"
+
+longhornUI:
+  nodeSelector:
+    longhorn.io/storage-node: "true"
