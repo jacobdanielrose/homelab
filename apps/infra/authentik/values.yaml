@@ -19,10 +19,6 @@ global:
           name: authentik-secrets
           key: password
 
-blueprints:
-  configMaps:
-    - authentik-blueprints
-
 server:
   ingress:
     enabled: true
