@@ -16,19 +16,11 @@ nextcloud:
         'trusted_proxies' => array('172.16.0.0/12'),
         'overwriteprotocol' => 'https',
       );
-    trusted_domains.php: |
-      <?php
-      $CONFIG = array (
-        'trusted_domains' => array(
-          'nextcloud.rostor.cloud',
-          'localhost',
-        ),
-      );
 
 persistence:
   enabled: true
   storageClass: longhorn
-  size: 5Gi
+  size: 1500Gi
   nextcloudData:
     enabled: true
     existingClaim: nextcloud-nfs-pvc
