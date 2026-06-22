@@ -12,16 +12,16 @@ spec:
   resources:
     requests:
       storage: 5Gi
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: authentik-blueprints
-  namespace: authentik
-  labels:
-    blueprints.goauthentik.io/instantiate: "true"
-data: {}
----
+#---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: authentik-blueprints
+#   namespace: authentik
+#   labels:
+#     blueprints.goauthentik.io/instantiate: "true"
+# data: {}
+# ---
 # apiVersion: v1
 # kind: ConfigMap
 # metadata:
