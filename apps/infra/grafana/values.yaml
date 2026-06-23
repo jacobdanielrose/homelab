@@ -1,9 +1,3 @@
-# Grafana values
-
-adminUser: admin
-adminExistingSecret: grafana-admin
-adminPasswordKey: admin-password
-
 ingress:
   enabled: true
   ingressClassName: traefik
