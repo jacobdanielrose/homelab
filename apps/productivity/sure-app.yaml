@@ -6,12 +6,13 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://community-charts.github.io/helm-charts
-      chart: sure
-      targetRevision: 0.7.2-alpha.3
+    - repoURL: https://github.com/we-promise/sure.git
+      targetRevision: main
+      path: charts/sure
       helm:
         valueFiles:
           - $values/apps/productivity/sure/values.yaml
+        ignoreMissingValueFiles: true
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
