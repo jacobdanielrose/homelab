@@ -3,6 +3,9 @@ server:
     main:
       enabled: true
       ingressClassName: traefik
+      annotations:
+        # TODO: Remove after large file uploads complete
+        traefik.ingress.kubernetes.io/router.middlewares: immich-upload-buffering@kubernetescrd
       hosts:
         - host: photos.rostor.cloud
           paths:

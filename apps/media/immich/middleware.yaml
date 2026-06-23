@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: upload-buffering
+  namespace: immich
+spec:
+  buffering:
+    # Set to the max upload file size in bytes (0 = unlimited)
+    # Example: 1073741824 = 1GB, 5368709120 = 5GB
+    maxRequestBodyBytes: 0

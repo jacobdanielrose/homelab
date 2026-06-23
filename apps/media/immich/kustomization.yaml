@@ -7,3 +7,4 @@ resources:
   - database.yaml
   - sealed-secrets.yaml
   - certificates.yaml
+  - middleware.yaml
