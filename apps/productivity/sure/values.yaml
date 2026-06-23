@@ -1,0 +1,57 @@
+image:
+  repository: ghcr.io/we-promise/sure
+  tag: "v1.0.0"
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  className: traefik
+  hosts:
+    - host: sure.rostor.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - sure.rostor.cloud
+      secretName: sure-cloud-tls
+
+rails:
+  existingSecret: sure-secrets
+  encryptionEnv:
+    enabled: true
+  settings:
+    SELF_HOSTED: "true"
+
+cnpg:
+  enabled: true
+  cluster:
+    enabled: true
+    name: sure-db
+    instances: 1
+    storage:
+      size: 8Gi
+      storageClassName: longhorn
+
+redisOperator:
+  enabled: true
+  managed:
+    enabled: true
+  mode: replication
+  sentinel:
+    enabled: false
+  replicas: 3
+  persistence:
+    enabled: true
+    className: longhorn
+    size: 8Gi
+
+migrations:
+  strategy: job
+
+simplefin:
+  encryption:
+    enabled: false
+    backfill:
+      enabled: true
+      dryRun: true

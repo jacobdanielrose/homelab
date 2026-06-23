@@ -9,3 +9,4 @@ resources:
   - homarr-app.yaml
   #- gitea-app.yaml
   #- ghost-app.yaml
+  - sure-app.yaml
