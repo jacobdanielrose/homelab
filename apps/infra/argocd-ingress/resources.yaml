@@ -31,7 +31,7 @@ spec:
     - kind: Rule
       match: Host(`argocd.rostor.local`)
       services:
-        - name: argocd-server
+        - name: argo-cd-argocd-server
           port: 443
           serversTransport: argocd-transport
   tls:
