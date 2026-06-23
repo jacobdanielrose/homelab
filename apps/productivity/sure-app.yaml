@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://ghcr.io/we-promise/sure
+    - repoURL: https://community-charts.github.io/helm-charts
       chart: sure
-      targetRevision: 1.0.0
+      targetRevision: 0.7.2-alpha.9
       helm:
         valueFiles:
           - $values/apps/productivity/sure/values.yaml
