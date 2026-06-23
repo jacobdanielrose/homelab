@@ -4,5 +4,5 @@ kind: Kustomization
 resources:
   - root-app.yaml
   - infra.yaml
-  #- media.yaml
+  - media.yaml
   - productivity.yaml
