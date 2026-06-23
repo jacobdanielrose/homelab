@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: sure-cloud-tls
   dnsNames:
-    - sure.rostor.cloud
+    - finance.rostor.cloud
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer

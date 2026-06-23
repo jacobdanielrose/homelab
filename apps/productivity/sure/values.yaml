@@ -7,14 +7,14 @@ ingress:
   enabled: true
   className: traefik
   hosts:
-    - host: sure.rostor.cloud
+    - host: finance.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
   tls:
     - hosts:
-        - sure.rostor.cloud
-      secretName: sure-cloud-tls
+        - finance.rostor.cloud
+      secretName: finance-cloud-tls
 
 rails:
   existingSecret: sure-secrets
