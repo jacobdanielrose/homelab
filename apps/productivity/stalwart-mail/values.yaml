@@ -17,7 +17,7 @@ ingress:
       secretName: mail-cloud-tls
 
 config:
-  "@type": "smtp"
+  "@type": "Sqlite"
   host: "mail.rostor.cloud"
   database: "sqlite:///data/stalwart.db"
   authUsername: "admin"
