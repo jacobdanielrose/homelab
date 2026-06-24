@@ -33,6 +33,10 @@ persistence:
 secrets:
   create: false
 
+certificate:
+  certmanager:
+    enabled: false
+
 resources:
   requests:
     cpu: 500m
