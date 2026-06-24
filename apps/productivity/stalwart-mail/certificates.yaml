@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mail-cloud-tls
+  namespace: stalwart-mail
+spec:
+  secretName: mail-cloud-tls
+  dnsNames:
+    - mail.rostor.cloud
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stalwart-mail
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://codeberg.org/wrenix/helm-charts
+      chart: stalwart-mail
+      targetRevision: 2.0.3
+      helm:
+        valueFiles:
+          - $values/apps/productivity/stalwart-mail/values.yaml
+        ignoreMissingValueFiles: true
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/stalwart-mail
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stalwart-mail
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
