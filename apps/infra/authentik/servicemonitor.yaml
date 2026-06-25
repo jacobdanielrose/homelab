@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: authentik
+  namespace: authentik
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: server
+      app.kubernetes.io/instance: authentik
+  namespaceSelector:
+    matchNames:
+      - authentik
+  endpoints:
+    - port: metrics
+      interval: 30s
+      path: /metrics

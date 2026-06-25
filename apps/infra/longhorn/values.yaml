@@ -12,6 +12,10 @@ persistence:
 preUpgradeChecker:
   jobEnabled: false
 
+metrics:
+  serviceMonitor:
+    enabled: false
+
 longhornManager:
   nodeSelector:
     longhorn.io/storage-node: "true"

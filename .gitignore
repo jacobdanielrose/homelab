@@ -3,3 +3,6 @@
 
 # Config backups
 scripts/config-backups/
+
+# Private docs (not committed - copy to wiki)
+docs/

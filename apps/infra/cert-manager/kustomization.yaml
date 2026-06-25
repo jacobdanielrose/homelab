@@ -7,3 +7,4 @@ resources:
   - letsencrypt-staging.yaml
   - letsencrypt-prod.yaml
   - cloudflare-api-token.yaml
+  - servicemonitor.yaml

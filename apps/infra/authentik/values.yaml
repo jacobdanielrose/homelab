@@ -31,6 +31,11 @@ server:
       - secretName: authentik-cloud-tls
         hosts:
           - authentik.rostor.cloud
+  metrics:
+    serviceMonitor:
+      enabled: true
+      interval: 30s
+      scrapeTimeout: 10s
 
 postgresql:
   enabled: true

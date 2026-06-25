@@ -24,6 +24,12 @@ ports:
     http:
       tls:
         enabled: true
+  metrics:
+    port: 9100
+    expose:
+      default: true
+    exposedPort: 9100
+    protocol: TCP
 
 ingressClass:
   enabled: true
@@ -52,3 +58,8 @@ metrics:
   prometheus:
     addRoutersLabels: true
     addServicesLabels: true
+    entryPoint: metrics
+    service:
+      enabled: true
+      labels:
+        app.kubernetes.io/instance: traefik
