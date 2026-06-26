@@ -35,6 +35,8 @@ extraEnvVars:
     value: "admin@rostor.cloud"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"
+  - name: BYPASS_MODEL_ACCESS_CONTROL
+    value: "True"
 
 sso:
   enabled: true
