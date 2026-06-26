@@ -8,7 +8,7 @@ services:
 
 persistence:
   enabled: true
-  size: 2Gi
+  size: 10Gi
   storageClass: longhorn
 
 ollama:
@@ -32,7 +32,7 @@ extraEnvVars:
   - name: ENABLE_INITIAL_ADMIN_SIGNUP
     value: "True"
   - name: WEBUI_ADMIN_EMAIL
-    value: "admin@home.local"
+    value: "admin@rostor.cloud"
   - name: WEBUI_ADMIN_NAME
     value: "Admin"
 
@@ -45,6 +45,6 @@ sso:
     clientExistingSecret: open-webui-secrets
     clientIdExistingSecretKey: oidc-client-id
     clientExistingSecretKey: oidc-client-secret
-    providerUrl: "https://authentik.rostor.cloud/application/o/open-webui/.well-known/openid-configuration"
+    providerUrl: "https://authentik.rostor.cloud/application/o/open-web-ui/.well-known/openid-configuration"
     providerName: "Authentik"
     scopes: "openid email profile"

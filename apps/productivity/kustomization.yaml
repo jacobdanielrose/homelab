@@ -4,8 +4,8 @@ kind: Kustomization
 resources:
   - outline-app.yaml
   - nextcloud-app.yaml
-  #- ollama-app.yaml
-  #- open-webui-app.yaml
+  - ollama-app.yaml
+  - open-webui-app.yaml
   - homarr-app.yaml
   #- gitea-app.yaml
   #- ghost-app.yaml
