@@ -60,6 +60,15 @@ COLLECTIONS = {
                 "services/navidrome.md",
                 "services/komga.md",
             ],
+            "📦 Arr-stack": [
+                "services/sonarr.md",
+                "services/radarr.md",
+                "services/lidarr.md",
+                "services/readarr.md",
+                "services/prowlarr.md",
+                "services/bazarr.md",
+                "services/qbittorrent.md",
+            ],
             "📋 Productivity": [
                 "services/nextcloud.md",
                 "services/outline.md",
@@ -177,18 +186,55 @@ def upload_doc(url, api_key, collection_id, md_path, parent_document_id=None):
     print(f"  {'CREATE' if is_new else 'UPDATE'}: {title}")
 
 
-def create_group_parent(url, api_key, collection_id, group_title):
-    """Create a parent document for a group of services."""
+def extract_overview(md_path):
+    """Extract title and 'What is it?' paragraph from a markdown doc."""
+    with open(md_path, "r") as f:
+        content = f.read()
+    title_match = re.match(r"^# (.+)", content, re.MULTILINE)
+    if not title_match:
+        return None, None
+    title = title_match.group(1).strip()
+    # Grab the paragraph right after the first ## heading or the URL line
+    match = re.search(r"## What is it\?\s*\n+(.*?)\n+(?=##|\Z)", content, re.DOTALL)
+    blurb = match.group(1).strip() if match else ""
+    return title, blurb
+
+
+def build_group_text(group_title, docs_dir, file_list):
+    """Build a friendly overview page for a group of services."""
+    lines = [f"### {group_title}", "", "Here are the services in this category:"]
+    for rel_path in file_list:
+        full_path = os.path.join(docs_dir, rel_path)
+        if not os.path.isfile(full_path):
+            continue
+        title, blurb = extract_overview(full_path)
+        if title:
+            url_match = re.search(r"\*\*URL:\*\*\s*\[([^\]]+)\]\(([^)]+)\)", blurb)
+            if url_match:
+                blurb = blurb.split("**URL:**")[0].strip()
+                lines.append(f"- **[{title}]({url_match.group(2)})** — {blurb} [{url_match.group(1)}]({url_match.group(2)})")
+            else:
+                lines.append(f"- **{title}** — {blurb}")
+    return "\n".join(lines)
+
+
+def upsert_group_parent(url, api_key, collection_id, group_title, docs_dir, file_list):
+    """Create or update the parent document for a group of services."""
+    group_text = build_group_text(group_title, docs_dir, file_list)
     existing_id = find_existing_doc(url, api_key, collection_id, group_title)
     if existing_id:
-        print(f"  Found group parent: {group_title}")
+        api(
+            url, api_key, "documents.update",
+            {"id": existing_id, "title": group_title, "text": group_text, "publish": True},
+        )
+        print(f"  UPDATE group parent: {group_title}")
         return existing_id
 
     result = api(
         url, api_key, "documents.create",
         {
             "title": group_title,
-            "text": f"### {group_title}\n\nServices in this category:",
+            "text": group_text,
             "collectionId": collection_id,
             "publish": True,
         },
@@ -254,7 +300,7 @@ def main():
 
         # Upload grouped docs under parent documents
         for group_title, file_list in config.get("groups", {}).items():
-            parent_id = create_group_parent(args.url, args.api_key, coll_id, group_title)
+            parent_id = upsert_group_parent(args.url, args.api_key, coll_id, group_title, docs_dir, file_list)
             for rel_path in file_list:
                 full_path = os.path.join(docs_dir, rel_path)
                 if not os.path.isfile(full_path):

@@ -19,8 +19,8 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/linuxserver/readarr
-          tag: develop-0.4.18.2805-ls157
+          repository: ghcr.io/faustvii/readarr
+          tag: develop-0.9.1
         env:
           TZ: Etc/UTC
           PUID: "1000"
