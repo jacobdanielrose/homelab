@@ -83,8 +83,5 @@ auth:
       - email
       - profile
 
-smtp:
-  host: "smtp"
-
 logging:
   level: info
