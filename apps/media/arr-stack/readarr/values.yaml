@@ -23,13 +23,15 @@ controllers:
           tag: 0.9.1
         env:
           TZ: Etc/UTC
-          PUID: "1000"
-          PGID: "1000"
           READARR__API_KEY:
             valueFrom:
               secretKeyRef:
                 name: arr-api-key
                 key: API_KEY
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          runAsNonRoot: true
 
 service:
   main:
