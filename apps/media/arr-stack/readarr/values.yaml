@@ -20,7 +20,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/faustvii/readarr
-          tag: v0.9.1
+          tag: 0.9.1
         env:
           TZ: Etc/UTC
           PUID: "1000"
