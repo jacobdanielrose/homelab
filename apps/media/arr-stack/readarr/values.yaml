@@ -16,6 +16,9 @@ ingress:
 
 controllers:
   main:
+    pod:
+      securityContext:
+        fsGroup: 1000
     containers:
       main:
         image:
@@ -28,6 +31,7 @@ controllers:
               secretKeyRef:
                 name: arr-api-key
                 key: API_KEY
+          SENTRY_DSN: ""
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
