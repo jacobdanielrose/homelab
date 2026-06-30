@@ -30,7 +30,7 @@ rails:
     - name: OIDC_ISSUER
       value: "https://authentik.rostor.cloud/application/o/sure/"
     - name: OIDC_REDIRECT_URI
-      value: "https://finance.rostor.cloud/auth/oidc/callback"
+      value: "https://finance.rostor.cloud/auth/openid_connect/callback"
     - name: OIDC_BUTTON_LABEL
       value: "Sign in with Authentik"
     - name: OIDC_CLIENT_SECRET
