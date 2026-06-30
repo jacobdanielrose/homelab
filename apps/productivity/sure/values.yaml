@@ -22,6 +22,24 @@ rails:
     enabled: true
   settings:
     SELF_HOSTED: "true"
+  extraEnvVars:
+    - name: OIDC_CLIENT_ID
+      value: "jT4h7YIhYonHwGsdDZBWRt9mhIKJVF6icvgMy4CI"
+    - name: OIDC_ISSUER
+      value: "https://authentik.rostor.cloud/application/o/sure/"
+    - name: OIDC_LOGOUT_REDIRECT_URL
+      value: "https://authentik.rostor.cloud/application/o/sure/end-session/"
+    - name: OIDC_METADATA_URL
+      value: "https://authentik.rostor.cloud/application/o/sure/.well-known/openid-configuration"
+    - name: OIDC_DISPLAY_NAME
+      value: "Authentik"
+    - name: OIDC_SCOPE
+      value: "openid,email,profile"
+    - name: OIDC_CLIENT_SECRET
+      valueFrom:
+        secretKeyRef:
+          name: sure-oidc-secrets
+          key: OIDC_CLIENT_SECRET
 
 cnpg:
   enabled: true
