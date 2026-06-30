@@ -22,17 +22,17 @@ rails:
     enabled: true
   settings:
     SELF_HOSTED: "true"
+    AUTH_LOCAL_LOGIN_ENABLED: "false"
+    AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: "true"
   extraEnvVars:
     - name: OIDC_CLIENT_ID
       value: "jT4h7YIhYonHwGsdDZBWRt9mhIKJVF6icvgMy4CI"
     - name: OIDC_ISSUER
       value: "https://authentik.rostor.cloud/application/o/sure/"
-    - name: OIDC_METADATA_URL
-      value: "https://authentik.rostor.cloud/application/o/sure/.well-known/openid-configuration"
-    - name: OIDC_DISPLAY_NAME
-      value: "Authentik"
-    - name: OIDC_SCOPE
-      value: "openid,email,profile"
+    - name: OIDC_REDIRECT_URI
+      value: "https://finance.rostor.cloud/auth/oidc/callback"
+    - name: OIDC_BUTTON_LABEL
+      value: "Sign in with Authentik"
     - name: OIDC_CLIENT_SECRET
       valueFrom:
         secretKeyRef:
