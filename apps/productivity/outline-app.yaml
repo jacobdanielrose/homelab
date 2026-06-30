@@ -28,3 +28,12 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - PruneLast=true
+    managedNamespaceMetadata:
+      labels:
+        app.kubernetes.io/name: outline
+  ignoreDifferences:
+    - group: ""
+      kind: PersistentVolumeClaim
+      jqPathExpressions:
+        - .spec.finalizers
