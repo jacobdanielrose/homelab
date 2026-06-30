@@ -45,6 +45,10 @@ cnpg:
     enabled: true
     name: sure-db
     instances: 1
+    existingSecret: sure-secrets
+    secret:
+      enabled: false
+      name: ""
     storage:
       size: 8Gi
       storageClassName: longhorn
