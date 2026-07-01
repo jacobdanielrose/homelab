@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: prowlarr-tls
   dnsNames:
-    - prowlarr.rostor.home
+    - prowlarr.rostor.internal
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

@@ -6,7 +6,7 @@
 # spec:
 #   secretName: authentik-tls
 #   dnsNames:
-#     - authentik.rostor.home
+#     - authentik.rostor.internal
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

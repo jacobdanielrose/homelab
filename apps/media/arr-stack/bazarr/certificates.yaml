@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: bazarr-tls
   dnsNames:
-    - bazarr.rostor.home
+    - bazarr.rostor.internal
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

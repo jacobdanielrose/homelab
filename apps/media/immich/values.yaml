@@ -27,7 +27,7 @@ controllers:
       hostAliases:
         - ip: "10.107.160.137"
           hostnames:
-            - "authentik.rostor.home"
+            - "authentik.rostor.internal"
     containers:
       main:
         env:

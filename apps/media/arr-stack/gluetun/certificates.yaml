@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: qbittorrent-tls
   dnsNames:
-    - downloads.rostor.home
+    - downloads.rostor.internal
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

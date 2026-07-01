@@ -7,7 +7,7 @@
 # spec:
 #   secretName: openwebui-tls
 #   dnsNames:
-#     - ai.rostor.home
+#     - ai.rostor.internal
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

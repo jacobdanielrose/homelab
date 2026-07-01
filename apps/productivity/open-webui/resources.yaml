@@ -8,7 +8,7 @@
 #     - websecure
 #   routes:
 #     - kind: Rule
-#       match: Host(`ai.rostor.home`)
+#       match: Host(`ai.rostor.internal`)
 #       services:
 #         - name: open-webui
 #           port: 80

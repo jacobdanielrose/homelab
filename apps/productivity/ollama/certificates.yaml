@@ -6,7 +6,7 @@
 # spec:
 #   secretName: ollama-tls
 #   dnsNames:
-#     - ollama.rostor.home
+#     - ollama.rostor.internal
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

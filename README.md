@@ -31,7 +31,7 @@ That's it. The root app watches the `argocd/` directory, which deploys three cat
 
 ### Access Services
 
-All services are exposed at `{name}.rostor.home` via Traefik. Add `*.rostor.home` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
+All services are exposed at `{name}.rostor.internal` via Traefik. Add `*.rostor.internal` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
 
 ## Repository Layout
 
@@ -56,24 +56,24 @@ scripts/                         # Utility scripts (config backups, etc.)
 | | cert-manager | — | ✅ |
 | | sealed-secrets | — | ✅ |
 | | MetalLB | — | ✅ |
-| | AdGuard Home | adguard.rostor.home | ✅ |
-| | Authentik | authentik.rostor.home | ✅ |
-| **Media** | Jellyfin | jellyfin.rostor.home | ✅ |
-| | Immich | immich.rostor.home | ✅ |
-| | Audiobookshelf | audiobookshelf.rostor.home | ✅ |
-| | Navidrome | navidrome.rostor.home | ✅ |
-| | Komga | komga.rostor.home | ✅ |
-| | Sonarr | sonarr.rostor.home | ✅ |
-| | Radarr | radarr.rostor.home | ✅ |
-| | Lidarr | lidarr.rostor.home | ✅ |
-| | Readarr | readarr.rostor.home | ✅ |
-| | Bazarr | bazarr.rostor.home | ✅ |
-| | Prowlarr | prowlarr.rostor.home | ✅ |
+| | AdGuard Home | adguard.rostor.internal | ✅ |
+| | Authentik | authentik.rostor.internal | ✅ |
+| **Media** | Jellyfin | jellyfin.rostor.internal | ✅ |
+| | Immich | immich.rostor.internal | ✅ |
+| | Audiobookshelf | audiobookshelf.rostor.internal | ✅ |
+| | Navidrome | navidrome.rostor.internal | ✅ |
+| | Komga | komga.rostor.internal | ✅ |
+| | Sonarr | sonarr.rostor.internal | ✅ |
+| | Radarr | radarr.rostor.internal | ✅ |
+| | Lidarr | lidarr.rostor.internal | ✅ |
+| | Readarr | readarr.rostor.internal | ✅ |
+| | Bazarr | bazarr.rostor.internal | ✅ |
+| | Prowlarr | prowlarr.rostor.internal | ✅ |
 | | Gluetun (VPN) | — | ✅ |
-| **Productivity** | Nextcloud | nextcloud.rostor.home | ✅ |
-| | Wiki.js | wikijs.rostor.home | ✅ |
+| **Productivity** | Nextcloud | nextcloud.rostor.internal | ✅ |
+| | Wiki.js | wikijs.rostor.internal | ✅ |
 | | Ollama | — | ✅ |
-| | Open WebUI | ai.rostor.home | ✅ |
+| | Open WebUI | ai.rostor.internal | ✅ |
 
 ## Storage
 

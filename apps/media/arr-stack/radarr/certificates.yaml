@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: radarr-tls
   dnsNames:
-    - radarr.rostor.home
+    - radarr.rostor.internal
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer
