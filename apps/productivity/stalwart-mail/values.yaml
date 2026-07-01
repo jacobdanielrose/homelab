@@ -17,13 +17,8 @@ ingress:
       secretName: mail-cloud-tls
 
 config:
-  "@type": "Sqlite"
-  host: "mail.rostor.cloud"
-  database: "sqlite:///data/stalwart.db"
-  authUsername: "admin"
-  authSecret:
-    "@type": "Value"
-    secret: ""
+  "@type": RocksDb
+  path: /var/lib/stalwart
 
 recovery:
   enabled: true
