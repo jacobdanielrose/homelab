@@ -2,12 +2,12 @@ ingress:
   enabled: true
   ingressClassName: traefik
   hosts:
-    - grafana.rostor.local
+    - grafana.rostor.home
   annotations:
     cert-manager.io/cluster-issuer: selfsigned
   tls:
     - hosts:
-        - grafana.rostor.local
+        - grafana.rostor.home
       secretName: grafana-tls
 
 persistence:

@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: argocd-tls
   dnsNames:
-    - argocd.rostor.local
+    - argocd.rostor.home
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer
@@ -29,7 +29,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`argocd.rostor.local`)
+      match: Host(`argocd.rostor.home`)
       services:
         - name: argo-cd-argocd-server
           port: 443

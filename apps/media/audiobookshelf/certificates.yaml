@@ -6,7 +6,7 @@
 # spec:
 #   secretName: audiobooks-tls
 #   dnsNames:
-#     - audiobooks.rostor.local
+#     - audiobooks.rostor.home
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

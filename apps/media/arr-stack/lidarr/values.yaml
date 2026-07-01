@@ -3,7 +3,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: lidarr.rostor.local
+      - host: lidarr.rostor.home
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - lidarr.rostor.local
+          - lidarr.rostor.home
         secretName: lidarr-tls
 
 controllers:

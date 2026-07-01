@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: hass-tls
   dnsNames:
-    - ha.rostor.local
+    - ha.rostor.home
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

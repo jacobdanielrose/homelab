@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: sonarr-tls
   dnsNames:
-    - sonarr.rostor.local
+    - sonarr.rostor.home
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

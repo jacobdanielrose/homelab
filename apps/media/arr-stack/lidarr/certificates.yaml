@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: lidarr-tls
   dnsNames:
-    - lidarr.rostor.local
+    - lidarr.rostor.home
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

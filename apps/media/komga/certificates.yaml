@@ -6,7 +6,7 @@
 # spec:
 #   secretName: komga-tls
 #   dnsNames:
-#     - books.rostor.local
+#     - books.rostor.home
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

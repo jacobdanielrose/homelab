@@ -6,7 +6,7 @@
 # spec:
 #   secretName: immich-tls
 #   dnsNames:
-#     - photos.rostor.local
+#     - photos.rostor.home
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

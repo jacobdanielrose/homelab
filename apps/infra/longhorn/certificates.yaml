@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: longhorn-tls
   dnsNames:
-    - storage.rostor.local
+    - storage.rostor.home
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

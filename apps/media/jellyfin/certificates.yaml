@@ -6,7 +6,7 @@
 # spec:
 #   secretName: jellyfin-tls
 #   dnsNames:
-#     - jellyfin.rostor.local
+#     - jellyfin.rostor.home
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

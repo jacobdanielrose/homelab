@@ -39,13 +39,13 @@ gateway:
     enabled: true
     ingressClassName: traefik
     hosts:
-      - host: loki.rostor.local
+      - host: loki.rostor.home
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - loki.rostor.local
+          - loki.rostor.home
         secretName: loki-tls
 
 read:

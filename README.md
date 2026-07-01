@@ -31,7 +31,7 @@ That's it. The root app watches the `argocd/` directory, which deploys three cat
 
 ### Access Services
 
-All services are exposed at `{name}.rostor.local` via Traefik. Add `*.rostor.local` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
+All services are exposed at `{name}.rostor.home` via Traefik. Add `*.rostor.home` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
 
 ## Repository Layout
 
@@ -56,24 +56,24 @@ scripts/                         # Utility scripts (config backups, etc.)
 | | cert-manager | — | ✅ |
 | | sealed-secrets | — | ✅ |
 | | MetalLB | — | ✅ |
-| | AdGuard Home | adguard.rostor.local | ✅ |
-| | Authentik | authentik.rostor.local | ✅ |
-| **Media** | Jellyfin | jellyfin.rostor.local | ✅ |
-| | Immich | immich.rostor.local | ✅ |
-| | Audiobookshelf | audiobookshelf.rostor.local | ✅ |
-| | Navidrome | navidrome.rostor.local | ✅ |
-| | Komga | komga.rostor.local | ✅ |
-| | Sonarr | sonarr.rostor.local | ✅ |
-| | Radarr | radarr.rostor.local | ✅ |
-| | Lidarr | lidarr.rostor.local | ✅ |
-| | Readarr | readarr.rostor.local | ✅ |
-| | Bazarr | bazarr.rostor.local | ✅ |
-| | Prowlarr | prowlarr.rostor.local | ✅ |
+| | AdGuard Home | adguard.rostor.home | ✅ |
+| | Authentik | authentik.rostor.home | ✅ |
+| **Media** | Jellyfin | jellyfin.rostor.home | ✅ |
+| | Immich | immich.rostor.home | ✅ |
+| | Audiobookshelf | audiobookshelf.rostor.home | ✅ |
+| | Navidrome | navidrome.rostor.home | ✅ |
+| | Komga | komga.rostor.home | ✅ |
+| | Sonarr | sonarr.rostor.home | ✅ |
+| | Radarr | radarr.rostor.home | ✅ |
+| | Lidarr | lidarr.rostor.home | ✅ |
+| | Readarr | readarr.rostor.home | ✅ |
+| | Bazarr | bazarr.rostor.home | ✅ |
+| | Prowlarr | prowlarr.rostor.home | ✅ |
 | | Gluetun (VPN) | — | ✅ |
-| **Productivity** | Nextcloud | nextcloud.rostor.local | ✅ |
-| | Wiki.js | wikijs.rostor.local | ✅ |
+| **Productivity** | Nextcloud | nextcloud.rostor.home | ✅ |
+| | Wiki.js | wikijs.rostor.home | ✅ |
 | | Ollama | — | ✅ |
-| | Open WebUI | ai.rostor.local | ✅ |
+| | Open WebUI | ai.rostor.home | ✅ |
 
 ## Storage
 
