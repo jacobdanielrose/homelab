@@ -18,6 +18,8 @@ global:
         secretKeyRef:
           name: authentik-secrets
           key: password
+    - name: AUTHENTIK_TRUSTED_PROXIES
+      value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 
 server:
   ingress:
