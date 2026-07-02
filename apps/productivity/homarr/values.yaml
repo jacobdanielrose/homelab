@@ -1,5 +1,8 @@
 replicaCount: 1
 
+image:
+  tag: "v1.68.1"
+
 # hostAliases:
 # - ip: "10.107.160.137"
 #   hostnames:
