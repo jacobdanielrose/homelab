@@ -19,6 +19,6 @@ spec:
         - name: navidrome
           port: 4533
       middlewares:
-        - name: navidrome-auth-chain
+        - name: navidrome-auth
   tls:
     secretName: navidrome-cloud-tls
