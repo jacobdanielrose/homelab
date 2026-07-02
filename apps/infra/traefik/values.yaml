@@ -42,6 +42,9 @@ providers:
   kubernetesIngress:
     enabled: true
 
+additionalArguments:
+  - --providers.kubernetescrd.allowCrossNamespace=true
+
 api:
   dashboard: true
 

@@ -1,19 +1,6 @@
 ingress:
   main:
-    enabled: true
-    className: traefik
-    hosts:
-      - host: music.rostor.cloud
-        paths:
-          - path: /
-            pathType: Prefix
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
-      traefik.ingress.kubernetes.io/router.middlewares: navidrome-auth-chain@kubernetescrd
-    tls:
-      - hosts:
-          - music.rostor.cloud
-        secretName: navidrome-cloud-tls
+    enabled: false
 
 persistence:
   data:
