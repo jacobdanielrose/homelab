@@ -9,8 +9,7 @@ ingress:
             pathType: Prefix
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-prod
-      # TODO: uncomment for Authentik ForwardAuth
-      # traefik.ingress.kubernetes.io/router.middlewares: navidrome-auth-chain@kubernetescrd
+      traefik.ingress.kubernetes.io/router.middlewares: navidrome-auth-chain@kubernetescrd
     tls:
       - hosts:
           - music.rostor.cloud
@@ -24,13 +23,12 @@ persistence:
     enabled: true
     existingClaim: media-nfs-pvc
 
-# TODO: uncomment for Authentik external auth
-# workload:
-#   main:
-#     podSpec:
-#       containers:
-#         main:
-#           env:
-#             ND_EXTAUTH_TRUSTEDSOURCES: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-#             ND_EXTAUTH_USERHEADER: X-Authentik-Username
-#             ND_ENABLEUSEREDITING: false
+workload:
+  main:
+    podSpec:
+      containers:
+        main:
+          env:
+            ND_EXTAUTH_TRUSTEDSOURCES: 10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+            ND_EXTAUTH_USERHEADER: X-Authentik-Username
+            ND_ENABLEUSEREDITING: true
