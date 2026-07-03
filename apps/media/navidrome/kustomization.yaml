@@ -6,3 +6,4 @@ resources:
   - resources.yaml
   - certificates.yaml
   - middleware.yaml
+  - ingressroute-subsonic.yaml
