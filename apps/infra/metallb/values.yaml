@@ -7,9 +7,7 @@ controller:
   logLevel: info
 
 speaker:
-  logLevel: info
-  frr:
-    enabled: false
+  logLevel: debug
 
 frrk8s:
   enabled: true
