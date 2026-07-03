@@ -1,5 +1,5 @@
 ingress:
-  enable: true
+  enabled: true
   ingressClassName: "traefik"
   hosts:
     - host: "seerr.rostor.cloud"
