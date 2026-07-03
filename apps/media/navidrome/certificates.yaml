@@ -20,6 +20,7 @@ spec:
   secretName: navidrome-cloud-tls
   dnsNames:
     - music.rostor.cloud
+    - subsonic.rostor.cloud
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer

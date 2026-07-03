@@ -13,4 +13,4 @@ spec:
         - name: navidrome
           port: 4533
   tls:
-    certResolver: letsencrypt-prod
+    secretName: navidrome-cloud-tls
