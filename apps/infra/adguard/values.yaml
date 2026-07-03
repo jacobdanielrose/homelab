@@ -1,8 +1,10 @@
+replicaCount: 2
+
 persistence:
   enabled: true
   volumeClaimSpec:
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     resources:
       requests:
         storage: 1Gi
