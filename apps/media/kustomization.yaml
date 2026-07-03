@@ -9,3 +9,4 @@ resources:
   - navidrome-app.yaml
   - komga-app.yaml
   - arrstack-app.yaml
+  - seerr-app.yaml
