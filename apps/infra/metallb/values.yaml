@@ -8,3 +8,6 @@ controller:
 
 speaker:
   logLevel: info
+
+frr:
+  enabled: false
