@@ -7,11 +7,12 @@ controllers:
           tag: v3.41.1
         env:
           TZ: Etc/UTC
-          VPN_SERVICE_PROVIDER: custom
+          VPN_SERVICE_PROVIDER: protonvpn
           VPN_TYPE: wireguard
           HEALTH_TARGET_ADDRESS: "1.1.1.1:443"
           HEALTH_VPN_DNS_ADDRESSES: "1.1.1.1"
           FIREWALL_INPUT_PORTS: "8888,8388,6881,8080"
+          VPN_PORT_FORWARDING: "on"
         envFrom:
           - secretRef:
               name: gluetun-secrets
