@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - bazarr-app.yaml
   - gluetun-app.yaml
+  - lazylibrarian-app.yaml
   - lidarr-app.yaml
   - prowlarr-app.yaml
   - radarr-app.yaml
