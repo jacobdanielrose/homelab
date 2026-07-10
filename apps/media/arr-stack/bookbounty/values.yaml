@@ -34,7 +34,7 @@ controllers:
               secretKeyRef:
                 name: arr-api-key
                 key: API_KEY
-          libgen_address: http://libgen.is
+          libgen_address: https://libgen.im
           sleep_interval: "0"
           sync_schedule: ""
           minimum_match_ratio: "90"
