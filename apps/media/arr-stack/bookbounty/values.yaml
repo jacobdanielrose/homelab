@@ -65,9 +65,9 @@ persistence:
     existingClaim: media-nfs-pvc
     globalMounts:
       - path: /bookbounty/downloads
-  sitecustomize:
+  gunicorn-config:
     type: configMap
-    name: sitecustomize
+    name: gunicorn-config
     globalMounts:
-      - path: /usr/local/lib/python3.12/site-packages/sitecustomize.py
-        subPath: sitecustomize.py
+      - path: /bookbounty/gunicorn_config.py
+        subPath: gunicorn_config.py

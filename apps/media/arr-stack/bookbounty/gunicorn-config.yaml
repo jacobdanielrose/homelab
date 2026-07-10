@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gunicorn-config
+  namespace: bookbounty
+data:
+  gunicorn_config.py: |
+    bind = "0.0.0.0:5000"
+    workers = 1
+    threads = 4
+    timeout = 120
+    worker_class = "geventwebsocket.gunicorn.workers.GeventWebSocketWorker"
+    def post_fork(server, worker):
+        import requests
+        requests.Session.headers["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
