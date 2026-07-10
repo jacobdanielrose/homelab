@@ -22,7 +22,7 @@ controllers:
           repository: ghcr.io/linuxserver/radarr
           tag: latest
         env:
-          TZ: Etc/UTC
+          TZ: Europe/Zurich
           PUID: "1000"
           PGID: "1000"
           RADARR__API_KEY:

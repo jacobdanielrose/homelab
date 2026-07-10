@@ -3,7 +3,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: readarr.rostor.internal
+      - host: bookbounty.rostor.internal
         paths:
           - path: /
             pathType: Prefix
@@ -11,8 +11,8 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - readarr.rostor.internal
-        secretName: readarr-tls
+          - bookbounty.rostor.internal
+        secretName: bookbounty-tls
 
 controllers:
   main:
@@ -22,16 +22,28 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/faustvii/readarr
-          tag: 0.9.1
+          repository: thewicklowwolf/bookbounty
+          tag: latest
         env:
           TZ: Europe/Zurich
-          READARR__API_KEY:
+          PUID: "1000"
+          PGID: "1000"
+          readarr_address: http://readarr.readarr.svc.cluster.local:8787
+          readarr_api_key:
             valueFrom:
               secretKeyRef:
                 name: arr-api-key
                 key: API_KEY
-          SENTRY_DSN: ""
+          libgen_address: http://libgen.is
+          sleep_interval: "0"
+          sync_schedule: ""
+          minimum_match_ratio: "90"
+          selected_path_type: folder
+          search_type: fiction
+          library_scan_on_completion: "True"
+          request_timeout: "120"
+          thread_limit: "1"
+          selected_language: English
         securityContext:
           runAsUser: 1000
           runAsGroup: 1000
@@ -42,7 +54,7 @@ service:
     controller: main
     ports:
       http:
-        port: 8787
+        port: 5000
 
 persistence:
   config:
@@ -51,9 +63,9 @@ persistence:
     storageClass: longhorn
     size: 1Gi
     globalMounts:
-      - path: /config
+      - path: /bookbounty/config
   media:
     type: persistentVolumeClaim
     existingClaim: media-nfs-pvc
     globalMounts:
-      - path: /data
+      - path: /bookbounty/downloads

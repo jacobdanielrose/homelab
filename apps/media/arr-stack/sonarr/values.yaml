@@ -22,7 +22,7 @@ controllers:
           repository: ghcr.io/linuxserver/sonarr
           tag: latest
         env:
-          TZ: Etc/UTC
+          TZ: Europe/Zurich
           PUID: "1000"
           PGID: "1000"
           SONARR__API_KEY:
