@@ -44,10 +44,6 @@ controllers:
           request_timeout: "120"
           thread_limit: "1"
           selected_language: English
-        securityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
-          runAsNonRoot: true
 
 service:
   main:
@@ -64,8 +60,15 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /bookbounty/config
-  media:
+  books:
     type: persistentVolumeClaim
     existingClaim: media-nfs-pvc
     globalMounts:
-      - path: /bookbounty/downloads
+      - path: /bookbounty/downloads/books
+        subPath: Books
+  manga:
+    type: persistentVolumeClaim
+    existingClaim: media-nfs-pvc
+    globalMounts:
+      - path: /bookbounty/downloads/manga
+        subPath: Manga
