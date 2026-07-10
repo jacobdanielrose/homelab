@@ -65,3 +65,9 @@ persistence:
     existingClaim: media-nfs-pvc
     globalMounts:
       - path: /bookbounty/downloads
+  sitecustomize:
+    type: configMap
+    name: sitecustomize
+    globalMounts:
+      - path: /usr/local/lib/python3.12/site-packages/sitecustomize.py
+        subPath: sitecustomize.py
