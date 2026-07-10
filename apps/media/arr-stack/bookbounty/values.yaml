@@ -60,15 +60,8 @@ persistence:
     size: 1Gi
     globalMounts:
       - path: /bookbounty/config
-  books:
+  media:
     type: persistentVolumeClaim
     existingClaim: media-nfs-pvc
     globalMounts:
-      - path: /bookbounty/downloads/books
-        subPath: Books
-  manga:
-    type: persistentVolumeClaim
-    existingClaim: media-nfs-pvc
-    globalMounts:
-      - path: /bookbounty/downloads/manga
-        subPath: Manga
+      - path: /bookbounty/downloads
