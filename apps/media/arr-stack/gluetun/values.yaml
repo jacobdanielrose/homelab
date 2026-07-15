@@ -6,13 +6,14 @@ controllers:
           repository: qmcgaw/gluetun
           tag: v3.41.1
         env:
-          TZ: Etc/UTC
+          TZ: Europe/Zurich
           VPN_SERVICE_PROVIDER: protonvpn
           VPN_TYPE: wireguard
           HEALTH_TARGET_ADDRESS: "1.1.1.1:443"
           HEALTH_VPN_DNS_ADDRESSES: "1.1.1.1"
           FIREWALL_INPUT_PORTS: "8888,8388,6881,8080"
           VPN_PORT_FORWARDING: "on"
+          VPN_PORT_FORWARDING_UP_COMMAND: "/bin/sh -c 'wget -qO- --post-data=\"json={\\\"listen_port\\\":{{PORT}}}\" http://localhost:8080/api/v2/app/setPreferences'"
         envFrom:
           - secretRef:
               name: gluetun-secrets
@@ -28,7 +29,7 @@ controllers:
           - name: http
             containerPort: 8080
         env:
-          TZ: Etc/UTC
+          TZ: Europe/Zurich
           PUID: "1000"
           PGID: "1000"
           DOCKER_MODS: ghcr.io/gabe565/linuxserver-mod-vuetorrent
