@@ -30,6 +30,12 @@ controllers:
             - "authentik.rostor.internal"
     containers:
       main:
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            memory: 4Gi
         env:
           DB_HOSTNAME: immich-postgres
           DB_USERNAME: immich
@@ -41,6 +47,7 @@ controllers:
                 key: POSTGRES_PASSWORD
           REDIS_HOSTNAME: immich-valkey
           NODE_TLS_REJECT_UNAUTHORIZED: "0"
+          TRANSCODING_FFMPEG_CONCURRENCY: 2
         envFrom:
           - secretRef:
               name: immich-postgres-secret
