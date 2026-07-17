@@ -35,7 +35,7 @@ controllers:
             cpu: 500m
             memory: 1Gi
           limits:
-            memory: 4Gi
+            memory: 6Gi
         env:
           DB_HOSTNAME: immich-postgres
           DB_USERNAME: immich
