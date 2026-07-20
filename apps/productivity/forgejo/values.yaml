@@ -1,6 +1,8 @@
 gitea:
   admin:
-    existingSecret: forgejo-admin-secret
+    username: forgejo_admin
+    email: 'admin@rostor.cloud'
+    passwordMode: keepUpdated
   config:
     APP_NAME: "Forgejo: Beyond coding. We forge."
     server:
