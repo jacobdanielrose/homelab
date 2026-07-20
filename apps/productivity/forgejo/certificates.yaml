@@ -2,10 +2,10 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: gitea-cloud-tls
-  namespace: gitea
+  name: forgejo-cloud-tls
+  namespace: forgejo
 spec:
-  secretName: gitea-cloud-tls
+  secretName: forgejo-cloud-tls
   dnsNames:
     - git.rostor.cloud
   issuerRef:

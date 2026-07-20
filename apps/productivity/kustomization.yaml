@@ -7,7 +7,7 @@ resources:
   - ollama-app.yaml
   - open-webui-app.yaml
   - homarr-app.yaml
-  #- gitea-app.yaml
+  - forgejo-app.yaml
   #- ghost-app.yaml
   - sure-app.yaml
   #- stalwart-mail-app.yaml
