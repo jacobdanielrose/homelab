@@ -101,8 +101,8 @@ kubectl create secret generic outline-auto-generated-secret --namespace outline 
 echo "  -> outline-auto-generated-secret"
 
 kubectl create secret generic outline-postgres-secrets --namespace outline \
-  --from-literal=password=$(openssl rand -base64 32) \
-  --from-literal=postgres-password=$(openssl rand -base64 32) \
+  --from-literal=password=$(openssl rand -hex 32) \
+  --from-literal=postgres-password=$(openssl rand -hex 32) \
   --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
   >> "$REPO_ROOT/apps/productivity/outline/sealed-secrets.yaml"
 echo "  -> outline-postgres-secrets"
