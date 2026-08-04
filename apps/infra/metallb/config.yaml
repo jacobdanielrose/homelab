@@ -16,5 +16,3 @@ metadata:
 spec:
   ipAddressPools:
     - homelab-pool
-  interfaces:
-    - eno1
