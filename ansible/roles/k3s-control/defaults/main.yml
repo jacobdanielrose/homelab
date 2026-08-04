@@ -9,7 +9,7 @@ k3s_server_args: ""
 
 k3s_tls_san: []
 k3s_disable_traefik: true
-k3s_disable_servicelb: false
+k3s_disable_servicelb: true
 k3s_disable_metrics_server: false
 k3s_disable_local_storage: false
 k3s_disable_components: []

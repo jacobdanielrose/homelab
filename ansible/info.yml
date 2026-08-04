@@ -117,7 +117,7 @@
           {{ line }}{% endfor %}{% endif %}"
           - ""
           - "🔄 ARGOCD"
-          - "   URL: https://{{ _argocd_svc.stdout | default('argocd.rostor.lab') }}"
+          - "   URL: https://{{ _argocd_svc.stdout | default('argocd.rostor.lab', true) }}"
           - "   Admin: admin"
           - "   Password: {{ argocd_password | default('kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath=\"{.data.password}\" | base64 -d') }}"
           - "{% if _argocd_apps.stdout_lines is defined %}{% for line in _argocd_apps.stdout_lines %}
