@@ -87,15 +87,15 @@ kubectl create secret generic nextcloud-user --namespace nextcloud \
   --from-literal=password=$(openssl rand -base64 32) \
   --from-literal=username=admin \
   --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
-  > "$REPO_ROOT/apps/productivity/nextcloud/sealed-secrets.yaml"
+  >> "$REPO_ROOT/apps/productivity/nextcloud/sealed-secrets.yaml"
 echo "  -> nextcloud-user"
 
 # outline (OIDC skipped, auto-gen and postgres resealed)
 echo "  -> outline-oidc-secrets (SKIPPED — OIDC)"
 
 kubectl create secret generic outline-auto-generated-secret --namespace outline \
-  --from-literal=secret-key=$(openssl rand -hex 64) \
-  --from-literal=utils-secret=$(openssl rand -hex 64) \
+  --from-literal=secret-key=$(openssl rand -hex 32) \
+  --from-literal=utils-secret=$(openssl rand -hex 32) \
   --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
   > "$REPO_ROOT/apps/productivity/outline/sealed-secrets.yaml"
 echo "  -> outline-auto-generated-secret"
@@ -104,7 +104,7 @@ kubectl create secret generic outline-postgres-secrets --namespace outline \
   --from-literal=password=$(openssl rand -base64 32) \
   --from-literal=postgres-password=$(openssl rand -base64 32) \
   --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
-  > "$REPO_ROOT/apps/productivity/outline/sealed-secrets.yaml"
+  >> "$REPO_ROOT/apps/productivity/outline/sealed-secrets.yaml"
 echo "  -> outline-postgres-secrets"
 
 # sure (OIDC skipped, everything else resealed)
@@ -116,7 +116,8 @@ kubectl create secret generic sure-secrets --namespace sure \
   --from-literal=ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=$(openssl rand -hex 64) \
   --from-literal=SECRET_KEY_BASE=$(openssl rand -hex 64) \
   --from-literal=password=$(openssl rand -base64 32) \
-  --from-literal=redis-password=$(openssl rand -base64 32) \
+  --from-literal=redis-password=$(openssl rand -hex 32) \
+  --from-literal=username=sure \
   --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
   > "$REPO_ROOT/apps/productivity/sure/sealed-secrets.yaml"
 echo "  -> sure-secrets"
