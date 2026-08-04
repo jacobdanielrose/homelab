@@ -35,7 +35,7 @@ alertmanager:
               storage: 2Gi
 
 nodeExporter:
-  enabled: true
+  enabled: false
 
 kubeStateMetrics:
   enabled: true

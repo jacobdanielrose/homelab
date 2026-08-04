@@ -1,0 +1,205 @@
+---
+- name: Strip cluster — delete ArgoCD apps, Longhorn data, and k3s
+  hosts: k3s_servers[0]
+  become: true
+  gather_facts: true
+  tags: [apps, argocd, longhorn]
+  tasks:
+    - name: Check if kubectl is available
+      ansible.builtin.command:
+        cmd: which kubectl
+      register: _kubectl_path
+      changed_when: false
+      failed_when: false
+
+    - name: Set kubectl command
+      ansible.builtin.set_fact:
+        kubectl_cmd: "{{ _kubectl_path.stdout | default('/usr/local/bin/kubectl') }}"
+        kubeconfig: "/etc/rancher/k3s/k3s.yaml"
+
+    - name: Check if ArgoCD namespace exists
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} get namespace argocd -o name"
+      register: _argocd_ns
+      changed_when: false
+      failed_when: false
+
+    - name: Delete all ArgoCD Applications
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} delete applications.argoproj.io --all --namespace argocd --ignore-not-found --wait=false"
+      when: _argocd_ns.rc == 0
+      changed_when: true
+
+    - name: Wait for ArgoCD app deletion
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} wait --namespace argocd --for=delete applications.argoproj.io --all --timeout=120s"
+      when: _argocd_ns.rc == 0
+      changed_when: false
+      failed_when: false
+
+    - name: Uninstall ArgoCD Helm release
+      ansible.builtin.command:
+        cmd: "helm uninstall argocd --namespace argocd --kubeconfig {{ kubeconfig }} --wait --timeout=120s"
+      when: _argocd_ns.rc == 0
+      changed_when: true
+      failed_when: false
+
+    - name: Delete ArgoCD namespace
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} delete namespace argocd --ignore-not-found --wait=false"
+      when: _argocd_ns.rc == 0
+      changed_when: true
+
+    - name: Delete ArgoCD CRDs
+      ansible.builtin.shell:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} get crd | grep argoproj.io | awk '{print $1}' | xargs -r {{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} delete crd --ignore-not-found"
+      changed_when: true
+      failed_when: false
+
+    - name: Delete all PVCs (Longhorn volumes)
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} delete pvc --all --all-namespaces --ignore-not-found --wait=false"
+      changed_when: true
+
+    - name: Delete Longhorn namespace
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} delete namespace longhorn-system --ignore-not-found --wait=false"
+      changed_when: true
+      failed_when: false
+
+    - name: Remove Longhorn namespace finalizers if stuck
+      ansible.builtin.shell:
+        cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} get namespace longhorn-system -o json 2>/dev/null | python3 -c \"import sys,json; d=json.load(sys.stdin); d['spec']['finalizers']=[]; print(json.dumps(d))\" 2>/dev/null | {{ kubectl_cmd }} --kubeconfig {{ kubeconfig }} replace --raw /api/v1/namespaces/longhorn-system/finalize -f -"
+      changed_when: true
+      failed_when: false
+
+- name: Uninstall k3s from worker nodes
+  hosts: k3s_workers
+  become: true
+  gather_facts: true
+  serial: 1
+  tags: [k3s, workers]
+  tasks:
+    - name: Stop and disable k3s-agent
+      ansible.builtin.systemd:
+        name: k3s-agent
+        state: stopped
+        enabled: false
+      failed_when: false
+
+    - name: Run k3s-agent uninstall script
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s-agent-uninstall.sh
+      changed_when: true
+      failed_when: false
+
+    - name: Remove remaining k3s data directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/rancher/k3s
+        - /etc/rancher/k3s
+        - /etc/systemd/system/k3s-agent.service
+      failed_when: false
+
+    - name: Unmount Longhorn data directory
+      ansible.builtin.mount:
+        path: /var/lib/longhorn
+        state: absent
+      failed_when: false
+
+    - name: Wipe Longhorn data device filesystem
+      ansible.builtin.command:
+        cmd: "wipefs -a {{ longhorn_data_device }}"
+      changed_when: true
+      failed_when: false
+
+    - name: Remove Longhorn mount directory
+      ansible.builtin.file:
+        path: /var/lib/longhorn
+        state: absent
+      failed_when: false
+
+- name: Uninstall k3s server from control node
+  hosts: k3s_servers
+  become: true
+  gather_facts: true
+  tags: [k3s, server]
+  tasks:
+    - name: Stop and disable k3s
+      ansible.builtin.systemd:
+        name: k3s
+        state: stopped
+        enabled: false
+      failed_when: false
+
+    - name: Run k3s server uninstall script
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s-uninstall.sh
+      changed_when: true
+      failed_when: false
+
+    - name: Remove remaining k3s data directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/rancher/k3s
+        - /etc/rancher/k3s
+        - /etc/systemd/system/k3s.service
+      failed_when: false
+
+- name: Verify hardening is still in place
+  hosts: all
+  become: true
+  gather_facts: false
+  tags: [verify]
+  tasks:
+    - name: Check firewalld is running
+      ansible.builtin.service:
+        name: firewalld
+        state: started
+      changed_when: false
+
+    - name: Check fail2ban is running
+      ansible.builtin.service:
+        name: fail2ban
+        state: started
+      changed_when: false
+
+    - name: Check node_exporter is running
+      ansible.builtin.service:
+        name: node_exporter
+        state: started
+      changed_when: false
+
+    - name: Verify k3s is no longer installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/k3s
+      register: _k3s_binary
+
+    - name: Confirm k3s binary removed
+      ansible.builtin.assert:
+        that:
+          - not _k3s_binary.stat.exists
+        fail_msg: "k3s binary still exists on {{ inventory_hostname }}"
+        success_msg: "k3s successfully removed from {{ inventory_hostname }}"
+
+- name: Clean up local kubeconfig and inventory token
+  hosts: localhost
+  gather_facts: false
+  tags: [cleanup]
+  tasks:
+    - name: Remove local kubeconfig
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/kubeconfig"
+        state: absent
+      failed_when: false
+
+    - name: Blank out k3s_token in inventory
+      ansible.builtin.replace:
+        path: "{{ playbook_dir }}/inventory.yml"
+        regexp: '(k3s_token:)\s*".*"'
+        replace: '\1 ""'
+      failed_when: false
