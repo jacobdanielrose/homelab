@@ -4,14 +4,14 @@ kind: Kustomization
 resources:
   - technitium-app.yaml
   - authentik-app.yaml
-  #- prometheus-app.yaml
-  #- rustfs-app.yaml
-  #- loki-app.yaml
-  #- grafana-app.yaml
+  - prometheus-app.yaml
+  - rustfs-app.yaml
+  - loki-app.yaml
+  - grafana-app.yaml
   - traefik-app.yaml
   - cert-manager-app.yaml
   - argocd-ingress-app.yaml
   - sealed-secrets-app.yaml
   - longhorn-app.yaml
-  - metallb-app.yaml # Uncomment when deploying on real hardware (not Docker/Kind)
+  - metallb-app.yaml
   - hass-app.yaml

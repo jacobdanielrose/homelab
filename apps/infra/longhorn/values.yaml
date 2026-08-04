@@ -14,7 +14,7 @@ preUpgradeChecker:
 
 metrics:
   serviceMonitor:
-    enabled: false
+    enabled: true
 
 longhornManager:
   nodeSelector:

@@ -62,6 +62,10 @@ metrics:
     addRoutersLabels: true
     addServicesLabels: true
     entryPoint: metrics
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: prometheus
     service:
       enabled: true
       labels:

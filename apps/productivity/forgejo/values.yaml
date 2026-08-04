@@ -23,7 +23,9 @@ gitea:
 ingress:
   enabled: true
   className: traefik
-  annotations: {}
+  annotations:
+      metallb.universe.tf/allow-shared-ip: forgejo-ssh
+    loadBalancerIP: 192.168.3.25
   hosts:
     - host: git.rostor.cloud
       paths:
