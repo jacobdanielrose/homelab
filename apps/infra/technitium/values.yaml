@@ -1,35 +1,52 @@
+env:
+  TZ: Europe/Berlin
+  DNS_SERVER_ADMIN_PASSWORD:
+    valueFrom:
+      secretKeyRef:
+        name: technitium-secrets
+        key: DNS_SERVER_ADMIN_PASSWORD
+  DNS_SERVER_RECURSION: "AllowOnlyForPrivateNetworks"
+  DNS_SERVER_RECURSION_ALLOWED_NETWORKS: "127.0.0.1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
+  DNS_SERVER_FORWARDERS: "1.1.1.1,8.8.8.8"
+  DNS_SERVER_FORWARDER_PROTOCOL: "Tcp"
+  DNS_SERVER_ENABLE_BLOCKING: true
+  DNS_SERVER_ALLOW_TXT_BLOCKING_REPORT: true
+
+service:
+  main:
+    type: LoadBalancer
+    externalTrafficPolicy: Local
+    ports:
+      http:
+        enabled: true
+        port: 80
+      dns-udp:
+        enabled: true
+        port: 53
+        protocol: UDP
+      dns-tcp:
+        enabled: true
+        port: 53
+        protocol: TCP
+      dot:
+        enabled: true
+        port: 853
+        protocol: TCP
+
 ingress:
   main:
     enabled: true
-    className: traefik
+    ingressClassName: traefik
     hosts:
       - host: technitium.rostor.lab
         paths:
           - path: /
             pathType: Prefix
 
-service:
-  dns:
-    enabled: true
-    type: LoadBalancer
-
 persistence:
   config:
     enabled: true
+    type: pvc
     storageClass: longhorn
-    accessMode: ReadWriteMany
+    accessMode: ReadWriteOnce
     size: 1Gi
-
-workload:
-  main:
-    podSpec:
-      containers:
-        main:
-          env:
-            DNS_SERVER_ADMIN_PASSWORD: "password"
-            DNS_SERVER_RECURSION: "AllowOnlyForPrivateNetworks"
-            DNS_SERVER_RECURSION_ALLOWED_NETWORKS: "127.0.0.1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
-            DNS_SERVER_FORWARDERS: "1.1.1.1,8.8.8.8"
-            DNS_SERVER_FORWARDER_PROTOCOL: "Tcp"
-            DNS_SERVER_ENABLE_BLOCKING: true
-            DNS_SERVER_ALLOW_TXT_BLOCKING_REPORT: true

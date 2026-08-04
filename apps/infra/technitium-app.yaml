@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://oci.trueforge.org/truecharts/technitium
-      chart: technitium
-      targetRevision: 4.0.17
+    - repoURL: https://charts.obeone.cloud
+      chart: technitium-dnsserver
+      targetRevision: 1.13.0
       helm:
         valueFiles:
           - $values/apps/infra/technitium/values.yaml

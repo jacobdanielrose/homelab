@@ -143,6 +143,13 @@ kubectl create secret generic stalwart-mail --namespace stalwart-mail \
   > "$REPO_ROOT/apps/productivity/stalwart-mail/sealed-secrets.yaml"
 echo "  -> stalwart-mail"
 
+# technitium
+kubectl create secret generic technitium-secrets --namespace technitium \
+  --from-literal=DNS_SERVER_ADMIN_PASSWORD=$(openssl rand -base64 32) \
+  --dry-run=client -o yaml | kubeseal $KUBESEAL_OPTS --cert=/tmp/sealed-secrets-cert.pem -o yaml \
+  > "$REPO_ROOT/apps/infra/technitium/sealed-secrets.yaml"
+echo "  -> technitium"
+
 echo ""
 echo "=== Done ==="
 echo "S3_ACCESS_KEY=$S3_ACCESS_KEY"
