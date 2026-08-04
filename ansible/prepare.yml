@@ -1,0 +1,24 @@
+---
+- name: Pre-k3s node preparation
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: common-tools
+      tags: [common, tools]
+    - role: hosts
+      tags: [common, hosts]
+    - role: ntp
+      tags: [common, ntp]
+    - role: sysctl-tuning
+      tags: [common, sysctl]
+    - role: linux-hardening
+      tags: [security, ssh]
+    - role: fail2ban
+      tags: [security, fail2ban]
+    - role: firewalld
+      tags: [security, firewalld]
+    - role: system-upgrade
+      tags: [system, upgrade]
+    - role: node-exporter
+      tags: [monitoring, node-exporter]

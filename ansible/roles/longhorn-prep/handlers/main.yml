@@ -1,0 +1,5 @@
+---
+- name: Restart iscsid
+  ansible.builtin.service:
+    name: "{{ longhorn_iscsi_service }}"
+    state: restarted

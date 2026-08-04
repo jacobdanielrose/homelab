@@ -1,0 +1,16 @@
+---
+k3s_version: "v1.36.2+k3s1"
+k3s_install_url: "https://get.k3s.io"
+k3s_install_dir: "/usr/local/bin"
+
+k3s_server_url: ""
+k3s_token: ""
+
+k3s_node_ip: ""
+k3s_node_labels: {}
+k3s_node_taints: []
+k3s_flannel_iface: ""
+
+k3s_drain_on_update: false
+
+k3s_env: {}

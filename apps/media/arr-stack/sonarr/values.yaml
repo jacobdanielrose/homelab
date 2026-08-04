@@ -3,7 +3,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: sonarr.rostor.internal
+      - host: sonarr.rostor.lab
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - sonarr.rostor.internal
+          - sonarr.rostor.lab
         secretName: sonarr-tls
 
 controllers:

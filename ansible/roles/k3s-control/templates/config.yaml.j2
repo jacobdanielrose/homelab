@@ -1,0 +1,54 @@
+{% if k3s_token | length > 0 %}
+token: "{{ k3s_token }}"
+{% endif %}
+tls-san: {{ k3s_tls_san | to_json }}
+disable:
+{% if k3s_disable_traefik %}
+  - traefik
+{% endif %}
+{% if k3s_disable_servicelb %}
+  - servicelb
+{% endif %}
+{% if k3s_disable_metrics_server %}
+  - metrics-server
+{% endif %}
+{% if k3s_disable_local_storage %}
+  - local-storage
+{% endif %}
+{% for component in k3s_disable_components %}
+  - {{ component }}
+{% endfor %}
+{% if k3s_etcd_only %}
+etcd-only: true
+{% endif %}
+cluster-cidr: "{{ k3s_cluster_cidr }}"
+service-cidr: "{{ k3s_service_cidr }}"
+cluster-dns: "{{ k3s_cluster_dns }}"
+cluster-domain: "{{ k3s_cluster_domain }}"
+{% if k3s_node_ip %}
+node-ip: "{{ k3s_node_ip }}"
+{% endif %}
+{% if k3s_bind_address %}
+bind-address: "{{ k3s_bind_address }}"
+{% endif %}
+{% if k3s_advertise_address %}
+advertise-address: "{{ k3s_advertise_address }}"
+{% endif %}
+flannel-backend: "{{ k3s_flannel_backend }}"
+{% if k3s_vpn_ready %}
+vpn-ready: true
+{% endif %}
+{% if k3s_node_labels %}
+node-label:
+{% for key, value in k3s_node_labels.items() %}
+{% if key is not match('node-role\\.kubernetes\\.io/.*') %}
+  - "{{ key }}={{ value }}"
+{% endif %}
+{% endfor %}
+{% endif %}
+{% if k3s_node_taints %}
+node-taint:
+{% for taint in k3s_node_taints %}
+  - "{{ taint }}"
+{% endfor %}
+{% endif %}

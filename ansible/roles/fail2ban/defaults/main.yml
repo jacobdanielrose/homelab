@@ -1,0 +1,19 @@
+---
+fail2ban_enabled: true
+fail2ban_maxretry: 3
+fail2ban_bantime: "24h"
+fail2ban_findtime: "10m"
+fail2ban_ignoreip: "127.0.0.1/8 ::1"
+fail2ban_jails:
+  - name: sshd
+    enabled: true
+    port: "ssh"
+    logpath: "%(sshd_log)s"
+    backend: "%(sshd_backend)s"
+  - name: sshd-ddos
+    enabled: true
+    port: "ssh"
+    logpath: "%(sshd_log)s"
+fail2ban_actions: "iptables-multiport"
+fail2ban_log_level: "INFO"
+fail2ban_ignore_network: []

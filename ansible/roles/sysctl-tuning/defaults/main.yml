@@ -1,0 +1,16 @@
+---
+sysctl_disable_swap: true
+sysctl_enable_ipv4_forwarding: true
+sysctl_enable_ipv6_forwarding: false
+sysctl_enable_bridge_nf: true
+sysctl_file: "/etc/sysctl.d/99-kubernetes.conf"
+sysctl_overcommit_memory: 1
+sysctl_inotify_max_user_watches: 1048576
+sysctl_inotify_max_user_instances: 8192
+sysctl_net_core_somaxconn: 32768
+sysctl_net_ipv4_tcp_tw_reuse: 1
+sysctl_net_ipv4_tcp_fin_timeout: 15
+sysctl_vm_swappiness: 0
+sysctl_vm_max_map_count: 262144
+sysctl_net_ipv4_conf_all_rp_filter: 2
+sysctl_extra: {}

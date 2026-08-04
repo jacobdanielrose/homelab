@@ -1,26 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: adguard
+  name: technitium
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: https://helm-charts.rm3l.org
-      chart: adguard-home
-      targetRevision: 0.24.0
+    - repoURL: oci://oci.trueforge.org/truecharts/technitium
+      chart: technitium
+      targetRevision: 4.0.17
       helm:
         valueFiles:
-          - $values/apps/infra/adguard/values.yaml
+          - $values/apps/infra/technitium/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
-      path: apps/infra/adguard
+      path: apps/infra/technitium
   destination:
     server: https://kubernetes.default.svc
-    namespace: adguard
+    namespace: technitium
   syncPolicy:
     automated:
       prune: true

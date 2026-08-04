@@ -1,0 +1,29 @@
+---
+# SSH hardening settings
+ssh_port: 22
+ssh_permit_root_login: "no"
+ssh_password_authentication: "no"
+ssh_pubkey_authentication: "yes"
+ssh_challenge_response_authentication: "no"
+ssh_authentication_methods: "publickey"
+ssh_allow_users: ""
+ssh_allow_groups: ""
+ssh_client_alive_interval: 300
+ssh_client_alive_count_max: 0
+ssh_max_auth_tries: 3
+ssh_max_sessions: 10
+ssh_max_startups: "10:30:60"
+ssh_use_pam: "no"
+ssh_print_motd: "no"
+ssh_print_last_log: "yes"
+ssh_banner: ""
+ssh_log_level: "VERBOSE"
+ssh_kex_algorithms: "curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256"
+ssh_ciphers: "chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com"
+ssh_macs: "hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@openssh.com"
+ssh_host_key_algorithms: "ssh-ed25519,rsa-sha2-512,rsa-sha2-256"
+
+# SSH key deployment
+ssh_authorized_keys: []
+ssh_authorized_users: []
+ssh_key_comment: "ansible-managed"

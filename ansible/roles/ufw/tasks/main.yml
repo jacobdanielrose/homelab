@@ -1,0 +1,52 @@
+---
+- name: Install ufw
+  ansible.builtin.package:
+    name: ufw
+    state: present
+
+- name: Set default policies
+  community.general.ufw:
+    default: "{{ 'deny' if ufw_default_deny_incoming else 'allow' }}"
+    direction: incoming
+  when: ufw_enabled
+
+- name: Set default outgoing policy
+  community.general.ufw:
+    default: "{{ 'allow' if ufw_default_allow_outgoing else 'deny' }}"
+    direction: outgoing
+  when: ufw_enabled
+
+- name: Apply default UFW rules
+  community.general.ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port | default(omit) }}"
+    proto: "{{ item.proto | default('tcp') }}"
+    from_ip: "{{ item.from | default('any') }}"
+    to_ip: "{{ item.to | default('any') }}"
+    direction: "{{ item.direction | default('in') }}"
+    comment: "{{ item.comment | default('') }}"
+  loop: "{{ ufw_rules + ufw_extra_rules }}"
+  when: ufw_enabled
+
+- name: Set logging level
+  community.general.ufw:
+    logging: "{{ ufw_logging }}"
+  when: ufw_enabled
+
+- name: Enable ufw
+  community.general.ufw:
+    state: enabled
+    policy: deny
+  when: ufw_enabled
+
+- name: Show ufw status
+  ansible.builtin.command:
+    cmd: ufw status verbose
+  register: _ufw_status
+  changed_when: false
+  when: ufw_enabled
+
+- name: Print ufw status
+  ansible.builtin.debug:
+    var: _ufw_status.stdout_lines
+  when: ufw_enabled

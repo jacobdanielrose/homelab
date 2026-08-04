@@ -1,0 +1,44 @@
+---
+- name: Install chrony
+  ansible.builtin.package:
+    name: chrony
+    state: present
+
+- name: Ensure chrony config directory exists
+  ansible.builtin.file:
+    path: /etc/chrony
+    state: directory
+    mode: "0755"
+
+- name: Write chrony config
+  ansible.builtin.template:
+    src: chrony.conf.j2
+    dest: /etc/chrony/chrony.conf
+    mode: "0644"
+  notify: Restart chrony
+
+- name: Write chrony log dir
+  ansible.builtin.file:
+    path: "{{ ntp_log_dir }}"
+    state: directory
+    mode: "0755"
+  when: ntp_log_tracking or ntp_log_measurements or ntp_log_statistics
+
+- name: Set timezone
+  ansible.builtin.timezone:
+    name: "{{ ntp_timezone }}"
+
+- name: Enable and start chrony
+  ansible.builtin.service:
+    name: chronyd
+    state: started
+    enabled: true
+
+- name: Wait for time sync
+  ansible.builtin.command:
+    cmd: chronyc tracking
+  register: _chrony_sync
+  changed_when: false
+  retries: 10
+  delay: 2
+  until: _chrony_sync.rc == 0

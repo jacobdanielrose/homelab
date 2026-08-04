@@ -9,6 +9,6 @@ spec:
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer
-  commonName: bookbounty.rostor.internal
+  commonName: bookbounty.rostor.lab
   dnsNames:
-    - bookbounty.rostor.internal
+    - bookbounty.rostor.lab

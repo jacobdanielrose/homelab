@@ -1,0 +1,22 @@
+---
+- name: Build /etc/hosts with managed entries
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    block: |
+      {% for entry in hosts_entries %}
+      {{ entry.ip }} {{ entry.names | join(' ') }}{% if entry.aliases is defined %} {{ entry.aliases | join(' ') }}{% endif %}
+      {% endfor %}
+    marker: "# {mark} ANSIBLE MANAGED HOSTS"
+    create: true
+    mode: "0644"
+  when: hosts_entries | length > 0
+
+- name: Ensure localhost entries are present
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item }}"
+    state: present
+  loop:
+    - "127.0.0.1 localhost"
+    - "::1 localhost ip6-localhost ip6-loopback"
+  when: hosts_manage_loopback

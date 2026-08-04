@@ -1,0 +1,55 @@
+---
+- name: Ensure firewalld is installed
+  ansible.builtin.package:
+    name: firewalld
+    state: present
+
+- name: Remove UFW if present
+  ansible.builtin.package:
+    name: ufw
+    state: absent
+  when: firewalld_remove_ufw
+
+- name: Ensure firewalld is running and enabled
+  ansible.builtin.service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Open firewalld ports
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port={{ item.port }}"
+  loop: "{{ firewalld_rules + firewalld_extra_rules }}"
+  register: _firewalld_ports
+  changed_when: '"success" in _firewalld_ports.stdout'
+  failed_when: false
+
+- name: Reload firewalld
+  ansible.builtin.command:
+    cmd: firewall-cmd --reload
+  changed_when: true
+  when: _firewalld_ports is changed
+
+- name: Show firewalld status
+  ansible.builtin.command:
+    cmd: firewall-cmd --list-all
+  register: _firewalld_status
+  changed_when: false
+
+- name: Print firewalld status
+  ansible.builtin.debug:
+    var: _firewalld_status.stdout_lines
+
+- name: Add Kubernetes overlay interfaces to trusted zone
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --zone=trusted --add-interface={{ item }}"
+  loop: "{{ firewalld_trusted_interfaces }}"
+  register: _firewalld_trusted
+  changed_when: '"success" in _firewalld_trusted.stdout'
+  failed_when: false
+
+- name: Reload firewalld after trusted interface assignment
+  ansible.builtin.command:
+    cmd: firewall-cmd --reload
+  changed_when: true
+  when: _firewalld_trusted is changed

@@ -1,0 +1,19 @@
+---
+common_tools_packages:
+  - vim
+  - htop
+  - iotop
+  - lsof
+  - tcpdump
+  - git
+  - curl
+  - wget
+  - jq
+  - unzip
+  - nc
+  - bind-utils
+  - traceroute
+  - mtr
+  - rsync
+
+common_tools_extra_packages: []

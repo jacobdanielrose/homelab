@@ -1,0 +1,60 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_facts.pkg_mgr == "apt"
+
+- name: Upgrade all packages
+  ansible.builtin.apt:
+    upgrade: dist
+    autoremove: "{{ sysupgrade_remove_unused_dependencies }}"
+    autoclean: "{{ sysupgrade_autoclean }}"
+  when: ansible_facts.pkg_mgr == "apt"
+
+- name: Install unattended-upgrades
+  ansible.builtin.apt:
+    name: unattended-upgrades
+    state: present
+  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+
+- name: Configure unattended-upgrades
+  ansible.builtin.template:
+    src: 50unattended-upgrades.j2
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    mode: "0644"
+  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+
+- name: Enable periodic apt updates
+  ansible.builtin.copy:
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Download-Upgradeable-Packages "1";
+      APT::Periodic::AutocleanInterval "7";
+      APT::Periodic::Unattended-Upgrade "1";
+    dest: /etc/apt/apt.conf.d/10periodic
+    mode: "0644"
+  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+
+- name: Check if reboot is required
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: _reboot_required
+  when: sysupgrade_reboot
+
+- name: Reboot if required
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+    pre_reboot_delay: 30
+  when: >
+    _reboot_required is defined and _reboot_required.stat.exists
+    and sysupgrade_reboot
+
+- name: Remove old kernels
+  ansible.builtin.shell:
+    cmd: |
+      apt-get autoremove --purge -y
+      apt-get autoclean -y
+    warn: false
+  changed_when: false
+  when: sysupgrade_remove_unused_dependencies and ansible_facts.pkg_mgr == "apt"

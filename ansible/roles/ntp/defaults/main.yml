@@ -1,0 +1,16 @@
+---
+ntp_timezone: "UTC"
+ntp_servers:
+  - "0.pool.ntp.org iburst"
+  - "1.pool.ntp.org iburst"
+  - "2.pool.ntp.org iburst"
+  - "3.pool.ntp.org iburst"
+ntp_driftfile: /var/lib/chrony/drift
+ntp_makestep: "1.0 3"
+ntp_rtcsync: true
+ntp_allow_clients: []
+ntp_bind_address: ""
+ntp_log_dir: /var/log/chrony
+ntp_log_tracking: false
+ntp_log_measurements: false
+ntp_log_statistics: false

@@ -57,7 +57,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: downloads.rostor.internal
+      - host: downloads.rostor.lab
         paths:
           - path: /
             pathType: Prefix
@@ -67,7 +67,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - downloads.rostor.internal
+          - downloads.rostor.lab
         secretName: qbittorrent-tls
 
 persistence:

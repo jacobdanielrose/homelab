@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: readarr-tls
   dnsNames:
-    - readarr.rostor.internal
+    - readarr.rostor.lab
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

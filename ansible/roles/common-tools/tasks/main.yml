@@ -1,0 +1,6 @@
+---
+- name: Install common CLI tools
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ common_tools_packages + common_tools_extra_packages }}"

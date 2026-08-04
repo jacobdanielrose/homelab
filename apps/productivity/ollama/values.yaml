@@ -6,24 +6,34 @@ ingress:
     paths: 
       - path: / 
         pathType: Prefix
-  # - host: ollama.rostor.cloud
-  #   paths:
-  #     - path: /
-  #       pathType: Prefix
   tls:
     - secretName: ollama-cloud-tls
       hosts:
         - ollama.rostor.cloud
-  # - secretName: ollama-cloud-tls
-  #   hosts:
-  #     - ollama.rostor.cloud
 
 ollama:
   models:
     pull:
-      - tinyllama
+      - llama3.1:8b
+      - mistral:7b
+      - qwen2.5:32b
+      - codellama:7b
+      - deepseek-r1:32b
+      - llama3.1:70b
+      - deepseek-r1:70b
+      - nomic-embed-text:v1.5
 
 persistentVolume:
   enabled: true
   storageClass: longhorn
   size: 30Gi
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - rostor-worker-node-0

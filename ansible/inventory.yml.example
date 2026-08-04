@@ -1,0 +1,51 @@
+---
+all:
+  children:
+    k3s_servers:
+      hosts:
+        k3s-master:
+          ansible_host: 10.0.0.10
+          ansible_user: jacob
+      vars:
+        k3s_tls_san:
+          - "k3s.home.lab"
+          - "10.0.0.10"
+        k3s_node_labels:
+          node-role.kubernetes.io/control-plane: "true"
+
+    k3s_workers:
+      hosts:
+        k3s-node1:
+          ansible_host: 10.0.0.11
+          ansible_user: jacob
+        k3s-node2:
+          ansible_host: 10.0.0.12
+          ansible_user: jacob
+      vars:
+        k3s_node_labels:
+          node-role.kubernetes.io/worker: "true"
+
+    k3s_all:
+      children:
+        k3s_servers: {}
+        k3s_workers: {}
+
+  vars:
+    # SSH key to deploy to all nodes
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3... your-key-here"
+    ssh_authorized_users:
+      - jacob
+
+    # /etc/hosts entries
+    hosts_entries:
+      - ip: 10.0.0.10
+        names: k3s-master
+      - ip: 10.0.0.11
+        names: k3s-node1
+      - ip: 10.0.0.12
+        names: k3s-node2
+
+    # k3s agent join (set after first run retrieves the token)
+    k3s_server_url: "https://10.0.0.10:6443"
+    k3s_token: ""  # Fill in after retrieving from master: /var/lib/rancher/k3s/server/node-token

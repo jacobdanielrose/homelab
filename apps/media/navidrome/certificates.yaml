@@ -6,7 +6,7 @@
 # spec:
 #   secretName: navidrome-tls
 #   dnsNames:
-#     - music.rostor.internal
+#     - music.rostor.lab
 #   issuerRef:
 #     name: selfsigned
 #     kind: ClusterIssuer

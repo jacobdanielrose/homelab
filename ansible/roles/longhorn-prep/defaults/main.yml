@@ -1,0 +1,17 @@
+---
+longhorn_data_device: ""
+longhorn_mount_path: "/var/lib/longhorn"
+longhorn_filesystem: "xfs"
+longhorn_auto_detect: false
+longhorn_disk_label: "longhorn"
+longhorn_force_format: false
+longhorn_verify_format: true
+
+longhorn_packages:
+  - iscsi-initiator-utils
+  - nfs-utils
+  - curl
+  - util-linux
+
+longhorn_iscsi_service: iscsid
+longhorn_iscsi_enable: true

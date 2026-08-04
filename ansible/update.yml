@@ -1,0 +1,33 @@
+---
+- name: Update all packages and reboot if needed
+  hosts: all
+  become: true
+  gather_facts: true
+  serial: "{{ serial_count | default('20%') }}"
+  roles:
+    - role: system-upgrade
+      tags: [system, upgrade]
+  post_tasks:
+    - name: Uptime after update
+      ansible.builtin.command:
+        cmd: uptime
+      register: _uptime
+      changed_when: false
+      tags: [system, upgrade]
+
+    - name: Show uptime
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}: {{ _uptime.stdout }}"
+      tags: [system, upgrade]
+
+    - name: Check for pending reboot
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: _reboot
+      tags: [system, upgrade]
+
+    - name: Warn if reboot still pending
+      ansible.builtin.debug:
+        msg: "WARNING: Reboot required on {{ inventory_hostname }}"
+      when: _reboot.stat.exists
+      tags: [system, upgrade]

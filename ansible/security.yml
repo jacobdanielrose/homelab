@@ -1,0 +1,36 @@
+---
+- name: Apply security hardening
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: linux-hardening
+      tags: [security, ssh]
+    - role: fail2ban
+      tags: [security, fail2ban]
+    - role: firewalld
+      tags: [security, firewalld]
+  post_tasks:
+    - name: Show firewalld status
+      ansible.builtin.command:
+        cmd: firewall-cmd --list-all
+      register: _firewalld_status
+      changed_when: false
+      tags: [security, firewalld]
+
+    - name: Print firewalld status
+      ansible.builtin.debug:
+        var: _firewalld_status.stdout_lines
+      tags: [security, firewalld]
+
+    - name: Show fail2ban status
+      ansible.builtin.command:
+        cmd: fail2ban-client status
+      register: _f2b_status
+      changed_when: false
+      tags: [security, fail2ban]
+
+    - name: Print fail2ban status
+      ansible.builtin.debug:
+        var: _f2b_status.stdout_lines
+      tags: [security, fail2ban]

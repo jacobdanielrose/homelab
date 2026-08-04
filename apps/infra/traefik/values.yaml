@@ -51,7 +51,7 @@ api:
 ingressRoute:
   dashboard:
     enabled: true
-    matchRule: Host(`traefik.rostor.internal`)
+    matchRule: Host(`traefik.rostor.lab`)
     entryPoints:
       - websecure
     tls:

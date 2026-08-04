@@ -3,7 +3,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: bazarr.rostor.internal
+      - host: bazarr.rostor.lab
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - bazarr.rostor.internal
+          - bazarr.rostor.lab
         secretName: bazarr-tls
 
 controllers:

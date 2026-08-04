@@ -1,0 +1,96 @@
+---
+- name: Ensure OpenSSH server is installed
+  ansible.builtin.package:
+    name: openssh-server
+    state: present
+
+- name: Ensure OpenSSH server is running and enabled
+  ansible.builtin.service:
+    name: sshd
+    state: started
+    enabled: true
+
+- name: Create .ssh directory for users
+  ansible.builtin.file:
+    path: "/home/{{ item }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ item }}"
+    group: "{{ item }}"
+  loop: "{{ ssh_authorized_users }}"
+  when: ssh_authorized_users | length > 0
+
+- name: Deploy authorized SSH keys
+  ansible.posix.authorized_key:
+    user: "{{ item.1 }}"
+    key: "{{ item.0.key | default(item.0) }}"
+    comment: "{{ item.0.comment | default(ssh_key_comment) }}"
+    state: "{{ item.0.state | default('present') }}"
+  loop: "{{ ssh_authorized_keys | product(ssh_authorized_users) | list }}"
+  when: ssh_authorized_keys | length > 0 and ssh_authorized_users | length > 0
+  loop_control:
+    label: "{{ item.1 }} <- {{ item.0.key | default(item.0) | truncate(50) }}"
+
+- name: Configure sshd_config
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^{{ item.param }}\\s+"
+    line: "{{ item.param }} {{ item.value }}"
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  loop:
+    - { param: "Port", value: "{{ ssh_port }}" }
+    - { param: "PermitRootLogin", value: "{{ ssh_permit_root_login }}" }
+    - { param: "PasswordAuthentication", value: "{{ ssh_password_authentication }}" }
+    - { param: "PubkeyAuthentication", value: "{{ ssh_pubkey_authentication }}" }
+    - { param: "ChallengeResponseAuthentication", value: "{{ ssh_challenge_response_authentication }}" }
+    - { param: "AuthenticationMethods", value: "{{ ssh_authentication_methods }}" }
+    - { param: "ClientAliveInterval", value: "{{ ssh_client_alive_interval }}" }
+    - { param: "ClientAliveCountMax", value: "{{ ssh_client_alive_count_max }}" }
+    - { param: "MaxAuthTries", value: "{{ ssh_max_auth_tries }}" }
+    - { param: "MaxSessions", value: "{{ ssh_max_sessions }}" }
+    - { param: "MaxStartups", value: "{{ ssh_max_startups }}" }
+    - { param: "UsePAM", value: "{{ ssh_use_pam }}" }
+    - { param: "PrintMotd", value: "{{ ssh_print_motd }}" }
+    - { param: "PrintLastLog", value: "{{ ssh_print_last_log }}" }
+    - { param: "LogLevel", value: "{{ ssh_log_level }}" }
+    - { param: "KexAlgorithms", value: "{{ ssh_kex_algorithms }}" }
+    - { param: "Ciphers", value: "{{ ssh_ciphers }}" }
+    - { param: "MACs", value: "{{ ssh_macs }}" }
+    - { param: "HostKeyAlgorithms", value: "{{ ssh_host_key_algorithms }}" }
+  notify: Restart sshd
+
+- name: Set AllowUsers in sshd_config if defined
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowUsers\\s+"
+    line: "AllowUsers {{ ssh_allow_users }}"
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  when: ssh_allow_users | length > 0
+  notify: Restart sshd
+
+- name: Set AllowGroups in sshd_config if defined
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AllowGroups\\s+"
+    line: "AllowGroups {{ ssh_allow_groups }}"
+    state: present
+    validate: /usr/sbin/sshd -T -f %s
+  when: ssh_allow_groups | length > 0
+  notify: Restart sshd
+
+- name: Disable sshd_config options that should not be set
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^{{ item }}\\s+"
+    state: absent
+  loop:
+    - PermitRootLogin
+    - PasswordAuthentication
+    - ChallengeResponseAuthentication
+    - UsePAM
+  when: false  # Handled by the main configuration loop above
+  # This task exists only to ensure clean state - the main config loop
+  # handles all parameters. We keep this as a reference for any params
+  # that should be explicitly absent rather than configured.

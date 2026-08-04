@@ -1,16 +1,19 @@
 # Homelab
 
-GitOps-managed Kubernetes homelab powered by [ArgoCD](https://argo-cd.readthedocs.io/).
+GitOps-managed Kubernetes homelab powered by [ArgoCD](https://argo-cd.readthedocs.io/), provisioned with [Ansible](https://docs.ansible.com/).
 
 ## Quick Start
 
-### Prerequisites
+### From bare metal
 
-- A Kubernetes cluster (K3s, Kind, or any K8s distro)
-- `kubectl` configured with cluster access
-- `argocd` CLI (optional, for debugging)
+```bash
+# One-command bootstrap: prepare nodes, install k3s, deploy ArgoCD
+ansible-playbook ansible/install-all.yml
+```
 
-### Bootstrap
+See [ansible/README.md](ansible/README.md) for full details on playbooks, roles, and ordering.
+
+### From an existing cluster
 
 ```bash
 # 1. Install ArgoCD
@@ -31,7 +34,7 @@ That's it. The root app watches the `argocd/` directory, which deploys three cat
 
 ### Access Services
 
-All services are exposed at `{name}.rostor.internal` via Traefik. Add `*.rostor.internal` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
+All services are exposed at `{name}.rostor.lab` via Traefik. Add `*.rostor.lab` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
 
 ## Repository Layout
 
@@ -56,24 +59,24 @@ scripts/                         # Utility scripts (config backups, etc.)
 | | cert-manager | — | ✅ |
 | | sealed-secrets | — | ✅ |
 | | MetalLB | — | ✅ |
-| | AdGuard Home | adguard.rostor.internal | ✅ |
-| | Authentik | authentik.rostor.internal | ✅ |
-| **Media** | Jellyfin | jellyfin.rostor.internal | ✅ |
-| | Immich | immich.rostor.internal | ✅ |
-| | Audiobookshelf | audiobookshelf.rostor.internal | ✅ |
-| | Navidrome | navidrome.rostor.internal | ✅ |
-| | Komga | komga.rostor.internal | ✅ |
-| | Sonarr | sonarr.rostor.internal | ✅ |
-| | Radarr | radarr.rostor.internal | ✅ |
-| | Lidarr | lidarr.rostor.internal | ✅ |
-| | Readarr | readarr.rostor.internal | ✅ |
-| | Bazarr | bazarr.rostor.internal | ✅ |
-| | Prowlarr | prowlarr.rostor.internal | ✅ |
+| | Technitium DNS | technitium.rostor.lab | ✅ |
+| | Authentik | authentik.rostor.lab | ✅ |
+| **Media** | Jellyfin | jellyfin.rostor.lab | ✅ |
+| | Immich | immich.rostor.lab | ✅ |
+| | Audiobookshelf | audiobookshelf.rostor.lab | ✅ |
+| | Navidrome | navidrome.rostor.lab | ✅ |
+| | Komga | komga.rostor.lab | ✅ |
+| | Sonarr | sonarr.rostor.lab | ✅ |
+| | Radarr | radarr.rostor.lab | ✅ |
+| | Lidarr | lidarr.rostor.lab | ✅ |
+| | Readarr | readarr.rostor.lab | ✅ |
+| | Bazarr | bazarr.rostor.lab | ✅ |
+| | Prowlarr | prowlarr.rostor.lab | ✅ |
 | | Gluetun (VPN) | — | ✅ |
-| **Productivity** | Nextcloud | nextcloud.rostor.internal | ✅ |
-| | Wiki.js | wikijs.rostor.internal | ✅ |
+| **Productivity** | Nextcloud | nextcloud.rostor.lab | ✅ |
+| | Wiki.js | wikijs.rostor.lab | ✅ |
 | | Ollama | — | ✅ |
-| | Open WebUI | ai.rostor.internal | ✅ |
+| | Open WebUI | ai.rostor.lab | ✅ |
 
 ## Storage
 

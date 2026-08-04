@@ -1,0 +1,44 @@
+# {{ ansible_managed }}
+
+# NTP servers
+{% for server in ntp_servers %}
+server {{ server }}
+{% endfor %}
+
+# Drift file
+driftfile {{ ntp_driftfile }}
+
+# Make step
+makestep {{ ntp_makestep }}
+
+{% if ntp_rtcsync %}
+# Synchronize hardware clock
+rtcsync
+{% endif %}
+
+{% if ntp_allow_clients | length > 0 %}
+# Allow NTP client access
+{% for client in ntp_allow_clients %}
+allow {{ client }}
+{% endfor %}
+{% endif %}
+
+{% if ntp_bind_address %}
+# Bind address
+bindaddress {{ ntp_bind_address }}
+{% endif %}
+
+# Logging
+logdir {{ ntp_log_dir }}
+{% if ntp_log_tracking %}
+log tracking
+{% endif %}
+{% if ntp_log_measurements %}
+log measurements
+{% endif %}
+{% if ntp_log_statistics %}
+log statistics
+{% endif %}
+
+# Keys (default)
+keyfile /etc/chrony/chrony.keys

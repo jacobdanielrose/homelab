@@ -1,0 +1,142 @@
+---
+- name: Collect cluster info
+  hosts: k3s_servers
+  become: true
+  gather_facts: true
+  run_once: true
+  tasks:
+    - name: Get k3s token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: _k3s_token
+      ignore_errors: true
+
+    - name: Get k3s node status
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get nodes -o wide
+      register: _k3s_nodes
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get namespaces
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get namespaces
+      register: _k3s_ns
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get ArgoCD initial admin password
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath='{.data.password}' 2>/dev/null
+      register: _argocd_password
+      changed_when: false
+      failed_when: false
+      ignore_errors: true
+
+    - name: Get ArgoCD applications
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get applications -n argocd -o wide 2>/dev/null
+      register: _argocd_apps
+      changed_when: false
+      failed_when: false
+      ignore_errors: true
+
+    - name: Get ArgoCD server URL
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get svc argocd-server -n argocd -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null
+      register: _argocd_svc
+      changed_when: false
+      failed_when: false
+      ignore_errors: true
+
+    - name: Get storage classes
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get sc
+      register: _storage_classes
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get persistent volumes
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get pv -o wide
+      register: _pv_list
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get system pods
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get pods -A -o wide --field-selector spec.nodeName={{ inventory_hostname }} 2>/dev/null
+      register: _system_pods
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get Longhorn volumes
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get volumes -n longhorn-system -o wide 2>/dev/null
+      register: _longhorn_volumes
+      changed_when: false
+      failed_when: false
+      ignore_errors: true
+
+    - name: Get cert-manager certificate status
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s kubectl get certificates -A -o wide 2>/dev/null
+      register: _certificates
+      changed_when: false
+      failed_when: false
+      ignore_errors: true
+
+    - name: Decode ArgoCD password
+      ansible.builtin.set_fact:
+        argocd_password: "{{ _argocd_password.stdout | b64decode }}"
+      when: _argocd_password.rc is defined and _argocd_password.rc == 0 and _argocd_password.stdout | length > 0
+      ignore_errors: true
+
+    - name: Print cluster summary
+      ansible.builtin.debug:
+        msg:
+          - ""
+          - "=============================================="
+          - "         CLUSTER SUMMARY"
+          - "=============================================="
+          - ""
+          - "🔑 K3S TOKEN"
+          - "   Location: /var/lib/rancher/k3s/server/node-token"
+          - "   Token: {{ _k3s_token.content | b64decode if _k3s_token.content is defined else 'k3s not installed' }}"
+          - ""
+          - "📋 KUBECONFIG"
+          - "   Run: ansible-playbook kubeconfig.yml"
+          - "   Or on master: cat /etc/rancher/k3s/k3s.yaml"
+          - ""
+          - "🌐 NODES"
+          - "{% if _k3s_nodes.stdout_lines is defined %}{% for line in _k3s_nodes.stdout_lines %}
+          {{ line }}{% endfor %}{% endif %}"
+          - ""
+          - "📦 NAMESPACES"
+          - "{% if _k3s_ns.stdout_lines is defined %}{% for line in _k3s_ns.stdout_lines %}
+          {{ line }}{% endfor %}{% endif %}"
+          - ""
+          - "🔄 ARGOCD"
+          - "   URL: https://{{ _argocd_svc.stdout | default('argocd.rostor.lab') }}"
+          - "   Admin: admin"
+          - "   Password: {{ argocd_password | default('kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath=\"{.data.password}\" | base64 -d') }}"
+          - "{% if _argocd_apps.stdout_lines is defined %}{% for line in _argocd_apps.stdout_lines %}
+          {{ line }}{% endfor %}{% endif %}"
+          - ""
+          - "💾 STORAGE"
+          - "{% if _storage_classes.stdout_lines is defined %}{% for line in _storage_classes.stdout_lines %}
+          {{ line }}{% endfor %}{% endif %}"
+          - ""
+          - "📀 PVs"
+          - "{% if _pv_list.stdout_lines is defined %}{% for line in _pv_list.stdout_lines %}
+          {{ line }}{% endfor %}{% endif %}"
+          - ""
+          - "🦬 LONGHORN VOLUMES"
+          - "{% if _longhorn_volumes.rc is defined and _longhorn_volumes.rc == 0 and _longhorn_volumes.stdout_lines is defined %}{% for line in _longhorn_volumes.stdout_lines %}
+          {{ line }}{% endfor %}{% else %}   (longhorn not installed yet or no volumes){% endif %}"
+          - ""
+          - "🔐 CERTIFICATES"
+          - "{% if _certificates.rc is defined and _certificates.rc == 0 and _certificates.stdout_lines is defined %}{% for line in _certificates.stdout_lines %}
+          {{ line }}{% endfor %}{% else %}   (cert-manager not installed yet or no certificates){% endif %}"
+          - ""
+          - "=============================================="

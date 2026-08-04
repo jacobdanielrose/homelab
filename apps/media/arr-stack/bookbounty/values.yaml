@@ -3,7 +3,7 @@ ingress:
     enabled: true
     className: traefik
     hosts:
-      - host: bookbounty.rostor.internal
+      - host: bookbounty.rostor.lab
         paths:
           - path: /
             pathType: Prefix
@@ -11,7 +11,7 @@ ingress:
       cert-manager.io/cluster-issuer: selfsigned
     tls:
       - hosts:
-          - bookbounty.rostor.internal
+          - bookbounty.rostor.lab
         secretName: bookbounty-tls
 
 controllers:

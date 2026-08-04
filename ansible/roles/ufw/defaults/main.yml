@@ -1,0 +1,19 @@
+---
+ufw_enabled: true
+ufw_default_deny_incoming: true
+ufw_default_allow_outgoing: true
+ufw_logging: "low"
+
+ufw_rules:
+  - { port: "22", proto: "tcp", rule: "allow", direction: "in", comment: "SSH" }
+  - { port: "6443", proto: "tcp", rule: "allow", direction: "in", comment: "k3s API server" }
+  - { port: "8472", proto: "udp", rule: "allow", direction: "in", comment: "Flannel VXLAN" }
+  - { port: "51820", proto: "udp", rule: "allow", direction: "in", comment: "Flannel WireGuard" }
+  - { port: "51821", proto: "udp", rule: "allow", direction: "in", comment: "Flannel WireGuard" }
+  - { port: "10250", proto: "tcp", rule: "allow", direction: "in", comment: "kubelet" }
+  - { port: "10256", proto: "tcp", rule: "allow", direction: "in", comment: "kube-proxy" }
+  - { port: "9090", proto: "tcp", rule: "allow", direction: "in", comment: "Cockpit" }
+  - { port: "9100", proto: "tcp", rule: "allow", direction: "in", comment: "node_exporter" }
+
+ufw_extra_rules: []
+ufw_manage_docker: false

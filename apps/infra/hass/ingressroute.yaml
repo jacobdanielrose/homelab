@@ -16,7 +16,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`ha.rostor.internal`)
+      match: Host(`ha.rostor.lab`)
       services:
         - kind: Service
           name: ha

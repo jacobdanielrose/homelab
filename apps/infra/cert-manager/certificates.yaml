@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: traefik-tls
   dnsNames:
-    - traefik.rostor.internal
+    - traefik.rostor.lab
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

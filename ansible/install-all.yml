@@ -1,0 +1,99 @@
+---
+- name: Apply base system roles to all nodes
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - role: common-tools
+      tags: [common, tools]
+    - role: hosts
+      tags: [common, hosts]
+    - role: ntp
+      tags: [common, ntp]
+    - role: sysctl-tuning
+      tags: [common, sysctl]
+    - role: linux-hardening
+      tags: [security, ssh]
+    - role: fail2ban
+      tags: [security, fail2ban]
+    - role: firewalld
+      tags: [security, firewalld]
+    - role: system-upgrade
+      tags: [system, upgrade]
+    - role: node-exporter
+      tags: [monitoring, node-exporter]
+
+- name: Install k3s control plane
+  hosts: k3s_servers
+  become: true
+  gather_facts: true
+  roles:
+    - role: k3s-control
+      tags: [k3s, control-plane]
+  post_tasks:
+    - name: Fetch kubeconfig to localhost
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ playbook_dir }}/kubeconfig"
+        flat: true
+      tags: [k3s, control-plane]
+
+    - name: Capture k3s token
+      ansible.builtin.slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: _k3s_token_raw
+      when: lookup('vars', 'k3s_token', default='') | length == 0
+
+    - name: Set k3s token fact
+      ansible.builtin.set_fact:
+        k3s_token: "{{ _k3s_token_raw.content | b64decode | trim }}"
+        cacheable: true
+      when: lookup('vars', 'k3s_token', default='') | length == 0
+
+- name: Join k3s worker nodes
+  hosts: k3s_workers
+  become: true
+  gather_facts: true
+  vars:
+    k3s_token: "{{ hostvars[groups['k3s_servers'][0]]['k3s_token'] }}"
+  roles:
+    - role: k3s-agent
+      tags: [k3s, worker]
+
+- name: Prepare Longhorn storage on workers
+  hosts: k3s_workers
+  become: true
+  gather_facts: true
+  roles:
+    - role: longhorn-prep
+      tags: [storage, longhorn]
+
+- name: Bootstrap ArgoCD on control plane
+  hosts: k3s_servers
+  become: true
+  gather_facts: true
+  roles:
+    - role: k3s-argocd
+      tags: [argocd, gitops]
+  post_tasks:
+    - name: Wait for ArgoCD root app to sync
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} wait --namespace argocd --for=condition=Synced application homelab-root --timeout=300s"
+      register: _argocd_sync
+      changed_when: false
+      retries: 10
+      delay: 15
+      until: _argocd_sync.rc == 0
+      tags: [argocd, gitops]
+
+    - name: Show ArgoCD sync status
+      ansible.builtin.command:
+        cmd: "{{ kubectl_cmd }} get applications --namespace argocd -o wide"
+      register: _argocd_apps
+      changed_when: false
+      tags: [argocd, gitops]
+
+    - name: Print Application status
+      ansible.builtin.debug:
+        var: _argocd_apps.stdout_lines
+      tags: [argocd, gitops]

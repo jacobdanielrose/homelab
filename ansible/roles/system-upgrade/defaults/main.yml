@@ -1,0 +1,14 @@
+---
+sysupgrade_packages: true
+sysupgrade_reboot: true
+sysupgrade_reboot_time: "03:00"
+sysupgrade_remove_unused_dependencies: true
+sysupgrade_autoclean: true
+sysupgrade_unattended: true
+sysupgrade_blacklisted_packages: []
+sysupgrade_update_kernel: false
+sysupgrade_notify_email: ""
+sysupgrade_reboot_window: "now"
+
+sysupgrade_auto_reboot: false
+sysupgrade_unattended_mail_only_on_error: true

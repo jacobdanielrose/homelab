@@ -1,0 +1,135 @@
+---
+- name: Check if k3s kubectl is available
+  ansible.builtin.command:
+    cmd: which kubectl
+  register: _kubectl_path
+  changed_when: false
+  failed_when: false
+
+- name: Set kubectl command fact
+  ansible.builtin.set_fact:
+    kubectl_cmd: "{{ _kubectl_path.stdout | default('/usr/local/bin/kubectl') }}"
+    kubeconfig_path: "{{ argocd_kubeconfig if argocd_kubeconfig | length > 0 else '/etc/rancher/k3s/k3s.yaml' }}"
+
+- name: Check if Helm is installed
+  ansible.builtin.command:
+    cmd: which helm
+  register: _helm_path
+  changed_when: false
+  failed_when: false
+
+- name: Install Helm
+  ansible.builtin.shell:
+    cmd: "curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash"
+  args:
+    creates: /usr/local/bin/helm
+  when: _helm_path.rc != 0
+
+- name: Add ArgoCD Helm repo
+  ansible.builtin.command:
+    cmd: "helm repo add {{ argocd_helm_repo_name }} {{ argocd_helm_repo_url }}"
+  register: _helm_repo_add
+  changed_when: _helm_repo_add.rc == 0
+  failed_when: _helm_repo_add.rc != 0 and 'already exists' not in _helm_repo_add.stderr
+
+- name: Update Helm repos
+  ansible.builtin.command:
+    cmd: helm repo update
+  changed_when: false
+
+- name: Write ArgoCD Helm values file
+  ansible.builtin.copy:
+    content: "{{ argocd_values | to_nice_yaml }}"
+    dest: /tmp/argocd-helm-values.yaml
+    mode: "0600"
+  when: argocd_values | length > 0
+
+- name: Check for existing ArgoCD Helm release
+  ansible.builtin.command:
+    cmd: helm list --namespace {{ argocd_namespace }} --kubeconfig {{ kubeconfig_path }} --failed --short 2>/dev/null
+  register: _helm_failed
+  changed_when: false
+  failed_when: false
+
+- name: Delete failed ArgoCD Helm release
+  ansible.builtin.command:
+    cmd: helm uninstall argocd --namespace {{ argocd_namespace }} --kubeconfig {{ kubeconfig_path }}
+  when: _helm_failed.stdout | length > 0
+
+- name: Install or upgrade ArgoCD via Helm
+  ansible.builtin.command:
+    cmd: >
+      helm upgrade --install argocd {{ argocd_helm_repo_name }}/{{ argocd_helm_chart }}
+      --namespace {{ argocd_namespace }}
+      --create-namespace
+      {{ '--version ' + argocd_chart_version if argocd_chart_version | length > 0 else '' }}
+      {{ '--values /tmp/argocd-helm-values.yaml' if argocd_values | length > 0 else '' }}
+      --kubeconfig {{ kubeconfig_path }}
+      --no-hooks
+      --wait
+      --timeout 5m
+  register: _argocd_install
+  changed_when: '"upgrade complete" in _argocd_install.stderr or "installed" in _argocd_install.stderr'
+
+- name: Wait for ArgoCD server pods to be ready
+  ansible.builtin.command:
+    cmd: >
+      {{ kubectl_cmd }} --kubeconfig {{ kubeconfig_path }} wait --namespace {{ argocd_namespace }}
+      --for=condition=Ready pods --selector app.kubernetes.io/name=argocd-server
+      --timeout=300s
+  register: _argocd_ready
+  retries: 15
+  delay: 10
+  until: _argocd_ready.rc == 0
+  changed_when: false
+
+- name: Get initial admin password
+  ansible.builtin.command:
+    cmd: >
+      {{ kubectl_cmd }} --kubeconfig {{ kubeconfig_path }} get secret argocd-initial-admin-secret
+      --namespace {{ argocd_namespace }} -o jsonpath='{.data.password}' 2>/dev/null
+  register: _argocd_admin_secret
+  changed_when: false
+  failed_when: false
+
+- name: Decode initial admin password
+  ansible.builtin.set_fact:
+    argocd_initial_admin_password: "{{ _argocd_admin_secret.stdout | b64decode }}"
+  when: _argocd_admin_secret.rc == 0 and _argocd_admin_secret.stdout | length > 0
+
+- name: Update admin password to bcrypt hash if set
+  ansible.builtin.command:
+    cmd: >
+      {{ kubectl_cmd }} --kubeconfig {{ kubeconfig_path }} --namespace {{ argocd_namespace }}
+      patch secret argocd-secret
+      -p '{"stringData": {"admin.password": "{{ argocd_admin_password_hash }}", "admin.passwordMtime": "'$(date +%Y-%m-%dT%H:%M:%S%z)'"}}'
+  no_log: true
+  when: argocd_admin_password_hash | length > 0
+  changed_when: true
+
+- name: Build ArgoCD root Application manifest
+  ansible.builtin.command:
+    cmd: "kubectl kustomize {{ argocd_root_app_path }}"
+  register: _argocd_root_manifest
+  changed_when: false
+  delegate_to: localhost
+  run_once: true
+  when: argocd_apply_root_app
+
+- name: Apply ArgoCD root Application
+  ansible.builtin.shell:
+    cmd: "{{ kubectl_cmd }} --kubeconfig {{ kubeconfig_path }} apply --namespace {{ argocd_namespace }} -f -"
+    stdin: "{{ _argocd_root_manifest.stdout }}"
+  register: _argocd_root_apply
+  changed_when: '"created" in _argocd_root_apply.stdout or "configured" in _argocd_root_apply.stdout'
+  when: argocd_apply_root_app
+
+- name: Output ArgoCD access info
+  ansible.builtin.debug:
+    msg:
+      - "ArgoCD installed in namespace {{ argocd_namespace }}"
+      - "Admin password: {{ argocd_initial_admin_password | default('kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath=\"{.data.password}\" | base64 -d') }}"
+      - ""
+      - "Port-forward to access:"
+      - "  kubectl port-forward -n argocd svc/argocd-server 8080:443"
+      - "Then open https://localhost:8080"

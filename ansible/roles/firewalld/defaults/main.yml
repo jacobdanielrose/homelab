@@ -1,0 +1,21 @@
+---
+firewalld_enabled: true
+firewalld_default_zone: "public"
+firewalld_default_target: "default"
+
+firewalld_rules:
+  - { port: "22/tcp", zone: "public", state: "enabled", comment: "SSH" }
+  - { port: "6443/tcp", zone: "public", state: "enabled", comment: "k3s API server" }
+  - { port: "8472/udp", zone: "public", state: "enabled", comment: "Flannel VXLAN" }
+  - { port: "51820/udp", zone: "public", state: "enabled", comment: "Flannel WireGuard" }
+  - { port: "51821/udp", zone: "public", state: "enabled", comment: "Flannel WireGuard" }
+  - { port: "10250/tcp", zone: "public", state: "enabled", comment: "kubelet" }
+  - { port: "10256/tcp", zone: "public", state: "enabled", comment: "kube-proxy" }
+  - { port: "9090/tcp", zone: "public", state: "enabled", comment: "Cockpit" }
+  - { port: "9100/tcp", zone: "public", state: "enabled", comment: "node_exporter" }
+
+firewalld_extra_rules: []
+firewalld_remove_ufw: true
+firewalld_trusted_interfaces:
+  - flannel.1
+  - cni0

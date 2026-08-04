@@ -1,0 +1,101 @@
+---
+- name: Install Longhorn dependencies
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ longhorn_packages }}"
+
+- name: Enable and start iscsid
+  ansible.builtin.service:
+    name: "{{ longhorn_iscsi_service }}"
+    state: started
+    enabled: "{{ longhorn_iscsi_enable }}"
+
+- name: Load iscsi_tcp module
+  ansible.builtin.command:
+    cmd: modprobe iscsi_tcp
+  changed_when: false
+  failed_when: false
+
+- name: Ensure iscsi_tcp module loads on boot
+  ansible.builtin.lineinfile:
+    path: /etc/modules-load.d/iscsi_tcp.conf
+    line: iscsi_tcp
+    create: true
+    mode: "0644"
+
+- name: Fail if no data device set
+  ansible.builtin.fail:
+    msg: "longhorn_data_device is not set. Define it per-host in inventory.yml, e.g. longhorn_data_device: /dev/sdb"
+  when: longhorn_data_device | length == 0
+
+- name: Check if data device exists
+  ansible.builtin.stat:
+    path: "{{ longhorn_data_device }}"
+  register: _data_device_stat
+
+- name: Fail if data device does not exist
+  ansible.builtin.fail:
+    msg: "Device {{ longhorn_data_device }} does not exist."
+  when: not _data_device_stat.stat.exists
+
+- name: Check if data device is already formatted
+  ansible.builtin.command:
+    cmd: "blkid -o value -s TYPE {{ longhorn_data_device }}"
+  register: _existing_fs
+  changed_when: false
+  failed_when: false
+
+- name: Check if data device has partitions
+  ansible.builtin.shell:
+    cmd: "lsblk -o NAME -n -l {{ longhorn_data_device }} | tail -n +2 | wc -l"
+  register: _partition_count
+  changed_when: false
+
+- name: Warn if device has partitions
+  ansible.builtin.debug:
+    msg: >
+      WARNING: {{ longhorn_data_device }} has {{ _partition_count.stdout | trim }} child partitions.
+      Formatting the whole disk will destroy all partition data.
+      Set longhorn_force_format=true to proceed.
+  when: _partition_count.stdout | trim | int > 0
+
+- name: Fail if device has partitions and force is not set
+  ansible.builtin.fail:
+    msg: "{{ longhorn_data_device }} has partitions. Set longhorn_force_format=true to wipe and reformat the entire disk."
+  when: _partition_count.stdout | trim | int > 0 and not longhorn_force_format
+
+- name: Format data device for Longhorn
+  community.general.filesystem:
+    fstype: "{{ longhorn_filesystem }}"
+    dev: "{{ longhorn_data_device }}"
+    label: "{{ longhorn_disk_label }}"
+    force: true
+  when: >
+    _existing_fs.rc != 0 or
+    _existing_fs.stdout | length == 0 or
+    _existing_fs.stdout not in ['ext4', 'ext3', 'ext2', 'xfs', 'btrfs']
+
+- name: Create Longhorn mount directory
+  ansible.builtin.file:
+    path: "{{ longhorn_mount_path }}"
+    state: directory
+    mode: "0755"
+
+- name: Mount data device to Longhorn path
+  ansible.builtin.mount:
+    path: "{{ longhorn_mount_path }}"
+    src: "{{ longhorn_data_device }}"
+    fstype: "{{ longhorn_filesystem }}"
+    opts: "defaults,noatime"
+    state: mounted
+
+- name: Pre-create Longhorn data directories
+  ansible.builtin.file:
+    path: "{{ longhorn_mount_path }}/{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - replicas
+    - snapshots
+    - backing-images

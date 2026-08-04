@@ -6,3 +6,7 @@ scripts/config-backups/
 
 # Private docs (not committed - copy to wiki)
 docs/
+
+# Ansible inventory (contains IPs, SSH keys, tokens)
+ansible/inventory.yml
+ansible/kubeconfig

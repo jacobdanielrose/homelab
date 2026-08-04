@@ -1,0 +1,21 @@
+---
+argocd_namespace: argocd
+argocd_helm_version: "7.x"
+argocd_chart_version: ""
+argocd_install_method: "helm"
+argocd_values: {}
+argocd_values_file: ""
+
+argocd_apply_root_app: true
+argocd_root_app_path: "{{ playbook_dir }}/../argocd"
+argocd_repo_url: ""
+argocd_repo_target_revision: "main"
+
+argocd_admin_password: ""
+argocd_admin_password_hash: ""
+
+argocd_kubeconfig: ""
+
+argocd_helm_repo_name: argo
+argocd_helm_repo_url: "https://argoproj.github.io/argo-helm"
+argocd_helm_chart: "argo-cd"

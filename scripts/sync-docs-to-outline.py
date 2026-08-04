@@ -47,7 +47,7 @@ COLLECTIONS = {
     "Rostor Cloud": {
         "description_file": "services/_index.md",
         "doc_files": [
-            "services/adguard.md",
+            "services/technitium.md",
             "services/authentik.md",
             "services/traefik.md",
             "services/hass.md",
