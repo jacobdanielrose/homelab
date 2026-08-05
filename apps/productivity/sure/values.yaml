@@ -26,7 +26,7 @@ rails:
     AUTH_LOCAL_ADMIN_OVERRIDE_ENABLED: "true"
   extraEnvVars:
     - name: OIDC_CLIENT_ID
-      value: "jT4h7YIhYonHwGsdDZBWRt9mhIKJVF6icvgMy4CI"
+      value: "O5yN8jJNMBNBdOboIE2xUmSl1kNwdg8DxKV5C7Nq"
     - name: OIDC_ISSUER
       value: "https://authentik.rostor.cloud/application/o/sure/"
     - name: OIDC_REDIRECT_URI
