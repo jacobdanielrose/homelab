@@ -3,7 +3,10 @@ argocd_namespace: argocd
 argocd_helm_version: "7.x"
 argocd_chart_version: ""
 argocd_install_method: "helm"
-argocd_values: {}
+argocd_values:
+  configs:
+    params:
+      server.insecure: "true"
 argocd_values_file: ""
 
 argocd_apply_root_app: true
