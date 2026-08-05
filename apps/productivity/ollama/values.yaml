@@ -26,7 +26,7 @@ ollama:
 persistentVolume:
   enabled: true
   storageClass: longhorn
-  size: 30Gi
+  size: 100Gi
 
 affinity:
   nodeAffinity:
