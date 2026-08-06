@@ -65,9 +65,3 @@ persistence:
     existingClaim: media-nfs-pvc
     globalMounts:
       - path: /bookbounty/downloads
-  gunicorn-config:
-    type: configMap
-    name: gunicorn-config
-    globalMounts:
-      - path: /bookbounty/gunicorn_config.py
-        subPath: gunicorn_config.py
