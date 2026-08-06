@@ -38,7 +38,7 @@ rails:
         secretKeyRef:
           name: sure-oidc-secrets
           key: OIDC_CLIENT_SECRET
-    - name: OPENAI_API_KEY
+    - name: OPENAI_ACCESS_TOKEN
       valueFrom:
         secretKeyRef:
           name: ollama-api-key
