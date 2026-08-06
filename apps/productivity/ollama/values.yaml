@@ -44,3 +44,5 @@ extraEnv:
       secretKeyRef:
         name: ollama-api-key
         key: OLLAMA_API_KEY
+  - name: OLLAMA_ORIGINS
+    value: "https://ai.rostor.cloud,https://finance.rostor.cloud,https://ollama.rostor.cloud,app://.*,chrome-extension://*"
