@@ -37,6 +37,11 @@ extraEnvVars:
     value: "Admin"
   - name: BYPASS_MODEL_ACCESS_CONTROL
     value: "True"
+  - name: OLLAMA_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: ollama-api-key
+        key: OLLAMA_API_KEY
 
 sso:
   enabled: true

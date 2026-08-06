@@ -38,6 +38,13 @@ rails:
         secretKeyRef:
           name: sure-oidc-secrets
           key: OIDC_CLIENT_SECRET
+    - name: OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: ollama-api-key
+          key: OLLAMA_API_KEY
+    - name: OPENAI_BASE_URL
+      value: "http://ollama.ollama.svc.cluster.local:11434/v1"
 
 cnpg:
   enabled: true
