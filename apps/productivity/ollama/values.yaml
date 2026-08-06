@@ -37,3 +37,10 @@ affinity:
               operator: In
               values:
                 - rostor-worker-node-0
+
+extraEnv:
+  - name: OLLAMA_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: ollama-api-key
+        key: OLLAMA_API_KEY
