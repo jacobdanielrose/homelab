@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
   - sealed-secrets.yaml
+  - sealed-secrets-ollama.yaml
   - certificates.yaml
   - resources.yaml
