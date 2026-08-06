@@ -43,8 +43,16 @@ rails:
         secretKeyRef:
           name: ollama-api-key
           key: OLLAMA_API_KEY
-    - name: OPENAI_BASE_URL
+    - name: OPENAI_URI_BASE
       value: "http://ollama.ollama.svc.cluster.local:11434/v1"
+    - name: OPENAI_MODEL
+      value: "llama3.1:8b"
+    - name: VECTOR_STORE_PROVIDER
+      value: "pgvector"
+    - name: EMBEDDING_MODEL
+      value: "nomic-embed-text"
+    - name: EMBEDDING_DIMENSIONS
+      value: "1024"
 
 cnpg:
   enabled: true
