@@ -13,6 +13,10 @@ firewalld_rules:
   - { port: "10256/tcp", zone: "public", state: "enabled", comment: "kube-proxy" }
   - { port: "9090/tcp", zone: "public", state: "enabled", comment: "Cockpit" }
   - { port: "9100/tcp", zone: "public", state: "enabled", comment: "node_exporter" }
+  - { port: "53/tcp", zone: "public", state: "enabled", comment: "DNS TCP" }
+  - { port: "53/udp", zone: "public", state: "enabled", comment: "DNS UDP" }
+  - { port: "853/tcp", zone: "public", state: "enabled", comment: "DNS over TLS" }
+  - { port: "8053/tcp", zone: "public", state: "enabled", comment: "DNS admin UI" }
 
 firewalld_extra_rules: []
 firewalld_remove_ufw: true
