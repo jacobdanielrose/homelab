@@ -10,9 +10,9 @@ spec:
     - kind: Rule
       match: Host(`music.rostor.cloud`) && PathPrefix(`/outpost.goauthentik.io`)
       services:
-        - name: ak-outpost-authentik-embedded-outpost
+        - name: authentik-server
           namespace: authentik
-          port: 9000
+          port: 80
     - kind: Rule
       match: Host(`music.rostor.cloud`)
       services:
