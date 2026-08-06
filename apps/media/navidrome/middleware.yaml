@@ -13,7 +13,15 @@ spec:
       - X-Forwarded-Proto
       - X-Real-Ip
     authResponseHeaders:
-      - X-Authentik-Username
-      - X-Authentik-Groups
-      - X-Authentik-Email
-      - X-Authentik-Name
+      - X-authentik-username
+      - X-authentik-groups
+      - X-authentik-entitlements
+      - X-authentik-email
+      - X-authentik-name
+      - X-authentik-uid
+      - X-authentik-jwt
+      - X-authentik-meta-jwks
+      - X-authentik-meta-outpost
+      - X-authentik-meta-provider
+      - X-authentik-meta-app
+      - X-authentik-meta-version
