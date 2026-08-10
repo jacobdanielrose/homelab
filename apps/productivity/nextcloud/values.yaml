@@ -48,6 +48,7 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-upload-buffering@kubernetescrd
   path: /
   pathType: Prefix
   tls:
