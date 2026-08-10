@@ -44,7 +44,6 @@ providers:
 
 additionalArguments:
   - --providers.kubernetescrd.allowCrossNamespace=true
-  - --serversTransport.forwardTimeout=10m
 
 api:
   dashboard: true
