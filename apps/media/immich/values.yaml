@@ -20,6 +20,18 @@ machine-learning:
   ingress:
     main:
       enabled: false
+  controllers:
+    main:
+      pod:
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: kubernetes.io/hostname
+                      operator: In
+                      values:
+                        - rostor-worker-node-0
 
 controllers:
   main:
