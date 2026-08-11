@@ -9,5 +9,6 @@ resources:
   - homarr-app.yaml
   - forgejo-app.yaml
   #- ghost-app.yaml
+  - n8n-app.yaml
   - sure-app.yaml
   #- stalwart-mail-app.yaml
