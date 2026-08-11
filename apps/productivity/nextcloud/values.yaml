@@ -1,0 +1,108 @@
+replicaCount: 1
+
+internalDatabase:
+  enabled: false
+
+livenessProbe:
+  enabled: true
+readinessProbe:
+  enabled: true
+
+nextcloud:
+  host: nextcloud.rostor.cloud
+  existingSecret:
+    secretName: nextcloud-user
+    usernameKey: username
+    passwordKey: password
+  configs:
+    trusted_domains.config.php: |
+      <?php
+      $CONFIG = [
+        'trusted_domains' => [
+          0 => 'localhost',
+          1 => 'nextcloud.rostor.cloud',
+          2 => 'nextcloud',
+          3 => 'nextcloud.nextcloud.svc',
+          4 => '192.168.3.21',
+        ]
+      ];
+    proxy.config.php: |
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' => array('10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'),
+        'allow_local_remote_servers' => true,
+        'overwriteprotocol' => 'https',
+      );
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 5Gi
+  nextcloudData:
+    enabled: true
+    existingClaim: nextcloud-nfs-pvc
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/service.sticky.cookie: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-upload-buffering@kubernetescrd
+  path: /
+  pathType: Prefix
+  tls:
+    - secretName: nextcloud-cloud-tls
+      hosts:
+        - nextcloud.rostor.cloud
+
+postgresql:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: latest
+  auth:
+    username: nextcloud
+    existingSecret: nextcloud-secrets
+    existingSecretPasswordKey: password
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 8Gi
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: nextcloud-postgresql
+  database: nextcloud
+  user: nextcloud
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-secrets
+    passwordKey: password
+
+redis:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: latest
+  auth:
+    enabled: true
+    existingSecret: nextcloud-secrets
+    existingSecretPasswordKey: redis-password
+  configmap: |-
+    aof-load-corrupt-tail-max-size 100000
+  master:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 1Gi
+  replica:
+    replicaCount: 2
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      size: 1Gi
