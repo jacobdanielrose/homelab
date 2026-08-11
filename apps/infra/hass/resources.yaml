@@ -13,6 +13,8 @@ kind: Endpoints
 metadata:
   name: ha
   namespace: hass
+  annotations:
+    argocd.argoproj.io/sync-options: ServerSideApply=false
 subsets:
   - addresses:
       - ip: 192.168.2.154

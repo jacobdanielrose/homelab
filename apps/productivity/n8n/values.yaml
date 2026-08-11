@@ -28,14 +28,6 @@ main:
         schema: public
     generic:
       timezone: Europe/Zurich
-    n8n:
-      auth:
-        oidc:
-          enabled: true
-          issuer: "https://authentik.rostor.lab/application/o/n8n/"
-          scopes: "openid email profile n8n"
-          usernameKey: "preferred_username"
-          clientId: "ZsH4NsF1b8rzzxnFxSdj0Vn7EYopt9imG88QWD7a"
     executions:
       process: main
       saveDataOnError: all
@@ -50,11 +42,6 @@ main:
         secretKeyRef:
           name: n8n-postgres-secret
           key: password
-    - name: N8N_AUTH_OIDC_CLIENT_SECRET
-      valueFrom:
-        secretKeyRef:
-          name: n8n-oidc-secret
-          key: oidc-client-secret
 
   persistence:
     enabled: true

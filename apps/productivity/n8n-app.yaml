@@ -21,6 +21,12 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: n8n
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      name: n8n-postgres
+      jsonPointers:
+        - /spec/volumeClaimTemplates
   syncPolicy:
     automated:
       prune: true
