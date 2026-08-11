@@ -6,7 +6,8 @@ ingress:
   hosts:
     - host: n8n.rostor.lab
       paths:
-        - /
+        - path: /
+          pathType: Prefix
   tls:
     - hosts:
         - n8n.rostor.lab
