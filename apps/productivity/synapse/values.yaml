@@ -64,10 +64,31 @@ matrixAuthenticationService:
   enabled: true
   ingress:
     host: mas.element.rostor.cloud
+  extraVolumes:
+    - name: oidc-secret
+      secret:
+        secretName: mas-oidc-secret
+  extraVolumeMounts:
+    - name: oidc-secret
+      mountPath: /secrets/mas-oidc-secret
+      readOnly: true
   additional:
     0-authentik:
-      configSecret: mas-oidc-config
-      configSecretKey: config.yaml
+      config: |
+        upstream_oauth2:
+          providers:
+            - id: authentik
+              issuer: "https://authentik.rostor.cloud/application/o/matrix/"
+              client_id: "<YOUR_CLIENT_ID>"
+              client_secret_file: /secrets/mas-oidc-secret/client_secret
+              scopes:
+                - "openid"
+                - "profile"
+                - "email"
+              claims_imports:
+                subject:
+                  action: require
+                  template: "{{ .sub }}"
 
 hookshot:
   enabled: false
