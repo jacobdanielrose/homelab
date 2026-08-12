@@ -11,4 +11,5 @@ resources:
   #- ghost-app.yaml
   - n8n-app.yaml
   - sure-app.yaml
+  - synapse-app.yaml
   #- stalwart-mail-app.yaml
