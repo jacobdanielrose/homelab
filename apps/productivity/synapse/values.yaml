@@ -39,8 +39,6 @@ elementWeb:
 
 wellKnownDelegation:
   enabled: true
-  ingress:
-    host: rostor.cloud
 
 postgres:
   enabled: true
