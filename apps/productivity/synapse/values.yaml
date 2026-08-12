@@ -108,4 +108,4 @@ elementAdmin:
   enabled: false
 
 haproxy:
-  replicas: 0
+  replicas: 1
