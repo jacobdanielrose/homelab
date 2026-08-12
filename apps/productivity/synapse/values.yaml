@@ -1,7 +1,7 @@
 serverName: rostor.cloud
 
 certManager:
-  clusterIssuer: letsencrypt-staging
+  clusterIssuer: letsencrypt-prod
 
 ingress:
   className: traefik
