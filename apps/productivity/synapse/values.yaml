@@ -38,7 +38,7 @@ elementWeb:
     host: element.rostor.cloud
 
 wellKnownDelegation:
-  enabled: false
+  enabled: true
 
 postgres:
   enabled: true
@@ -105,6 +105,12 @@ matrixRTC:
   enabled: true
   ingress:
     host: mrtc.element.rostor.cloud
+  sfu:
+    exposedServices:
+      rtcTcp:
+        portType: LoadBalancer
+      rtcMuxedUdp:
+        portType: LoadBalancer
 
 elementAdmin:
   enabled: true
