@@ -77,18 +77,23 @@ matrixAuthenticationService:
       config: |
         upstream_oauth2:
           providers:
-            - id: authentik
-              issuer: "https://authentik.rostor.cloud/application/o/matrix/"
-              client_id: "<YOUR_CLIENT_ID>"
+            - id: 01HFRQFT5QFMJFGF01P7JAV2ME
+              human_name: Authentik
+              issuer: "https://authentik.rostor.cloud/application/o/element/"
+              client_id: "f7GUxUBYNDhb49dosT3WRLeavsKviyDz3A6BhFJ3"
               client_secret_file: /secrets/mas-oidc-secret/client_secret
-              scopes:
-                - "openid"
-                - "profile"
-                - "email"
+              token_endpoint_auth_method: client_secret_basic
+              scope: "openid profile email"
               claims_imports:
-                subject:
+                localpart:
                   action: require
-                  template: "{{ .sub }}"
+                  template: "{{ user.preferred_username }}"
+                displayname:
+                  action: suggest
+                  template: "{{ user.name }}"
+                email:
+                  action: suggest
+                  template: "{{ user.email }}"
 
 hookshot:
   enabled: false
