@@ -13,6 +13,9 @@ storage:
 
 affinity: {}
 
+networking:
+  ipFamily: ipv4
+
 synapse:
   enabled: true
   ingress:
