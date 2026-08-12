@@ -62,6 +62,8 @@ redis:
 
 matrixAuthenticationService:
   enabled: true
+  ingress:
+    host: mas.element.rostor.cloud
   additional:
     0-authentik:
       configSecret: mas-oidc-config
