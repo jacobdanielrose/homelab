@@ -57,6 +57,13 @@ gateway:
           - loki.rostor.lab
         secretName: loki-tls
 
+# Enable ServiceMonitor for Prometheus Operator
+serviceMonitor:
+  enabled: true
+  labels:
+    release: prometheus
+  interval: 15s
+
 read:
   replicas: 1
   persistence:

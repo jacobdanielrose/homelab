@@ -5,3 +5,4 @@ resources:
   - resources.yaml
   - sealed-secrets.yaml
   - certificates.yaml
+  - servicemonitor.yaml

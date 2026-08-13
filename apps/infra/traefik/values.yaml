@@ -72,4 +72,4 @@ metrics:
     service:
       enabled: true
       labels:
-        app.kubernetes.io/instance: traefik
+        app.kubernetes.io/instance: traefik-traefik
