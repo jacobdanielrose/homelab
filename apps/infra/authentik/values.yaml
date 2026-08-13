@@ -34,10 +34,12 @@ server:
         hosts:
           - authentik.rostor.cloud
   metrics:
+    enabled: true
     serviceMonitor:
       enabled: true
       interval: 30s
-      scrapeTimeout: 10s
+      labels:
+        release: prometheus
 
 postgresql:
   enabled: true
