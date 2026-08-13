@@ -42,6 +42,7 @@ COLLECTIONS = {
             "security.md",
             "monitoring.md",
             "scripts.md",
+            "resource-limits.md",
         ],
     },
     "Rostor Cloud": {
@@ -51,16 +52,21 @@ COLLECTIONS = {
             "services/authentik.md",
             "services/traefik.md",
             "services/hass.md",
+            "services/argocd.md",
+            "services/longhorn.md",
+            "services/grafana.md",
+            "services/rustfs.md",
         ],
         "groups": {
-            "🎬 Media & Entertainment": [
+            "Media & Entertainment": [
                 "services/jellyfin.md",
                 "services/immich.md",
                 "services/audiobookshelf.md",
                 "services/navidrome.md",
                 "services/komga.md",
+                "services/seerr.md",
             ],
-            "📦 Arr-stack": [
+            "Arr-stack": [
                 "services/sonarr.md",
                 "services/radarr.md",
                 "services/lidarr.md",
@@ -68,12 +74,19 @@ COLLECTIONS = {
                 "services/prowlarr.md",
                 "services/bazarr.md",
                 "services/qbittorrent.md",
+                "services/bookbounty.md",
             ],
-            "📋 Productivity": [
+            "Productivity": [
                 "services/nextcloud.md",
                 "services/outline.md",
                 "services/homarr.md",
                 "services/sure.md",
+                "services/ollama.md",
+                "services/open-webui.md",
+                "services/forgejo.md",
+                "services/n8n.md",
+                "services/synapse.md",
+                "services/searxng.md",
             ],
         },
     },

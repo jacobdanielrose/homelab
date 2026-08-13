@@ -34,7 +34,7 @@ That's it. The root app watches the `argocd/` directory, which deploys three cat
 
 ### Access Services
 
-All services are exposed at `{name}.rostor.lab` via Traefik. Add `*.rostor.lab` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
+All services are exposed at `{name}.example.lab` (internal) or `{name}.example.cloud` (external via Cloudflare) via Traefik. Add `*.example.lab` to your DNS (Pi-hole, router, or `/etc/hosts` pointing to your cluster's ingress IP).
 
 ## Repository Layout
 
@@ -45,9 +45,9 @@ argocd/                          # Root app watches here
   media.yaml                     # Deploys apps/media/
   productivity.yaml              # Deploys apps/productivity/
 apps/
-  infra/                         # Infrastructure: Traefik, cert-manager, etc.
+  infra/                         # Infrastructure: Traefik, cert-manager, Technitium, etc.
   media/                         # Media: Jellyfin, Immich, *arr stack, etc.
-  productivity/                  # Productivity: Nextcloud, Ollama, etc.
+  productivity/                  # Productivity: Nextcloud, Forgejo, n8n, Synapse, etc.
 scripts/                         # Utility scripts (config backups, etc.)
 ```
 
@@ -55,28 +55,43 @@ scripts/                         # Utility scripts (config backups, etc.)
 
 | Category | Service | Hostname | Status |
 |---|---|---|---|
-| **Infra** | Traefik (ingress) | — | ✅ |
-| | cert-manager | — | ✅ |
-| | sealed-secrets | — | ✅ |
-| | MetalLB | — | ✅ |
-| | Technitium DNS | technitium.rostor.lab | ✅ |
-| | Authentik | authentik.rostor.lab | ✅ |
-| **Media** | Jellyfin | jellyfin.rostor.lab | ✅ |
-| | Immich | immich.rostor.lab | ✅ |
-| | Audiobookshelf | audiobookshelf.rostor.lab | ✅ |
-| | Navidrome | navidrome.rostor.lab | ✅ |
-| | Komga | komga.rostor.lab | ✅ |
-| | Sonarr | sonarr.rostor.lab | ✅ |
-| | Radarr | radarr.rostor.lab | ✅ |
-| | Lidarr | lidarr.rostor.lab | ✅ |
-| | Readarr | readarr.rostor.lab | ✅ |
-| | Bazarr | bazarr.rostor.lab | ✅ |
-| | Prowlarr | prowlarr.rostor.lab | ✅ |
-| | Gluetun (VPN) | — | ✅ |
-| **Productivity** | Nextcloud | nextcloud.rostor.lab | ✅ |
-| | Wiki.js | wikijs.rostor.lab | ✅ |
-| | Ollama | — | ✅ |
-| | Open WebUI | ai.rostor.lab | ✅ |
+| **Infra** | Traefik (ingress) | — | :white_check_mark: |
+| | cert-manager | — | :white_check_mark: |
+| | sealed-secrets | — | :white_check_mark: |
+| | MetalLB | — | :white_check_mark: |
+| | Technitium DNS | technitium.example.lab | :white_check_mark: |
+| | Authentik | authentik.example.cloud | :white_check_mark: |
+| | Prometheus | — | :white_check_mark: |
+| | Loki | — | :white_check_mark: |
+| | Grafana | grafana.example.internal | :white_check_mark: |
+| | Longhorn | storage.example.internal | :white_check_mark: |
+| | RustFS (S3) | — | :white_check_mark: |
+| | Home Assistant | ha.example.cloud | :white_check_mark: |
+| | ArgoCD | argocd.example.internal | :white_check_mark: |
+| **Media** | Jellyfin | jellyfin.example.cloud | :white_check_mark: |
+| | Immich | photos.example.cloud | :white_check_mark: |
+| | Audiobookshelf | audiobooks.example.cloud | :white_check_mark: |
+| | Navidrome | music.example.cloud | :white_check_mark: |
+| | Komga | books.example.cloud | :white_check_mark: |
+| | Seerr | seerr.example.cloud | :white_check_mark: |
+| | Sonarr | sonarr.example.lab | :white_check_mark: |
+| | Radarr | radarr.example.lab | :white_check_mark: |
+| | Lidarr | lidarr.example.lab | :white_check_mark: |
+| | Readarr | readarr.example.lab | :white_check_mark: |
+| | Bazarr | bazarr.example.lab | :white_check_mark: |
+| | Prowlarr | prowlarr.example.lab | :white_check_mark: |
+| | Gluetun (VPN) | — | :white_check_mark: |
+| | BookBounty | bookbounty.example.lab | :white_check_mark: |
+| **Productivity** | Nextcloud | nextcloud.example.cloud | :white_check_mark: |
+| | Ollama | ollama.example.cloud | :white_check_mark: |
+| | Open WebUI | ai.example.cloud | :white_check_mark: |
+| | Outline wiki | wiki.example.cloud | :white_check_mark: |
+| | Homarr dashboard | homarr.example.cloud | :white_check_mark: |
+| | Sure (finance) | finance.example.cloud | :white_check_mark: |
+| | Forgejo (Git) | git.example.cloud | :white_check_mark: |
+| | n8n automation | n8n.example.lab | :white_check_mark: |
+| | Synapse (Matrix) | element.example.cloud | :white_check_mark: |
+| | SearXNG search | search.example.cloud | :white_check_mark: |
 
 ## Storage
 
