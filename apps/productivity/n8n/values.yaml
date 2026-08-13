@@ -46,6 +46,28 @@ main:
         secretKeyRef:
           name: n8n-postgres-secret
           key: password
+    - name: N8N_ENABLED_MODULES
+      value: "instance-ai,agents"
+    - name: N8N_INSTANCE_AI_SANDBOX_ENABLED
+      value: "true"
+    - name: N8N_INSTANCE_AI_SANDBOX_PROVIDER
+      value: "daytona"
+    - name: DAYTONA_API_URL
+      value: "https://app.daytona.io/api"
+    - name: DAYTONA_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: n8n-daytona-secret
+          key: DAYTONA_API_KEY
+    - name: N8N_INSTANCE_AI_MODEL
+      value: "ollama/llama3.1:8b"
+    - name: N8N_INSTANCE_AI_MODEL_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: n8n-ollama-secret
+          key: OLLAMA_API_KEY
+    - name: N8N_INSTANCE_AI_OLLAMA_BASE_URL
+      value: "http://ollama.ollama.svc.cluster.local:11434"
 
   persistence:
     enabled: true
