@@ -15,3 +15,4 @@ resources:
   - longhorn-app.yaml
   - metallb-app.yaml
   - hass-app.yaml
+  - promtail-app.yaml
