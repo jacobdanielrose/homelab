@@ -1,0 +1,55 @@
+searxng:
+  baseUrl: "https://search.rostor.cloud"
+  settings:
+    use_default_settings: true
+    general:
+      instance_name: "rostor.cloud"
+      debug: false
+      enable_metrics: false
+    server:
+      port: 8080
+      limiter: false
+      public_instance: false
+      image_proxy: true
+      method: "POST"
+    search:
+      safe_search: 0
+      autocomplete: ""
+      default_lang: "auto"
+      formats:
+        - html
+        - json
+    outgoing:
+      request_timeout: 3.0
+      max_request_timeout: 10.0
+      pool_connections: 100
+      pool_maxsize: 20
+      enable_http2: true
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+  hosts:
+    - host: search.rostor.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: searxng-tls
+      hosts:
+        - search.rostor.cloud
+
+networkPolicy:
+  enabled: true
+  ingress:
+    allowSameNamespace: true
+    fromNamespaces:
+      - traefik
+
+valkey:
+  enabled: true
+  architecture: standalone
+  persistence:
+    enabled: false

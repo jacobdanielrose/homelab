@@ -68,6 +68,8 @@ main:
           key: OLLAMA_API_KEY
     - name: N8N_INSTANCE_AI_OLLAMA_BASE_URL
       value: "http://ollama.ollama.svc.cluster.local:11434"
+    - name: N8N_INSTANCE_AI_SEARXNG_URL
+      value: "http://searxng.searxng.svc.cluster.local:8080"
 
   persistence:
     enabled: true

@@ -12,4 +12,5 @@ resources:
   - n8n-app.yaml
   - sure-app.yaml
   - synapse-app.yaml
+  - searxng-app.yaml
   #- stalwart-mail-app.yaml

@@ -42,6 +42,8 @@ extraEnvVars:
       secretKeyRef:
         name: ollama-api-key
         key: OLLAMA_API_KEY
+  - name: WEBUI_SEARXNG_BASE_URL
+    value: "http://searxng.searxng.svc.cluster.local:8080"
 
 sso:
   enabled: true
