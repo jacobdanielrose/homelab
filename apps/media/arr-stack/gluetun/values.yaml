@@ -91,4 +91,4 @@ persistence:
     type: persistentVolumeClaim
     existingClaim: media-nfs-pvc
     globalMounts:
-      - path: /downloads
+      - path: /data
