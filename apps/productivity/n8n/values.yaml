@@ -61,13 +61,13 @@ main:
           key: DAYTONA_API_KEY
     - name: N8N_INSTANCE_AI_MODEL
       value: "custom/llama3.1:8b"
+    - name: N8N_INSTANCE_AI_MODEL_URL
+      value: "http://ollama.ollama.svc.cluster.local:11434/v1"
     - name: N8N_INSTANCE_AI_MODEL_API_KEY
       valueFrom:
         secretKeyRef:
           name: n8n-ollama-secret
           key: OLLAMA_API_KEY
-    - name: N8N_INSTANCE_AI_CUSTOM_PROVIDER_BASE_URL
-      value: "http://ollama.ollama.svc.cluster.local:11434/v1"
     - name: N8N_INSTANCE_AI_SEARXNG_URL
       value: "http://searxng.searxng.svc.cluster.local:8080"
 
