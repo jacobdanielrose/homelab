@@ -47,6 +47,8 @@ networkPolicy:
     allowSameNamespace: true
     fromNamespaces:
       - traefik
+      - open-webui
+      - n8n
 
 valkey:
   enabled: true
