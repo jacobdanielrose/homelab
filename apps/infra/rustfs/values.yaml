@@ -1,6 +1,7 @@
 # RustFS values — S3-compatible object storage for Loki
 # Deployed in the loki namespace; replaces the deprecated bundled minio.
 fullnameOverride: rustfs
+replicaCount: 1
 mode:
   standalone:
     enabled: true
@@ -14,7 +15,8 @@ ingress:
   enabled: false
 storageclass:
   name: longhorn
-  size: 2Gi
+  dataStorageSize: 2Gi
+  logStorageSize: 2Gi
 resources:
   limits:
     cpu: 500m
