@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://charts.rustfs.com
       chart: rustfs
-      targetRevision: 0.0.70
+      targetRevision: 1.0.0-rc.2
       helm:
         valueFiles:
           - $values/apps/infra/rustfs/values.yaml
