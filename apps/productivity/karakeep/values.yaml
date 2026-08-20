@@ -155,8 +155,8 @@ persistence:
 
 meilisearch:
   image:
-    repository: ghcr.io/meilisearch/meilisearch
-    tag: v1.13.0
+    repository: getmeili/meilisearch
+    tag: v1.53.1
   auth:
     existingMasterKeySecret: karakeep-meilesearch
   environment:
