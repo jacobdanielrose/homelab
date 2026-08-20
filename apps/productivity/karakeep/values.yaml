@@ -74,7 +74,7 @@ controllers:
     containers:
       chrome:
         image:
-          repository: gcr.io/zenika-hub/alpine-chrome
+          repository: docker.io/zenika/alpine-chrome
           tag: 124
         args:
           - --remote-debugging-address=0.0.0.0
@@ -154,6 +154,9 @@ persistence:
             readonly: false
 
 meilisearch:
+  image:
+    repository: ghcr.io/meilisearch/meilisearch
+    tag: v1.13.0
   auth:
     existingMasterKeySecret: karakeep-meilesearch
   environment:
