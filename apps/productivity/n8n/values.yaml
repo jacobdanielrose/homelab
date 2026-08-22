@@ -71,7 +71,7 @@ main:
     - name: N8N_INSTANCE_AI_SEARXNG_URL
       value: "http://searxng.searxng.svc.cluster.local:8080"
     - name: NODE_FUNCTION_ALLOW_EXTERNAL
-      value: "yaml"
+      value: "yaml,buffer"
     - name: N8N_PORT
       value: "5678"
 
