@@ -70,6 +70,8 @@ main:
           key: OLLAMA_API_KEY
     - name: N8N_INSTANCE_AI_SEARXNG_URL
       value: "http://searxng.searxng.svc.cluster.local:8080"
+    - name: NODE_FUNCTION_ALLOW_EXTERNAL
+      value: "yaml"
 
   persistence:
     enabled: true
