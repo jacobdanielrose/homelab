@@ -20,6 +20,9 @@ rails:
   existingSecret: sure-secrets
   encryptionEnv:
     enabled: true
+  resources:
+    limits:
+      memory: 2Gi
   settings:
     SELF_HOSTED: "true"
     AUTH_LOCAL_LOGIN_ENABLED: "false"
