@@ -81,6 +81,10 @@ postgresql:
 
 redis:
   enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/redis
+    tag: 7.4
   auth:
     enabled: true
     username: ""
