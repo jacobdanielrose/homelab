@@ -5,7 +5,7 @@ image:
 
 env:
   TZ: Europe/Zurich
-  PAPERLESS_URL: https://paperless.rostor.cloud
+  PAPERLESS_URL: https://paperless.rostor.lab
   PAPERLESS_TIME_ZONE: Europe/Zurich
   PAPERLESS_OCR_LANGUAGE: deu+eng
   PAPERLESS_SECRET_KEY:
@@ -35,15 +35,15 @@ ingress:
     enabled: true
     className: traefik
     annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-staging
+      cert-manager.io/cluster-issuer: selfsigned
     hosts:
-      - host: paperless.rostor.cloud
+      - host: paperless.rostor.lab
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - paperless.rostor.cloud
+          - paperless.rostor.lab
         secretName: paperless-tls
 
 persistence:
