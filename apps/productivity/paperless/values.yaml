@@ -84,7 +84,7 @@ redis:
   image:
     registry: docker.io
     repository: bitnami/redis
-    tag: sha256-06c26fc7f876d8e8000e0e63a9e301407a09e7a7f6eafbeaa142597af873828c
+    tag: latest
   auth:
     enabled: true
     username: ""
