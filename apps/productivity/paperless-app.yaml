@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: paperless
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/gabe565/charts/paperless-ngx
+      chart: paperless-ngx
+      targetRevision: 0.24.1
+      helm:
+        valueFiles:
+          - $values/apps/productivity/paperless/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/paperless
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: paperless
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    managedNamespaceMetadata:
+      labels:
+        app.kubernetes.io/name: paperless
+  ignoreDifferences:
+    - group: apps
+      kind: StatefulSet
+      name: paperless-postgres
+      jsonPointers:
+        - /spec/volumeClaimTemplates

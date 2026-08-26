@@ -1,0 +1,89 @@
+image:
+  repository: ghcr.io/paperless-ngx/paperless-ngx
+  tag: 2.14.7
+  pullPolicy: IfNotPresent
+
+env:
+  TZ: Europe/Zurich
+  PAPERLESS_URL: https://paperless.rostor.cloud
+  PAPERLESS_TIME_ZONE: Europe/Zurich
+  PAPERLESS_OCR_LANGUAGE: deu+eng
+  PAPERLESS_SECRET_KEY:
+    valueFrom:
+      secretKeyRef:
+        name: paperless-secret
+        key: PAPERLESS_SECRET_KEY
+  PAPERLESS_DBENGINE: postgresql
+  PAPERLESS_DBHOST: paperless-postgres
+  PAPERLESS_DBPORT: "5432"
+  PAPERLESS_DBNAME: paperless
+  PAPERLESS_DBUSER: paperless
+  PAPERLESS_DBPASS:
+    valueFrom:
+      secretKeyRef:
+        name: paperless-postgres-secret
+        key: password
+
+service:
+  main:
+    ports:
+      http:
+        port: 8000
+
+ingress:
+  main:
+    enabled: true
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    hosts:
+      - host: paperless.rostor.cloud
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - paperless.rostor.cloud
+        secretName: paperless-tls
+
+persistence:
+  data:
+    enabled: true
+    retain: true
+    size: 10Gi
+    storageClass: longhorn
+    mountPath: /usr/src/paperless/data
+  media:
+    enabled: true
+    retain: true
+    size: 50Gi
+    storageClass: longhorn
+    mountPath: /usr/src/paperless/media
+  export:
+    enabled: true
+    retain: true
+    size: 10Gi
+    storageClass: longhorn
+    mountPath: /usr/src/paperless/export
+  consume:
+    enabled: true
+    retain: true
+    size: 5Gi
+    storageClass: longhorn
+    mountPath: /usr/src/paperless/consume
+
+postgresql:
+  enabled: false
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    username: ""
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: longhorn
+  replica:
+    replicaCount: 0
