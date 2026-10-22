@@ -28,35 +28,11 @@ env:
   PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: "true"
   PAPERLESS_SOCIAL_AUTO_SIGNUP: "true"
   PAPERLESS_LOGOUT_REDIRECT_URL: https://authentik.rostor.cloud/application/o/paperless/end-session/
-  PAPERLESS_SOCIALACCOUNT_PROVIDERS: |-
-    {
-      "openid_connect": {
-        "OAUTH_PKCE_ENABLED": true,
-        "APPS": [
-          {
-            "provider_id": "authentik",
-            "name": "authentik",
-            "client_id": "Xtsou5ietCgyiSfteGxUoFIADRQg2VAA74lH5nIP",
-            "secret": "${PAPERLESS_OIDC_CLIENT_SECRET}",
-            "settings": {
-              "server_url": "https://authentik.rostor.cloud/application/o/paperless/.well-known/openid-configuration",
-              "fetch_userinfo": true
-            }
-          }
-        ],
-        "SCOPE": [
-          "openid",
-          "profile",
-          "email"
-        ]
-      }
-    }
-
-  PAPERLESS_OIDC_CLIENT_SECRET:
+  PAPERLESS_SOCIALACCOUNT_PROVIDERS:
     valueFrom:
       secretKeyRef:
         name: paperless-oidc-secret
-        key: PAPERLESS_OIDC_CLIENT_SECRET
+        key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
 
 service:
   main:
