@@ -8,5 +8,5 @@ spec:
   dnsNames:
     - paperless.rostor.cloud
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer

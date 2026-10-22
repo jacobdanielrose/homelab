@@ -3,5 +3,6 @@ kind: Kustomization
 
 resources:
   - certificates.yaml
+  - media-pv.yaml
   - postgres.yaml
   - sealed-secrets.yaml
