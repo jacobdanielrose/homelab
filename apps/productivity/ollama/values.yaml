@@ -25,6 +25,7 @@ ollama:
       - mistral-small:24b-instruct-2501-q4_K_M
       - command-r:35b
       - llava:7b
+      - minicpm-v
 
 persistentVolume:
   enabled: true

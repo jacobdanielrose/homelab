@@ -67,6 +67,12 @@ spec:
               value: qwen2.5:14b
             - name: OLLAMA_HOST
               value: http://ollama.ollama.svc:11434
+            - name: OCR_PROVIDER
+              value: llm
+            - name: VISION_LLM_PROVIDER
+              value: ollama
+            - name: VISION_LLM_MODEL
+              value: minicpm-v
             - name: OLLAMA_KEEP_ALIVE
               value: 10m
             - name: LLM_LANGUAGE
