@@ -99,6 +99,8 @@ redis:
   auth:
     enabled: true
     username: ""
+    existingSecret: paperless-redis-auth
+    existingSecretPasswordKey: redis-password
   master:
     persistence:
       enabled: true
