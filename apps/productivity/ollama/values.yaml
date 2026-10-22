@@ -16,6 +16,7 @@ ollama:
     pull:
       - nomic-embed-text:v1.5
       - qwen3-coder:30b
+      - qwen2.5:14b
       - qwen2.5:32b
       - llama3.1:8b
       - llama3.1:70b

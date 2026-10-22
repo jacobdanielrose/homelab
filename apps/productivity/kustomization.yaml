@@ -16,3 +16,4 @@ resources:
   #- stalwart-mail-app.yaml
   - karakeep-app.yaml
   - paperless-app.yaml
+  - paperless-gpt-app.yaml
