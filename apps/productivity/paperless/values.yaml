@@ -5,7 +5,7 @@ image:
 
 env:
   TZ: Europe/Zurich
-  PAPERLESS_URL: https://paperless.rostor.lab
+  PAPERLESS_URL: https://paperless.rostor.cloud
   PAPERLESS_TIME_ZONE: Europe/Zurich
   PAPERLESS_OCR_LANGUAGE: deu+eng
   PAPERLESS_SECRET_KEY:
@@ -23,6 +23,40 @@ env:
       secretKeyRef:
         name: paperless-postgres-secret
         key: password
+  PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+  PAPERLESS_SOCIAL_ACCOUNT_SYNC_GROUPS: true
+  PAPERLESS_ACCOUNT_ALLOW_SIGNUPS: "true"
+  PAPERLESS_SOCIAL_AUTO_SIGNUP: "true"
+  PAPERLESS_LOGOUT_REDIRECT_URL: https://authentik.rostor.cloud/application/o/paperless/end-session/
+  PAPERLESS_SOCIALACCOUNT_PROVIDERS: |-
+    {
+      "openid_connect": {
+        "OAUTH_PKCE_ENABLED": true,
+        "APPS": [
+          {
+            "provider_id": "authentik",
+            "name": "authentik",
+            "client_id": "Xtsou5ietCgyiSfteGxUoFIADRQg2VAA74lH5nIP",
+            "secret": "${PAPERLESS_OIDC_CLIENT_SECRET}",
+            "settings": {
+              "server_url": "https://authentik.rostor.cloud/application/o/paperless/.well-known/openid-configuration",
+              "fetch_userinfo": true
+            }
+          }
+        ],
+        "SCOPE": [
+          "openid",
+          "profile",
+          "email"
+        ]
+      }
+    }
+
+  PAPERLESS_OIDC_CLIENT_SECRET:
+    valueFrom:
+      secretKeyRef:
+        name: paperless-oidc-secret
+        key: PAPERLESS_OIDC_CLIENT_SECRET
 
 service:
   main:
@@ -35,15 +69,15 @@ ingress:
     enabled: true
     className: traefik
     annotations:
-      cert-manager.io/cluster-issuer: selfsigned
+      cert-manager.io/cluster-issuer: letsencrypt-staging
     hosts:
-      - host: paperless.rostor.lab
+      - host: paperless.rostor.cloud
         paths:
           - path: /
             pathType: Prefix
     tls:
       - hosts:
-          - paperless.rostor.lab
+          - paperless.rostor.cloud
         secretName: paperless-tls
 
 persistence:
@@ -85,6 +119,7 @@ redis:
     registry: docker.io
     repository: bitnami/redis
     tag: latest
+    digest: sha256:08863c2c3f4e051fb6139b38fa223e9c13be5033326a59bead182860d899bf98
   auth:
     enabled: true
     username: ""

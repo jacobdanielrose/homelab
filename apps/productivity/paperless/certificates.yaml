@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: paperless-tls
   dnsNames:
-    - paperless.rostor.lab
+    - paperless.rostor.cloud
   issuerRef:
-    name: selfsigned
+    name: letsencrypt-staging
     kind: ClusterIssuer
