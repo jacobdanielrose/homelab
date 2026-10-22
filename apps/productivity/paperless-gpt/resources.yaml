@@ -101,10 +101,10 @@ spec:
             initialDelaySeconds: 5
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 500m
+              memory: 1Gi
             limits:
-              memory: 512Mi
+              memory: 4Gi
       volumes:
         - name: data
           persistentVolumeClaim:
