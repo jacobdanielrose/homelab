@@ -8,6 +8,8 @@ env:
   PAPERLESS_URL: https://paperless.rostor.cloud
   PAPERLESS_TIME_ZONE: Europe/Zurich
   PAPERLESS_OCR_LANGUAGE: deu+eng
+  USERMAP_UID: "1026"
+  USERMAP_GID: "100"
   PAPERLESS_SECRET_KEY:
     valueFrom:
       secretKeyRef:
