@@ -1,6 +1,6 @@
 image:
   repository: n8nio/n8n
-  tag: "2.35.1"
+  tag: "2.44.6"
 
 ingress:
   enabled: true

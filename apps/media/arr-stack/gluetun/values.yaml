@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: qmcgaw/gluetun
-          tag: v3.41.1
+          tag: v3.41.3
         env:
           TZ: Europe/Zurich
           VPN_SERVICE_PROVIDER: protonvpn

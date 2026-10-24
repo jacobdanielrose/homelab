@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://charts.obeone.cloud
       chart: technitium-dnsserver
-      targetRevision: 1.13.0
+      targetRevision: 1.13.5
       helm:
         valueFiles:
           - $values/apps/infra/technitium/values.yaml

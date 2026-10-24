@@ -8,7 +8,7 @@ controllers:
       karakeep:
         image:
           repository: ghcr.io/karakeep-app/karakeep
-          tag: 0.33.1
+          tag: 0.34.1
         env:
           NEXTAUTH_URL: "https://karakeep.rostor.cloud"
           DATA_DIR: /data
