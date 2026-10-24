@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/paperless-ngx/paperless-ngx
-  tag: 2.14.7
+  tag: 3.3.4
   pullPolicy: IfNotPresent
 
 env:
@@ -36,6 +36,13 @@ env:
       secretKeyRef:
         name: paperless-oidc-secret
         key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
+
+  # Built-in AI classification (replaces paperless-ai)
+  PAPERLESS_AI_ENABLED: "true"
+  PAPERLESS_AI_LLM_BACKEND: ollama
+  PAPERLESS_AI_LLM_ENDPOINT: http://ollama.ollama.svc:11434
+  PAPERLESS_AI_LLM_MODEL: qwen2.5:14b
+  PAPERLESS_AI_LLM_ALLOW_INTERNAL_ENDPOINTS: "true"
 
 service:
   main:

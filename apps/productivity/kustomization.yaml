@@ -17,4 +17,3 @@ resources:
   - karakeep-app.yaml
   - paperless-app.yaml
   - paperless-gpt-app.yaml
-  - paperless-ai-app.yaml
