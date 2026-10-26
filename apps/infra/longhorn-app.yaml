@@ -8,8 +8,9 @@ spec:
   sources:
     - repoURL: https://charts.longhorn.io
       chart: longhorn
-      targetRevision: 1.10.0
+      targetRevision: 1.11.0
       helm:
+        includeCrds: true
         valueFiles:
           - $values/apps/infra/longhorn/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
