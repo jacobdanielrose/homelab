@@ -2,7 +2,7 @@ server:
   ingress:
     main:
       enabled: true
-      ingressClassName: traefik
+      className: traefik
       annotations:
         # TODO: Remove after large file uploads complete
         traefik.ingress.kubernetes.io/router.middlewares: immich-upload-buffering@kubernetescrd
