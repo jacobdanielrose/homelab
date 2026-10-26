@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: oci://ghcr.io/immich-app/immich-charts/immich
       chart: immich
-      targetRevision: 0.12.0
+      targetRevision: 0.13.4
       helm:
         valueFiles:
           - $values/apps/media/immich/values.yaml
