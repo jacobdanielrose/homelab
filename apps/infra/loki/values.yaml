@@ -73,6 +73,8 @@ write:
   replicas: 1
   persistence:
     storageClass: longhorn
+    size: 20Gi
+    enableStatefulSetAutoDeletePVC: true
 
 backend:
   replicas: 1
