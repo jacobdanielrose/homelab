@@ -13,11 +13,24 @@ config:
       brightness: 50
       opacity: 60
     theme: dark
+    color: slate
     layout:
-      Media:
+      System:
+        style: row
+        columns: 3
+      Monitoring:
         style: row
         columns: 4
       Infrastructure:
+        style: row
+        columns: 4
+      Media:
+        style: row
+        columns: 4
+      Downloads:
+        style: row
+        columns: 4
+      Productivity:
         style: row
         columns: 4
       Services:
@@ -26,12 +39,209 @@ config:
     useEqualHeights: true
     statusStyle: dot
     favicon: https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/vector/translate.svg
+    hideErrors: false
 
   # https://gethomepage.dev/configs/services/
-  services: []
+  services:
+    - Monitoring:
+        - Grafana:
+            href: https://grafana.rostor.lab
+            description: Metrics dashboards
+            icon: grafana.png
+            widget:
+              type: grafana
+              url: http://prometheus-grafana.prometheus.svc:3000
+              logo: false
+
+        - Uptime Kuma:
+            href: https://uptime.rostor.lab
+            description: Active uptime monitoring
+            icon: uptime-kuma.png
+
+        - Netdata:
+            href: https://netdata.rostor.lab
+            description: Per-second system metrics
+            icon: netdata.png
+
+        - Beszel:
+            href: https://beszel.rostor.lab
+            description: Lightweight monitoring
+            icon: beszel.png
+
+    - Infrastructure:
+        - Traefik:
+            href: https://traefik.rostor.lab
+            description: Ingress controller
+            icon: traefik.png
+
+        - Longhorn:
+            href: https://longhorn.rostor.lab
+            description: Distributed block storage
+            icon: longhorn.png
+
+        - Authentik:
+            href: https://authentik.rostor.cloud
+            description: Identity & SSO provider
+            icon: authentik.png
+
+        - Technitium:
+            href: https://technitium.rostor.lab
+            description: DNS & ad-blocking server
+            icon: technitium.png
+
+    - Media:
+        - Jellyfin:
+            href: https://jellyfin.rostor.cloud
+            description: Movies & TV streaming
+            icon: jellyfin.png
+
+        - Immich:
+            href: https://photos.rostor.cloud
+            description: Photo & video backup
+            icon: immich.png
+
+        - Audiobookshelf:
+            href: https://audiobooks.rostor.cloud
+            description: Audiobooks & podcasts
+            icon: audiobookshelf.png
+
+        - Komga:
+            href: https://books.rostor.cloud
+            description: Comics & ebooks
+            icon: komga.png
+
+        - Jellyseerr:
+            href: https://seerr.rostor.cloud
+            description: Media request manager
+            icon: jellyseerr.png
+
+    - Downloads:
+        - Gluetun:
+            href: https://downloads.rostor.lab
+            description: VPN gateway & torrents
+            icon: gluetun.png
+
+        - Sonarr:
+            href: https://sonarr.rostor.lab
+            description: TV series automation
+            icon: sonarr.png
+
+        - Radarr:
+            href: https://radarr.rostor.lab
+            description: Movie automation
+            icon: radarr.png
+
+        - Lidarr:
+            href: https://lidarr.rostor.lab
+            description: Music automation
+            icon: lidarr.png
+
+        - Readarr:
+            href: https://readarr.rostor.lab
+            description: Book automation
+            icon: readarr.png
+
+        - Bazarr:
+            href: https://bazarr.rostor.lab
+            description: Subtitle management
+            icon: bazarr.png
+
+        - Prowlarr:
+            href: https://prowlarr.rostor.lab
+            description: Indexer management
+            icon: prowlarr.png
+
+        - BookBounty:
+            href: https://bookbounty.rostor.lab
+            description: Book searching
+            icon: bookbounty.png
+
+    - Productivity:
+        - Nextcloud:
+            href: https://nextcloud.rostor.cloud
+            description: Cloud storage & sync
+            icon: nextcloud.png
+
+        - Outline:
+            href: https://wiki.rostor.cloud
+            description: Knowledge base wiki
+            icon: outline.png
+
+        - Forgejo:
+            href: https://git.rostor.cloud
+            description: Git repos & CI
+            icon: forgejo.png
+
+        - Paperless:
+            href: https://paperless.rostor.cloud
+            description: Document management
+            icon: paperless.png
+
+        - Paperless AI:
+            href: https://paperless-ai.rostor.lab
+            description: AI document tagging
+            icon: paperless-ngx.png
+
+    - Services:
+        - n8n:
+            href: https://n8n.rostor.lab
+            description: Workflow automation
+            icon: n8n.png
+
+        - Ollama:
+            href: https://ollama.rostor.cloud
+            description: Local LLM inference
+            icon: ollama.png
+
+        - SearXNG:
+            href: https://search.rostor.cloud
+            description: Private metasearch
+            icon: searxng.png
+
+        - Karakeep:
+            href: https://karakeep.rostor.cloud
+            description: Bookmark manager
+            icon: karakeep.png
+
+        - Sure:
+            href: https://finance.rostor.cloud
+            description: Personal finance
+            icon: finance.png
+
+        - Element:
+            href: https://element.rostor.cloud
+            description: Matrix chat client
+            icon: element.png
 
   # https://gethomepage.dev/configs/bookmarks/
-  bookmarks: []
+  bookmarks:
+    - Infrastructure:
+        - ArgoCD:
+            abbr: CD
+            href: https://argocd.rostor.lab
+            description: GitOps deployment
+        - Prometheus:
+            abbr: P
+            href: https://prometheus.rostor.lab
+            description: Metrics store
+        - Loki:
+            abbr: L
+            href: https://loki.rostor.lab
+            description: Log aggregation
+
+    - Dev:
+        - GitHub:
+            abbr: GH
+            href: https://github.com/jacobdanielrose/homelab
+            description: Homelab repo
+        - Docker Hub:
+            abbr: DH
+            href: https://hub.docker.com
+            description: Container images
+        - Homepage Docs:
+            abbr: HP
+            href: https://gethomepage.dev
+            description: Dashboard docs
 
   # https://gethomepage.dev/configs/widgets/
   widgets:
@@ -40,24 +250,38 @@ config:
         memory: true
         disk: /
         uptime: true
+        showLabel: true
+
     - search:
         provider: google
         target: _blank
-    - docker:
-        socket: /var/run/docker.sock
+        showSearchSuggestions: true
 
-  # Kubernetes discovery — auto-discovers services from ingresses
-  # Add `gethomepage.dev/description` and `gethomepage.dev/group` annotations
-  # to your ingresses to customize how they appear in Homepage.
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+
+  # Disable K8s ingress discovery — services are defined manually above
+  # to keep the layout clean. If you want auto-discovery alongside manual
+  # services, set mode: cluster and ingress: true.
   kubernetes:
-    mode: cluster
-    ingress: true
+    mode: disabled
+
+
 
 # ── Kubernetes access ─────────────────────────────────────────────────────
 kubernetes:
-  enabled: true
+  enabled: false
   rbac:
-    create: true
+    create: false
 
 # ── Ingress ───────────────────────────────────────────────────────────────
 ingress:
@@ -74,11 +298,26 @@ ingress:
       hosts:
         - homepage.rostor.lab
 
+# ── Custom CSS ────────────────────────────────────────────────────────────
+customCss: |
+  .services .group:nth-child(1) .group-heading { color: #f97316; }
+  .services .group:nth-child(2) .group-heading { color: #8b5cf6; }
+  .services .group:nth-child(3) .group-heading { color: #ec4899; }
+  .services .group:nth-child(4) .group-heading { color: #06b6d4; }
+  .services .group:nth-child(5) .group-heading { color: #10b981; }
+  .services .group:nth-child(6) .group-heading { color: #f59e0b; }
+
+# ── Extra env for Grafana widget ──────────────────────────────────────────
+env: []
+# Uncomment and set a Grafana API token for the widget:
+#  - name: HOMEPAGE_VAR_GRAFANA_TOKEN
+#    value: "glsa_..."
+
 # ── Resources ─────────────────────────────────────────────────────────────
 resources:
   requests:
-    cpu: 50m
-    memory: 192Mi
+    cpu: 100m
+    memory: 256Mi
   limits:
     cpu: "1"
     memory: 512Mi
