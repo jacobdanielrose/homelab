@@ -20,6 +20,11 @@ persistence:
 initChownData:
   enabled: false
 
+grafana.ini:
+  auth.anonymous:
+    enabled: true
+    org_role: Viewer
+
 datasources:
   datasources.yaml:
     apiVersion: 1
