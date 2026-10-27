@@ -16,3 +16,5 @@ resources:
   - metallb-app.yaml
   - hass-app.yaml
   - promtail-app.yaml
+  - netdata-app.yaml
+  - uptime-kuma-app.yaml

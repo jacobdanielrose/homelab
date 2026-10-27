@@ -1,0 +1,73 @@
+# Uptime Kuma Helm chart values
+# https://helmforge.dev/docs/charts/uptime-kuma
+
+image:
+  repository: docker.io/louislam/uptime-kuma
+  tag: "2.5.6"
+  pullPolicy: IfNotPresent
+
+# ── Database (SQLite is fine for single-replica) ──────────────────────────
+database:
+  type: sqlite
+
+# ── Persistence ───────────────────────────────────────────────────────────
+persistence:
+  enabled: true
+  storageClass: "longhorn"
+  size: 2Gi
+  accessModes:
+    - ReadWriteOnce
+
+# ── Service ───────────────────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+# ── Ingress ───────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations: {}
+  hosts:
+    - host: uptime.rostor.lab
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - uptime.rostor.lab
+      secretName: uptime-kuma-tls
+
+# ── Probes ────────────────────────────────────────────────────────────────
+probes:
+  startup:
+    enabled: true
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 60
+  liveness:
+    enabled: true
+    path: /
+    initialDelaySeconds: 0
+    periodSeconds: 15
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    enabled: true
+    path: /
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+# ── Resources ─────────────────────────────────────────────────────────────
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
