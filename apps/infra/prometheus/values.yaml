@@ -39,3 +39,163 @@ nodeExporter:
 
 kubeStateMetrics:
   enabled: true
+
+# ── Custom alerting rules ───────────────────────────────────────────────────
+additionalPrometheusRules:
+  - name: homelab-custom
+    groups:
+      # ── Longhorn ──────────────────────────────────────────────────────────
+      - name: longhorn.rules
+        rules:
+          - alert: LonghornVolumeDegraded
+            expr: longhorn_volume_robustness{job="longhorn-prometheus-servicemonitor"} != 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Longhorn volume {{ $labels.volume }} is degraded"
+              description: "Volume {{ $labels.volume }} has robustness status {{ $value }}. Replicas may be at risk."
+
+          - alert: LonghornVolumeFaulted
+            expr: longhorn_volume_robustness{job="longhorn-prometheus-servicemonitor"} == 2
+            for: 0m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Longhorn volume {{ $labels.volume }} is faulted"
+              description: "Volume {{ $labels.volume }} is faulted and may be unavailable. Immediate attention required."
+
+          - alert: LonghornDiskSpaceRunningLow
+            expr: (longhorn_disk_usage_bytes / longhorn_disk_capacity_bytes) * 100 > 85
+            labels:
+              severity: warning
+            annotations:
+              summary: "Longhorn disk {{ $labels.disk }} on {{ $labels.node }} is >85% full"
+              description: "Disk usage is at {{ $value | humanizePercentage }} on node {{ $labels.node }} (disk: {{ $labels.disk }})."
+
+          - alert: LonghornDiskSpaceCritical
+            expr: (longhorn_disk_usage_bytes / longhorn_disk_capacity_bytes) * 100 > 95
+            labels:
+              severity: critical
+            annotations:
+              summary: "Longhorn disk {{ $labels.disk }} on {{ $labels.node }} is >95% full"
+              description: "Disk usage is at {{ $value | humanizePercentage }} on node {{ $labels.node }}. Risk of data loss."
+
+          - alert: LonghornDiskDegraded
+            expr: longhorn_disk_health{job="longhorn-prometheus-servicemonitor"} != 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Longhorn disk {{ $labels.disk }} on {{ $labels.node }} is unhealthy"
+              description: "Disk health status is {{ $labels.health }} (value: {{ $value }})."
+
+          - alert: LonghornVolumeNotAttached
+            expr: longhorn_volume_state{job="longhorn-prometheus-servicemonitor"} != 1 and longhorn_volume_state{job="longhorn-prometheus-servicemonitor"} != 2
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Longhorn volume {{ $labels.volume }} is in an unexpected state"
+              description: "Volume {{ $labels.volume }} state is {{ $value }} (1=creating, 2=attached, 3=detached, 4=attaching, 5=detaching, 6=deleting)."
+
+          - alert: LonghornVolumeRebuildOngoing
+            expr: longhorn_engine_rebuild_progress{job="longhorn-prometheus-servicemonitor"} < 100 and longhorn_engine_rebuild_progress{job="longhorn-prometheus-servicemonitor"} > 0
+            for: 30m
+            labels:
+              severity: info
+            annotations:
+              summary: "Longhorn volume {{ $labels.volume }} rebuild in progress ({{ $value }}%)"
+              description: "Volume {{ $labels.volume }} on node {{ $labels.node }} is rebuilding at {{ $value }}%. Down two nodes and you could lose data."
+
+          - alert: LonghornNodeOffline
+            expr: longhorn_node_status{job="longhorn-prometheus-servicemonitor"} == 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Longhorn node {{ $labels.node }} is offline"
+              description: "Longhorn reports node {{ $labels.node }} as offline. Replicas on this node are unavailable."
+
+      # ── Traefik ───────────────────────────────────────────────────────────
+      - name: traefik.rules
+        rules:
+          - alert: TraefikHigh5xxRate
+            expr: |
+              (sum(rate(traefik_service_requests_total{code=~"5.."}[5m])) by (service, namespace)
+               /
+              sum(rate(traefik_service_requests_total[5m])) by (service, namespace)) * 100 > 5
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "{{ $labels.service }} has high 5xx error rate"
+              description: "Service {{ $labels.service }} in {{ $labels.namespace }} has {{ $value | humanizePercentage }} 5xx errors over 5m."
+
+          - alert: TraefikServiceUnreachable
+            expr: sum(rate(traefik_service_requests_total{code=~"5.."}[5m])) by (service, namespace) / sum(rate(traefik_service_requests_total[5m])) by (service, namespace) > 0.9
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              summary: "{{ $labels.service }} is returning mostly errors"
+              description: "Service {{ $labels.service }} in {{ $labels.namespace }} has {{ $value | humanizePercentage }} errors."
+
+          - alert: TraefikConfigReloadFailed
+            expr: traefik_config_last_reload_success == 0
+            for: 1m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Traefik config reload failed"
+              description: "Traefik configuration reload failed. New routes may not be active."
+
+      # ── cert-manager ─────────────────────────────────────────────────────
+      - name: cert-manager.rules
+        rules:
+          - alert: CertManagerCertExpiringSoon
+            expr: certmanager_certificate_expiration_timestamp_seconds - time() < 1209600
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              summary: "Certificate {{ $labels.name }} expiring in <14 days"
+              description: "Certificate {{ $labels.name }} ({{ $labels.namespace }}) expires on {{ $value | humanizeTimestamp }}."
+
+          - alert: CertManagerCertExpired
+            expr: certmanager_certificate_expiration_timestamp_seconds - time() < 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Certificate {{ $labels.name }} has expired"
+              description: "Certificate {{ $labels.name }} ({{ $labels.namespace }}) expired on {{ $value | humanizeTimestamp }}. Services may be broken."
+
+          - alert: CertManagerCertNotReady
+            expr: certmanager_certificate_ready_status{status!="True"} == 1
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              summary: "Certificate {{ $labels.name }} not ready"
+              description: "Certificate {{ $labels.name }} ({{ $labels.namespace }}) is not ready: {{ $labels.reason }}"
+
+          - alert: CertManagerSyncErrors
+            expr: increase(certmanager_controller_sync_error_count[5m]) > 0
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              summary: "cert-manager controller sync errors"
+              description: "cert-manager controller is experiencing sync errors. {{ $value }} errors in last 5m."
+
+      # ── System ────────────────────────────────────────────────────────────
+      - name: system.rules
+        rules:
+          - alert: HighPodRestartRate
+            expr: increase(kube_pod_container_status_restarts_total[30m]) > 5
+            labels:
+              severity: warning
+            annotations:
+              summary: "Pod {{ $labels.pod }} has restarted {{ $value }} times in 30m"
+              description: "Container {{ $labels.container }} in pod {{ $labels.pod }} ({{ $labels.namespace }}) has restarted {{ $value }} times in the last 30 minutes."
