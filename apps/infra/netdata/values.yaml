@@ -1,9 +1,6 @@
 # Netdata Helm chart values
 # https://github.com/netdata/helmchart
 
-# Disable telemetry
-doNotTrack: true
-
 # ── Parent (central aggregation node) ──────────────────────────────────────
 parent:
   hostname: "netdata-parent"
@@ -78,8 +75,7 @@ parent:
       path: /etc/netdata/exporting.conf
       data: ""
 
-  env:
-    DO_NOT_TRACK: 1
+  env: {}
 
 # ── Child DaemonSet (per-node collectors) ─────────────────────────────────
 child:
