@@ -1,12 +1,12 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: netdata-tls
-  namespace: netdata
+  name: homepage-tls
+  namespace: homepage
 spec:
-  secretName: netdata-tls
+  secretName: homepage-tls
   dnsNames:
-    - netdata.rostor.lab
+    - homepage.rostor.lab
   issuerRef:
     name: selfsigned
     kind: ClusterIssuer

@@ -1,0 +1,84 @@
+# Homepage Helm chart values
+# https://gethomepage.dev/configs/
+
+# ── Homepage configuration ────────────────────────────────────────────────
+config:
+  # https://gethomepage.dev/configs/settings/
+  settings:
+    title: "Rostor Homelab"
+    background:
+      image: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80
+      blur: sm
+      saturate: 50
+      brightness: 50
+      opacity: 60
+    theme: dark
+    layout:
+      Media:
+        style: row
+        columns: 4
+      Infrastructure:
+        style: row
+        columns: 4
+      Services:
+        style: row
+        columns: 4
+    useEqualHeights: true
+    statusStyle: dot
+    favicon: https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/vector/translate.svg
+
+  # https://gethomepage.dev/configs/services/
+  services: []
+
+  # https://gethomepage.dev/configs/bookmarks/
+  bookmarks: []
+
+  # https://gethomepage.dev/configs/widgets/
+  widgets:
+    - resources:
+        cpu: true
+        memory: true
+        disk: /
+        uptime: true
+    - search:
+        provider: google
+        target: _blank
+    - docker:
+        socket: /var/run/docker.sock
+
+  # Kubernetes discovery — auto-discovers services from ingresses
+  # Add `gethomepage.dev/description` and `gethomepage.dev/group` annotations
+  # to your ingresses to customize how they appear in Homepage.
+  kubernetes:
+    mode: cluster
+    ingress: true
+
+# ── Kubernetes access ─────────────────────────────────────────────────────
+kubernetes:
+  enabled: true
+  rbac:
+    create: true
+
+# ── Ingress ───────────────────────────────────────────────────────────────
+ingress:
+  enabled: true
+  className: traefik
+  annotations: {}
+  hosts:
+    - name: homepage.rostor.lab
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: homepage-tls
+      hosts:
+        - homepage.rostor.lab
+
+# ── Resources ─────────────────────────────────────────────────────────────
+resources:
+  requests:
+    cpu: 50m
+    memory: 192Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi

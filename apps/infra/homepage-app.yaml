@@ -1,26 +1,23 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: netdata
+  name: homepage
   namespace: argocd
 spec:
   project: default
   sources:
-    - repoURL: https://netdata.github.io/helmchart
-      chart: netdata
-      targetRevision: 3.7.177
+    - repoURL: https://this-is-tobi.github.io/helm-charts
+      chart: homepage
+      targetRevision: 0.1.0
       helm:
         valueFiles:
-          - $values/apps/infra/netdata/values.yaml
+          - $values/apps/infra/homepage/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
-    - repoURL: https://github.com/jacobdanielrose/homelab.git
-      targetRevision: HEAD
-      path: apps/infra/netdata
   destination:
     server: https://kubernetes.default.svc
-    namespace: netdata
+    namespace: homepage
   syncPolicy:
     automated:
       prune: true
