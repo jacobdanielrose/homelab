@@ -49,7 +49,7 @@ rails:
     - name: OPENAI_URI_BASE
       value: "http://ollama.ollama.svc.cluster.local:11434/v1"
     - name: OPENAI_MODEL
-      value: "llama3.1:8b"
+      value: "mistral-nemo:12b"
     - name: VECTOR_STORE_PROVIDER
       value: "pgvector"
     - name: EMBEDDING_MODEL

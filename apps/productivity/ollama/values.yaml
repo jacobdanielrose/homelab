@@ -14,18 +14,18 @@ ingress:
 ollama:
   models:
     pull:
-      - nomic-embed-text:v1.5
-      - qwen3-coder:30b
-      - qwen2.5:14b
-      - qwen2.5:32b
-      - llama3.1:8b
-      - llama3.1:70b
-      - deepseek-r1:32b
-      - deepseek-r1:70b
-      - mistral-small:24b-instruct-2501-q4_K_M
-      - command-r:35b
-      - llava:7b
-      - minicpm-v
+      # ── Embedding ──────────────────────────────────────────
+      - nomic-embed-text:v1.5        # ~1GB — used by sure & karakeep, always fits
+      # ── Text (12B, concurrent-safe with vision) ───────────
+      # ~8GB — pairs with any vision model (~13GB total, 3GB headroom)
+      - mistral-nemo:12b             # default for sure, n8n, karakeep, paperless
+      # ── Text (14B, standalone — one at a time) ────────────
+      # Each ~9GB, fill 16GB solo. Pick the specialist you need.
+      - qwen2.5:14b                  # all-rounder: chat, doc analysis, general
+      - qwen2.5-coder:14b            # coding specialist (distinct from above)
+      - deepseek-r1:14b              # reasoning specialist: math, logic, complex tasks
+      # ── Vision ─────────────────────────────────────────────
+      - qwen2.5-vl:7b                # ~5.5GB — vision understanding & OCR (karakeep, paperless-gpt)
 
 persistentVolume:
   enabled: true
