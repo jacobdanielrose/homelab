@@ -1,59 +1,84 @@
+# Values for the homelab `stalwart` chart (0.1.x, Stalwart v1.0.x).
+# Chart source: https://git.rostor.cloud/jacobdanielrose/stalwart
+# Schema differs from the previous wrenix chart -- see the notes at the
+# bottom of this file.
+
 image:
   repository: ghcr.io/stalwartlabs/stalwart
-  tag: "v0.16.27"
+  tag: "v1.0.1"
   pullPolicy: IfNotPresent
+
+# Single-node deployment: one pod runs every task and listener.
+replicaCount: 1
+role: ""
+pushShard: ""
+
+# Bootstrap administrator credential.
+# The chart renders this into a Secret, so the password is stored in git.
+# This is only needed for the first login; remove the block once a
+# permanent administrator account exists in the database.
+recoveryAdmin:
+  enabled: true
+  username: admin
+  password: "REPLACE_WITH_SEALED_SECRET"
+
+# Recovery mode suspends mail services and exposes only the management
+# listener. Enable temporarily for offline administration.
+recoveryMode:
+  enabled: false
+  port: 8080
+  logLevel: info
+
+extraEnv:
+  TZ: Europe/Berlin
+
+# Sensitive store credentials (S3 keys, DB passwords) belong here.
+extraSecretEnv: {}
+
+# Only the DataStore object belongs in config.json. Everything else lives
+# in the database after bootstrap.
+config:
+  "@type": RocksDb
+  path: /var/lib/stalwart
+
+# Mail protocols need L4 exposure, so the Service is a LoadBalancer
+# (MetalLB homelab-pool 192.168.3.20-192.168.3.30). Traefik only fronts
+# the HTTP/HTTPS listeners via the Ingress below.
+service:
+  type: LoadBalancer
+  ports:
+    smtp: 25
+    smtps: 465
+    submission: 587
+    imap: 143
+    imaps: 993
+    pop3: 110
+    pop3s: 995
+    sieve: 4190
+    http: 80
+    https: 443
+    mgmt: 8080
 
 ingress:
   enabled: true
   className: traefik
+  annotations: {}
   hosts:
     - host: mail.rostor.cloud
       paths:
         - path: /
           pathType: Prefix
+          portName: https
   tls:
     - hosts:
         - mail.rostor.cloud
       secretName: mail-cloud-tls
 
-config:
-  "@type": RocksDb
-  path: /var/lib/stalwart
-
-recovery:
-  enabled: true
-
-livenessProbe:
-  httpGet:
-    path: /healthz/live
-    port: http
-    httpHeaders:
-      - name: "X-Forwarded-For"
-        value: "127.0.0.1"
-  initialDelaySeconds: 5
-  periodSeconds: 10
-
-readinessProbe:
-  httpGet:
-    path: /healthz/ready
-    port: http
-    httpHeaders:
-      - name: "X-Forwarded-For"
-        value: "127.0.0.1"
-  initialDelaySeconds: 30
-  periodSeconds: 10
-
 persistence:
   enabled: true
+  accessMode: ReadWriteOnce
   storageClass: longhorn
   size: 10Gi
-
-secrets:
-  create: false
-
-certificate:
-  certmanager:
-    enabled: false
 
 resources:
   requests:
@@ -64,6 +89,19 @@ resources:
     memory: 2Gi
 
 podSecurityContext:
+  fsGroup: 2000
   runAsUser: 2000
   runAsGroup: 2000
-  fsGroup: 2000
+
+containerSecurityContext: {}
+
+# ---------------------------------------------------------------------------
+# Differences from the previous wrenix `stalwart-mail` chart values:
+#   * `recovery.enabled`        -> `recoveryAdmin.enabled` + username/password
+#   * `secrets.create`          -> not supported (chart always renders its Secret)
+#   * `certificate.certmanager` -> handled by certificates.yaml in this dir
+#   * probes                    -> chart hardcodes /healthz/{live,ready} on mgmt
+#   * image tag v0.16.27        -> v1.0.1 (major upgrade; fresh install, no data)
+# The SealedSecret in this directory still carries the old wrenix keys
+# (FALLBACK_ADMIN_SECRET, METRICS_*) and is unused by this chart.
+# ---------------------------------------------------------------------------

@@ -15,3 +15,4 @@ resources:
   - karakeep-app.yaml
   - paperless-app.yaml
   - paperless-gpt-app.yaml
+  - stalwart-mail-app.yaml

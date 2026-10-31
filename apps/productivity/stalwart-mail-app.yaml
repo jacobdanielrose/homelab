@@ -6,16 +6,18 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: oci://codeberg.org/wrenix/helm-charts/stalwart-mail
-      chart: stalwart-mail
-      targetRevision: 2.0.3
+    # Chart served from the homelab Forgejo Helm registry.
+    # Anonymous read is enabled, so no repo credentials are required.
+    - repoURL: https://git.rostor.cloud/api/packages/jacobdanielrose/helm
+      chart: stalwart
+      targetRevision: 0.1.2
       helm:
         valueFiles:
           - $values/apps/productivity/stalwart-mail/values.yaml
-        ignoreMissingValueFiles: true
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    # Extra manifests for this app (Certificate, SealedSecret).
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       path: apps/productivity/stalwart-mail
