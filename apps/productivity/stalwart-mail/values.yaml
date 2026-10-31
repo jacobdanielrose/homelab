@@ -17,8 +17,6 @@ pushShard: ""
 # The chart renders this into a Secret, so the password is stored in git.
 # This is only needed for the first login; remove the block once a
 # permanent administrator account exists in the database.
-recoveryAdmin:
-  enabled: false 
 
 # Recovery mode suspends mail services and exposes only the management
 # listener. Enable temporarily for offline administration.
