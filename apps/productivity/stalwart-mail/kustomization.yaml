@@ -3,4 +3,5 @@ kind: Kustomization
 
 resources:
   - certificates.yaml
+  - ingressroute.yaml
   - sealed-secrets.yaml

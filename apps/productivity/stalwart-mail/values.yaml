@@ -59,20 +59,11 @@ service:
     https: 443
     mgmt: 8080
 
+# Disabled: the chart's Ingress cannot attach a backend ServersTransport,
+# and Stalwart's self-signed cert has no IP SANs, so Traefik returns 500.
+# HTTP(S) is routed by ingressroute.yaml in this directory instead.
 ingress:
-  enabled: true
-  className: traefik
-  annotations: {}
-  hosts:
-    - host: mail.rostor.cloud
-      paths:
-        - path: /
-          pathType: Prefix
-          portName: https
-  tls:
-    - hosts:
-        - mail.rostor.cloud
-      secretName: mail-cloud-tls
+  enabled: false
 
 persistence:
   enabled: true

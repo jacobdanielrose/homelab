@@ -1,0 +1,41 @@
+# Stalwart serves its WebUI over TLS on port 443 using a self-signed
+# certificate that carries no IP SANs. Traefik verifies backend
+# certificates by default, so routing to the `https` service port with a
+# plain Ingress fails with:
+#
+#   500 Internal Server Error
+#   tls: failed to verify certificate: x509: cannot validate certificate
+#   for 10.42.x.x because it doesn't contain any IP SANs
+#
+# The chart's Ingress template cannot attach a ServersTransport, and the
+# `traefik.ingress.kubernetes.io/service.serverstransport` annotation is
+# ambiguous when the namespace contains a hyphen, so the Ingress is
+# disabled in values.yaml and replaced by this IngressRoute.
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: stalwart-insecure
+  namespace: stalwart-mail
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: stalwart-mail
+  namespace: stalwart-mail
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`mail.rostor.cloud`)
+      services:
+        - kind: Service
+          name: stalwart-mail-stalwart
+          namespace: stalwart-mail
+          port: 443
+          scheme: https
+          serversTransport: stalwart-insecure
+  tls:
+    secretName: mail-cloud-tls
