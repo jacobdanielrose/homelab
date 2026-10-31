@@ -31,6 +31,11 @@ recoveryMode:
 
 extraEnv:
   TZ: Europe/Berlin
+  # Public URL Stalwart publishes to clients. Without it the server derives
+  # URLs from its own hostname, so OAuth/sign-in redirects point at the pod
+  # (https://stalwart-mail-stalwart-0/login?...) instead of the real domain.
+  # Must match the URL Traefik serves. See /docs/server/reverse-proxy/traefik.
+  STALWART_PUBLIC_URL: https://mail.rostor.cloud
 
 # Sensitive store credentials (S3 keys, DB passwords) belong here.
 extraSecretEnv: {}
