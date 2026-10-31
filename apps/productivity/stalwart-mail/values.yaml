@@ -18,9 +18,7 @@ pushShard: ""
 # This is only needed for the first login; remove the block once a
 # permanent administrator account exists in the database.
 recoveryAdmin:
-  enabled: true
-  username: admin
-  password: "REPLACE_WITH_SEALED_SECRET"
+  enabled: false 
 
 # Recovery mode suspends mail services and exposes only the management
 # listener. Enable temporarily for offline administration.
