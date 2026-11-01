@@ -21,11 +21,11 @@ ollama:
       - mistral-nemo:12b             # default for sure, n8n, karakeep, paperless
       # ── Text (14B, standalone — one at a time) ────────────
       # Each ~9GB, fill 16GB solo. Pick the specialist you need.
-      - qwen2.5:14b                  # all-rounder: chat, doc analysis, general
-      - qwen2.5-coder:14b            # coding specialist (distinct from above)
+      - qwen3:14b                    # all-rounder: chat, doc analysis, general
+      - qwen2.5-coder:14b            # coding specialist (left as-is — do not change)
       - deepseek-r1:14b              # reasoning specialist: math, logic, complex tasks
       # ── Vision ─────────────────────────────────────────────
-      - qwen2.5-vl:7b                # ~5.5GB — vision understanding & OCR (karakeep, paperless-gpt)
+      - qwen3-vl:8b                  # ~6GB — vision understanding & OCR (karakeep, paperless-gpt)
 
 persistentVolume:
   enabled: true
