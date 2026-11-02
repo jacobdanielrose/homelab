@@ -19,10 +19,11 @@ config:
   appName: Rostor Webmail
   telemetry: "off"
   jmap:
-    # Canonical JMAP URL. It must be reachable from BOTH the browser and the
-    # Bulwark Pod (server-side login verification), which mail.rostor.cloud
-    # is (public LE cert via Traefik, hairpin routing inside the cluster).
-    serverUrl: https://mail.rostor.cloud
+    # Same-origin topology: the JMAP paths are proxied by ingressroute.yaml
+    # from this hostname to the Stalwart HTTPS listener, so the browser and
+    # the Bulwark Pod both talk to webmail.rostor.cloud and no CORS
+    # configuration on Stalwart is required.
+    serverUrl: https://webmail.rostor.cloud
   oauth:
     # SSO via the Authentik provider used by the rest of the homelab
     # (app registered as "Bulwark" in Authentik, redirect URI
@@ -46,18 +47,9 @@ persistence:
   size: 5Gi
   retain: true
 
-ingress:
-  enabled: true
-  ingressClassName: traefik
-  hosts:
-    - host: webmail.rostor.cloud
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: webmail-tls
-      hosts:
-        - webmail.rostor.cloud
+# Chart Ingress disabled: Traefik exposure for webmail.rostor.cloud is
+# defined in ingressroute.yaml (same-origin JMAP routing to Stalwart plus
+# the Bulwark Service).
 
 # Next.js app with an encrypted settings sync -- a bit more headroom than
 # the chart defaults, still modest.

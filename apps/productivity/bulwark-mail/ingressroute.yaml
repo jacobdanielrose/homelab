@@ -1,0 +1,51 @@
+# Traefik exposure for Bulwark Mail (chart Ingress is disabled in values.yaml).
+#
+# Same-origin topology: the browser and the Bulwark Pod both use
+# https://webmail.rostor.cloud as the JMAP URL. Traefik routes the JMAP and
+# authentication paths to the Stalwart HTTPS listener (skipping its
+# self-signed certificate like the mail.rostor.cloud IngressRoute does), and
+# everything else to the Bulwark Service. This avoids the CORS configuration
+# that cross-origin webmail would need on Stalwart.
+#
+# Stalwart's own routes (WebUI, OAuth, IMAP/SMTP listeners) stay on
+# mail.rostor.cloud and are untouched.
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: bulwark-jmap-insecure
+  namespace: bulwark-mail
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bulwark-mail
+  namespace: bulwark-mail
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # Paths Stalwart serves. /api/auth is matched exactly (the /api/auth/*
+    # routes below it belong to Bulwark's own API). Bulwark has no bare
+    # /auth/ or /jmap/ application routes.
+    - kind: Rule
+      match: Host(`webmail.rostor.cloud`) && (Path(`/.well-known/jmap`) || PathPrefix(`/jmap/`) || Path(`/api/auth`) || Path(`/api/auth/`) || PathPrefix(`/auth/`))
+      priority: 1000
+      services:
+        - kind: Service
+          name: stalwart-mail-stalwart
+          namespace: stalwart-mail
+          port: 443
+          scheme: https
+          serversTransport: bulwark-jmap-insecure
+    # Everything else is the Bulwark application.
+    - kind: Rule
+      match: Host(`webmail.rostor.cloud`)
+      services:
+        - kind: Service
+          name: bulwark-mail
+          namespace: bulwark-mail
+          port: 3000
+  tls:
+    secretName: webmail-tls
