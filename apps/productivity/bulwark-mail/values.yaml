@@ -1,0 +1,69 @@
+# Values for the HelmForge `bulwark-mail` chart (1.2.x, Bulwark 1.15.0).
+# Chart docs:   https://helmforge.dev/docs/charts/bulwark-mail/
+# Chart source: https://github.com/helmforgedev/charts
+#
+# Bulwark is a JMAP webmail frontend for the Stalwart server that already
+# runs in this cluster (apps/productivity/stalwart-mail, mail.rostor.cloud).
+# Topology is the canonical cross-origin one from the chart docs: the
+# browser and the Bulwark Pod both reach the JMAP origin directly.
+
+image:
+  repository: ghcr.io/bulwarkmail/webmail
+  tag: "1.15.0-always"
+  pullPolicy: IfNotPresent
+
+config:
+  # Skip Bulwark's first-launch wizard; an unclaimed setup surface must not
+  # sit on a public route. serverUrl is set below, so no wizard is needed.
+  mode: declarative
+  appName: Rostor Webmail
+  telemetry: "off"
+  jmap:
+    # Canonical JMAP URL. It must be reachable from BOTH the browser and the
+    # Bulwark Pod (server-side login verification), which mail.rostor.cloud
+    # is (public LE cert via Traefik, hairpin routing inside the cluster).
+    serverUrl: https://mail.rostor.cloud
+  admin:
+    # No Stalwart master account credentials are configured in the SealedSecret,
+    # so Bulwark cannot administer Stalwart. Keep Stalwart administration in
+    # Stalwart's own WebUI and leave the auto-detection off.
+    stalwartAccess: "off"
+
+secrets:
+  # Secret is provisioned by the SealedSecret in this directory; the chart
+  # must not render (or rotate) its own.
+  generate: false
+  existingSecret: bulwark-mail-secrets
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 5Gi
+  retain: true
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  hosts:
+    - host: webmail.rostor.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: webmail-tls
+      hosts:
+        - webmail.rostor.cloud
+
+# Next.js app with an encrypted settings sync -- a bit more headroom than
+# the chart defaults, still modest.
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi
+
+extraEnv:
+  - name: TZ
+    value: Europe/Berlin

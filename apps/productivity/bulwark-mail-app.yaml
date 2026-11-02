@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bulwark-mail
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    # HelmForge chart repository (public, no credentials required).
+    - repoURL: https://repo.helmforge.dev
+      chart: bulwark-mail
+      targetRevision: 1.2.0
+      helm:
+        valueFiles:
+          - $values/apps/productivity/bulwark-mail/values.yaml
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      ref: values
+    # Extra manifests for this app (Certificate, SealedSecret).
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/bulwark-mail
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: bulwark-mail
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
