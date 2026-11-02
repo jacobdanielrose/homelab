@@ -23,11 +23,16 @@ config:
     # Bulwark Pod (server-side login verification), which mail.rostor.cloud
     # is (public LE cert via Traefik, hairpin routing inside the cluster).
     serverUrl: https://mail.rostor.cloud
-  admin:
-    # No Stalwart master account credentials are configured in the SealedSecret,
-    # so Bulwark cannot administer Stalwart. Keep Stalwart administration in
-    # Stalwart's own WebUI and leave the auto-detection off.
-    stalwartAccess: "off"
+  oauth:
+    # SSO via the Authentik provider used by the rest of the homelab
+    # (app registered as "Bulwark" in Authentik, redirect URI
+    # https://webmail.rostor.cloud/en/auth/callback).
+    enabled: true
+    clientId: BlWkGvHfUXBCWg0YItufnpKaqrF1deCqRNc9Qv77
+    issuerUrl: https://authentik.rostor.cloud/application/o/bulwark/
+    # Send anonymous visitors straight to Authentik (was autoSsoEnabled in
+    # the admin dashboard config).
+    autoSso: true
 
 secrets:
   # Secret is provisioned by the SealedSecret in this directory; the chart

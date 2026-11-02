@@ -8,5 +8,5 @@ spec:
   dnsNames:
     - webmail.rostor.cloud
   issuerRef:
-    name: letsencrypt-prod
+    name: letsencrypt-staging
     kind: ClusterIssuer
