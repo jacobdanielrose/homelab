@@ -21,7 +21,6 @@ data:
       printcap name = /dev/null
       disable spoolss = yes
       guest account = nobody
-      # Restrict to the shared directories
       veto files = /.appledouble/.AppleDouble/.DS_Store/
       delete veto files = no
 
@@ -47,27 +46,37 @@ data:
       create mask = 0644
       directory mask = 0755
 
-  # Router sidecar: on new file in a user's staging subfolder, POST it to
-  # Paperless and remove the local copy once ingested (staged-only consume).
+  # Router sidecar entrypoint. Installs runtime deps, then on a new file in a
+  # user's staging subfolder uploads it to Paperless with that user as owner,
+  # then removes the local copy (staged-only consume).
   router.sh: |
     #!/bin/sh
-    PAPERLESS="http://paperless-paperless-ngx.paperless.svc:8000"
+    set -x
+    # Install runtime deps, retrying until the network (registry) is reachable.
+    until command -v inotifywait >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; do
+      apk add --no-cache curl inotify-tools >/dev/null 2>&1
+      sleep 2
+    done
+
+    # Paperless runs as the main container in the same pod.
+    PAPERLESS="http://127.0.0.1:8000"
+    LOG=/tmp/router.log
     mkdir -p /consume/jacob /consume/federica
-    mkdir -p /state
+    echo "router started $(date -Is)" >> "$LOG"
 
     post_file() {
       folder="$1"
       file="$2"
       [ -f "$file" ] || return 0
       case "$folder" in
-        jacob)    TOKEN="$(cat /secrets/paperless-token-jacob)"
+        jacob)    TOKEN="$(tr -d '\n' < /secrets/paperless-token-jacob)"
                   OWNER="jacobdanielrose" ;;
-        federica) TOKEN="$(cat /secrets/paperless-token-federica)"
+        federica) TOKEN="$(tr -d '\n' < /secrets/paperless-token-federica)"
                   OWNER="federicatorrigino" ;;
-        *)        return 0 ;;
+        *)        echo "$(date -Is) unknown folder $folder, skipping" >> "$LOG"; return 0 ;;
       esac
       base="$(basename "$file")"
-      echo "$(date -Is) posting to owner ${OWNER}: ${base}" >> /state/router.log
+      echo "$(date -Is) posting to owner ${OWNER}: ${base}" >> "$LOG"
       code=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Authorization: Token ${TOKEN}" \
         -F "document=@${file}" \
@@ -75,23 +84,17 @@ data:
         "${PAPERLESS}/api/documents/post_document/")
       if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
         rm -f "$file"
-        echo "$(date -Is) ingested and removed ${base}" >> /state/router.log
+        echo "$(date -Is) ingested + removed ${base}" >> "$LOG"
       else
-        echo "$(date -Is) FAILED (http ${code}) ${base}" >> /state/router.log
+        echo "$(date -Is) FAILED (http ${code}) ${base}" >> "$LOG"
       fi
     }
 
-    # Ensure inotify tools exist
-    if ! command -v inotifywait >/dev/null 2>&1; then
-      echo "ERROR: inotifywait not installed in router image" >> /state/router.log
-      tail -f /state/router.log
-    fi
-
-    echo "$(date -Is) router started, watching jacob + federica" >> /state/router.log
-    inotifywait -m -r -e close_write -e moved_to --format '%w%f' /consume/jacob /consume/federica \
+    inotifywait -m -r -e close_write -e moved_to --format '%w%f' \
+        /consume/jacob /consume/federica \
       | while read -r event_path; do
           folder="$(basename "$(dirname "$event_path")")"
-          # Debounce: give the SMTP/SMB write to fully flush
+          # Debounce: let the SMB write fully flush before reading.
           sleep 1
           post_file "$folder" "$event_path"
         done

@@ -8,3 +8,4 @@ resources:
   - sealed-secrets.yaml
   - scan-config.yaml
   - scan-sealed-secret.yaml
+  - scan-service.yaml

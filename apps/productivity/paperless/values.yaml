@@ -92,6 +92,84 @@ persistence:
     accessMode: ReadWriteOnce
     storageClass: longhorn
     mountPath: /usr/src/paperless/consume
+  # Samba gateway config (smb.conf + router.sh). mountPath '-' creates the
+  # volume without mounting it into the main Paperless container; it's mounted
+  # in the sidecars below.
+  scan-config:
+    enabled: true
+    type: configMap
+    name: scan-gateway
+    mountPath: "-"
+  # Secret holding SMB credentials + Paperless API tokens used by the sidecars.
+  scan-secrets:
+    enabled: true
+    type: secret
+    name: scan-gateway
+    mountPath: "-"
+
+# Samba + router sidecars injected into the Paperless pod. They share the same
+# consume volume (single pod, so no RWX needed) so scanned files dropped on the
+# SMB shares are ingested by the Paperless main container / API router.
+sidecars:
+  samba:
+    enabled: true
+    image: docker.io/dperson/samba:latest
+    command:
+      - /bin/sh
+      - -c
+    args:
+      - |
+        # Create unix users, install smb.conf, set SMB passwords from the secret,
+        # then run smbd (older versions of the image spawn bg processes; exec keeps
+        # it as PID 1 so signals work).
+        for u in jacob federica; do
+          id "$u" >/dev/null 2>&1 || useradd -M -s /sbin/nologin "$u" 2>/dev/null || true
+        done
+        cp /config/smb.conf /etc/samba/smb.conf
+        for u in jacob federica; do
+          p="$(tr -d '\n' < "/secrets/smb-${u}-password")"
+          if [ -n "$p" ]; then
+            { printf '%s\n%s\n' "$p" "$p"; } | smbpasswd -s -a "$u" && echo "samba user $u set"
+          fi
+        done
+        mkdir -p /consume/jacob /consume/federica
+        chown root:root /consume/jacob /consume/federica
+        exec smbd --foreground --no-process-group
+    securityContext:
+      runAsUser: 0
+    ports:
+      smb:
+        enabled: true
+        containerPort: 445
+        protocol: TCP
+      netbios:
+        enabled: true
+        containerPort: 139
+        protocol: TCP
+    volumeMounts:
+      - name: consume
+        mountPath: /consume
+      - name: scan-config
+        mountPath: /config
+      - name: scan-secrets
+        mountPath: /secrets
+        readOnly: true
+  router:
+    enabled: true
+    image: alpine:3.20
+    command:
+      - /bin/sh
+      - /config/router.sh
+    securityContext:
+      runAsUser: 0
+    volumeMounts:
+      - name: consume
+        mountPath: /consume
+      - name: scan-config
+        mountPath: /config
+      - name: scan-secrets
+        mountPath: /secrets
+        readOnly: true
 
 postgresql:
   enabled: false
