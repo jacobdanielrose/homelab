@@ -132,7 +132,11 @@ sidecars:
           fi
         done
         mkdir -p /consume/jacob /consume/federica
-        chown root:root /consume/jacob /consume/federica
+        # Own each share dir by its user so SMB clients can write (root-owned
+        # dirs are read-only to the auth'd users). The router sidecar runs as
+        # root so it can still read/delete uploaded files.
+        chown jacob:jacob /consume/jacob
+        chown federica:federica /consume/federica
         exec smbd --foreground --no-process-group
     securityContext:
       runAsUser: 0
