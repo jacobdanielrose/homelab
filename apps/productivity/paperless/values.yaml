@@ -112,7 +112,6 @@ persistence:
 # SMB shares are ingested by the Paperless main container / API router.
 sidecars:
   samba:
-    enabled: true
     image: docker.io/dperson/samba:latest
     command:
       - /bin/sh
@@ -138,12 +137,10 @@ sidecars:
     securityContext:
       runAsUser: 0
     ports:
-      smb:
-        enabled: true
+      - name: smb
         containerPort: 445
         protocol: TCP
-      netbios:
-        enabled: true
+      - name: netbios
         containerPort: 139
         protocol: TCP
     volumeMounts:
@@ -155,7 +152,6 @@ sidecars:
         mountPath: /secrets
         readOnly: true
   router:
-    enabled: true
     image: alpine:3.20
     command:
       - /bin/sh
