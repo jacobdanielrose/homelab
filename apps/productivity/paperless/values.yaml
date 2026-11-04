@@ -124,9 +124,6 @@ sidecars:
         for u in jacob federica; do
           id "$u" >/dev/null 2>&1 || useradd -M -s /sbin/nologin "$u" 2>/dev/null || true
         done
-        getent group scans >/dev/null 2>&1 || groupadd scans
-        usermod -aG scans jacob 2>/dev/null || true
-        usermod -aG scans federica 2>/dev/null || true
         cp /config/smb.conf /etc/samba/smb.conf
         for u in jacob federica; do
           p="$(tr -d '\n' < "/secrets/smb-${u}-password")"
@@ -134,13 +131,16 @@ sidecars:
             { printf '%s\n%s\n' "$p" "$p"; } | smbpasswd -s -a "$u" && echo "samba user $u set"
           fi
         done
+        # Paperless owns the consume PVC as uid/gid 1026:users (USERMAP_UID/GID).
+        # The consume subdirs inherit that via fsGroup on each pod start, so to
+        # let SMB users write we (a) put jacob+federica in the 'users' group,
+        # (b) keep the dirs owned by 1026:users, and (c) make them group-writable
+        # and setgid so new files/children inherit the 'users' group.
+        usermod -aG users jacob 2>/dev/null || true
+        usermod -aG users federica 2>/dev/null || true
         mkdir -p /consume/jacob /consume/federica
-        # Make share dirs group-owned by 'scans' (jacob+federica) and group
-        # writable so SMB clients can write. Router sidecar runs as root so it
-        # can still read/delete uploaded files regardless of ownership.
-        chgrp -R scans /consume/jacob /consume/federica
-        chmod g+rwx /consume/jacob /consume/federica
-        chmod g+s /consume/jacob /consume/federica
+        chown 1026:users /consume/jacob /consume/federica
+        chmod 2775 /consume/jacob /consume/federica
         exec smbd --foreground --no-process-group
     securityContext:
       runAsUser: 0

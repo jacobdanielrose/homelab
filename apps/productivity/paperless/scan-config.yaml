@@ -14,7 +14,7 @@ data:
       passdb backend = smbpasswd
       create mask = 0664
       directory mask = 0775
-      force group = scans
+      force group = users
       follow symlinks = yes
       wide links = no
       load printers = no
@@ -34,7 +34,7 @@ data:
       writeable = yes
       valid users = jacob
       guest ok = no
-      force group = scans
+      force group = users
       create mask = 0664
       directory mask = 0775
 
@@ -46,7 +46,7 @@ data:
       writeable = yes
       valid users = federica
       guest ok = no
-      force group = scans
+      force group = users
       create mask = 0664
       directory mask = 0775
 
@@ -55,28 +55,23 @@ data:
   # then removes the local copy (staged-only consume).
   router.sh: |
     #!/bin/sh
-    set -x
-    # Install runtime deps, retrying until the network (registry) is reachable.
-    until command -v inotifywait >/dev/null 2>&1 && command -v curl >/dev/null 2>&1; do
-      apk add --no-cache curl inotify-tools >/dev/null 2>&1
-      sleep 2
-    done
+    # Polls the share directories for new documents and POSTs them to Paperless
+    # via the API.  Uses polling (not inotify) so macOS SMB quirks (.sidecar
+    # files, multiple close events) don't cause missed events.  Also cleans up
+    # macOS ._ AppleDouble detritus.
 
-    # Paperless runs as the main container in the same pod.
     PAPERLESS="http://127.0.0.1:8000"
     LOG=/tmp/router.log
+    POLL_INTERVAL=5
     mkdir -p /consume/jacob /consume/federica
-    echo "router started $(date -Is)" >> "$LOG"
 
-    # Only process real document files (not macOS ._ sidecars or dotfiles).
     is_doc() {
       b="$(basename "$1")"
+      case "$b" in ._*|.*) return 1 ;; esac
       case "$b" in
-        ._*|.*) return 1 ;;
-      esac
-      case "$b" in
-        *.pdf|*.PDF|*.png|*.PNG|*.jpg|*.jpeg|*.JPG|*.JPEG|*.tif|*.tiff|*.TIF|*.TIFF|\
-        *.bmp|*.BMP|*.gif|*.GIF|*.webp|*.WEBP|*.heic|*.HEIC|*.doc|*.docx|*.odt|*.txt) return 0 ;;
+        *.pdf|*.PDF|*.png|*.PNG|*.jpg|*.jpeg|*.JPG|*.JPEG|\
+        *.tif|*.tiff|*.TIF|*.TIFF|*.bmp|*.BMP|*.gif|*.GIF|\
+        *.webp|*.WEBP|*.heic|*.HEIC|*.doc|*.docx|*.odt|*.txt) return 0 ;;
         *) return 1 ;;
       esac
     }
@@ -85,10 +80,10 @@ data:
       folder="$1"
       file="$2"
       [ -f "$file" ] || return 0
-      # Drop macOS AppleDouble sidecars (._*) and non-document files.
+      # Drop macOS sidecars and non-docs on sight (may be re-created, keep trying).
       if ! is_doc "$file"; then
         echo "$(date -Is) skipping non-document ${file##*/}" >> "$LOG"
-        rm -f "$file"
+        rm -f "$file"; rm -f "/consume/${folder}/.$(basename \"$file\")"
         return 0
       fi
       case "$folder" in
@@ -106,18 +101,21 @@ data:
         -F "owner=${OWNER}" \
         "${PAPERLESS}/api/documents/post_document/")
       if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
-        rm -f "$file"
+        rm -f "$file"; rm -f "/consume/${folder}/.$(basename \"$file\")"
         echo "$(date -Is) ingested + removed ${base}" >> "$LOG"
       else
         echo "$(date -Is) FAILED (http ${code}) ${base}" >> "$LOG"
       fi
     }
 
-    inotifywait -m -r -e close_write -e moved_to --format '%w%f' \
-        /consume/jacob /consume/federica \
-      | while read -r event_path; do
-          folder="$(basename "$(dirname "$event_path")")"
-          # Debounce: let the SMB write fully flush before reading.
-          sleep 1
-          post_file "$folder" "$event_path"
+    echo "router started $(date -Is) (poll every ${POLL_INTERVAL}s)" >> "$LOG"
+    while true; do
+      for d in /consume/jacob /consume/federica; do
+        folder="$(basename "$d")"
+        for f in "$d"/*; do
+          [ -f "$f" ] || continue
+          post_file "$folder" "$f"
         done
+      done
+      sleep "${POLL_INTERVAL}"
+    done
