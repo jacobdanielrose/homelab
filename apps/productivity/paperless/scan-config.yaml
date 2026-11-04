@@ -83,7 +83,7 @@ data:
       # Drop macOS sidecars and non-docs on sight (may be re-created, keep trying).
       if ! is_doc "$file"; then
         echo "$(date -Is) skipping non-document ${file##*/}" >> "$LOG"
-        rm -f "$file"; rm -f "/consume/${folder}/.$(basename \"$file\")"
+        rm -f "$file"; rm -f "/consume/${folder}/.$(basename "$file")"
         return 0
       fi
       case "$folder" in
@@ -101,7 +101,7 @@ data:
         -F "owner=${OWNER}" \
         "${PAPERLESS}/api/documents/post_document/")
       if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
-        rm -f "$file"; rm -f "/consume/${folder}/.$(basename \"$file\")"
+        rm -f "$file"; rm -f "/consume/${folder}/.$(basename "$file")"
         echo "$(date -Is) ingested + removed ${base}" >> "$LOG"
       else
         echo "$(date -Is) FAILED (http ${code}) ${base}" >> "$LOG"
