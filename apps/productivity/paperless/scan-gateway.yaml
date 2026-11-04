@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scan-gateway
+  namespace: paperless
+  labels:
+    app.kubernetes.io/name: scan-gateway
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: scan-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: scan-gateway
+    spec:
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      initContainers:
+        - name: samba-setup
+          image: docker.io/dperson/samba
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command: ["sh", "-c"]
+          args:
+            - |
+              set -e
+              mkdir -p /consume/jacob /consume/federica /state
+              # Ensure unix users exist for samba (before building passdb)
+              for u in jacob federica; do
+                id "$u" >/dev/null 2>&1 || useradd -M -s /sbin/nologin "$u" 2>/dev/null || true
+              done
+              cp /config/smb.conf /etc/samba/smb.conf
+              # Initialize samba passdb and add users with credentials from the sealed secret
+              for u in jacob federica; do
+                upass=$(cat "/secrets/smb-${u}-password" 2>/dev/null | tr -d '\n')
+                if [ -n "$upass" ]; then
+                  { printf '%s\n%s\n' "$upass" "$upass"; } | smbpasswd -s -a "$u"
+                  echo "samba user ${u} set" >> /state/setup.log
+                fi
+              done
+              touch /state/setup-done
+          volumeMounts:
+            - name: consume
+              mountPath: /consume
+            - name: state
+              mountPath: /state
+            - name: config
+              mountPath: /config
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+      containers:
+        - name: samba
+          image: docker.io/dperson/samba
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              while [ ! -f /state/setup-done ]; do sleep 1; done
+              exec smbd --foreground --no-process-group
+          ports:
+            - name: smb
+              containerPort: 445
+              protocol: TCP
+            - name: smb-netbios
+              containerPort: 139
+              protocol: TCP
+          volumeMounts:
+            - name: consume
+              mountPath: /consume
+            - name: state
+              mountPath: /state
+            - name: config
+              mountPath: /config
+        - name: router
+          image: alpine:3.20
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Install runtime deps, retrying until network is up
+              until curl --version >/dev/null 2>&1 && inotifywait --help >/dev/null 2>&1; do
+                apk add --no-cache curl inotify-tools >/dev/null 2>&1
+                sleep 2
+              done
+              exec /config/router.sh
+          env:
+            - name: PAPERLESS_URL
+              value: "http://paperless-paperless-ngx.paperless.svc:8000"
+          volumeMounts:
+            - name: consume
+              mountPath: /consume
+            - name: state
+              mountPath: /state
+            - name: config
+              mountPath: /config
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+      volumes:
+        - name: consume
+          persistentVolumeClaim:
+            claimName: paperless-paperless-ngx-consume
+        - name: state
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: scan-gateway
+        - name: secrets
+          secret:
+            secretName: scan-gateway
+            items:
+              - key: smb-jacob-password
+                path: smb-jacob-password
+              - key: smb-federica-password
+                path: smb-federica-password
+              - key: paperless-token-jacob
+                path: paperless-token-jacob
+              - key: paperless-token-federica
+                path: paperless-token-federica

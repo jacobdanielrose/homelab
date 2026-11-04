@@ -1,0 +1,97 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scan-gateway
+  namespace: paperless
+data:
+  # Per-user SMB share definitions for the Samba container.
+  smb.conf: |
+    [global]
+      workgroup = WORKGROUP
+      server string = Paperless Scan Gateway
+      security = user
+      map to guest = never
+      passdb backend = smbpasswd
+      create mask = 0644
+      directory mask = 0755
+      follow symlinks = yes
+      wide links = no
+      load printers = no
+      printing = bsd
+      printcap name = /dev/null
+      disable spoolss = yes
+      guest account = nobody
+      # Restrict to the shared directories
+      veto files = /.appledouble/.AppleDouble/.DS_Store/
+      delete veto files = no
+
+    [jacob]
+      comment = Scans for Jacob
+      path = /consume/jacob
+      browseable = yes
+      read only = no
+      writeable = yes
+      valid users = jacob
+      guest ok = no
+      create mask = 0644
+      directory mask = 0755
+
+    [federica]
+      comment = Scans for Federica
+      path = /consume/federica
+      browseable = yes
+      read only = no
+      writeable = yes
+      valid users = federica
+      guest ok = no
+      create mask = 0644
+      directory mask = 0755
+
+  # Router sidecar: on new file in a user's staging subfolder, POST it to
+  # Paperless and remove the local copy once ingested (staged-only consume).
+  router.sh: |
+    #!/bin/sh
+    PAPERLESS="http://paperless-paperless-ngx.paperless.svc:8000"
+    mkdir -p /consume/jacob /consume/federica
+    mkdir -p /state
+
+    post_file() {
+      folder="$1"
+      file="$2"
+      [ -f "$file" ] || return 0
+      case "$folder" in
+        jacob)    TOKEN="$(cat /secrets/paperless-token-jacob)"
+                  OWNER="jacobdanielrose" ;;
+        federica) TOKEN="$(cat /secrets/paperless-token-federica)"
+                  OWNER="federicatorrigino" ;;
+        *)        return 0 ;;
+      esac
+      base="$(basename "$file")"
+      echo "$(date -Is) posting to owner ${OWNER}: ${base}" >> /state/router.log
+      code=$(curl -s -o /dev/null -w "%{http_code}" \
+        -H "Authorization: Token ${TOKEN}" \
+        -F "document=@${file}" \
+        -F "owner=${OWNER}" \
+        "${PAPERLESS}/api/documents/post_document/")
+      if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
+        rm -f "$file"
+        echo "$(date -Is) ingested and removed ${base}" >> /state/router.log
+      else
+        echo "$(date -Is) FAILED (http ${code}) ${base}" >> /state/router.log
+      fi
+    }
+
+    # Ensure inotify tools exist
+    if ! command -v inotifywait >/dev/null 2>&1; then
+      echo "ERROR: inotifywait not installed in router image" >> /state/router.log
+      tail -f /state/router.log
+    fi
+
+    echo "$(date -Is) router started, watching jacob + federica" >> /state/router.log
+    inotifywait -m -r -e close_write -e moved_to --format '%w%f' /consume/jacob /consume/federica \
+      | while read -r event_path; do
+          folder="$(basename "$(dirname "$event_path")")"
+          # Debounce: give the SMTP/SMB write to fully flush
+          sleep 1
+          post_file "$folder" "$event_path"
+        done
