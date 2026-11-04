@@ -89,7 +89,7 @@ persistence:
     enabled: true
     retain: true
     size: 5Gi
-    accessMode: ReadWriteMany
+    accessMode: ReadWriteOnce
     storageClass: longhorn
     mountPath: /usr/src/paperless/consume
 

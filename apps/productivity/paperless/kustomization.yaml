@@ -7,6 +7,4 @@ resources:
   - postgres.yaml
   - sealed-secrets.yaml
   - scan-config.yaml
-  - scan-gateway.yaml
-  - scan-service.yaml
   - scan-sealed-secret.yaml
