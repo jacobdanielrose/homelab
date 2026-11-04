@@ -118,12 +118,15 @@ sidecars:
       - -c
     args:
       - |
-        # Create unix users, install smb.conf, set SMB passwords from the secret,
-        # then run smbd (older versions of the image spawn bg processes; exec keeps
-        # it as PID 1 so signals work).
+        # Create unix users + a shared 'scans' group, install smb.conf, set
+        # SMB passwords from the secret, then run smbd. exec keeps smbd as
+        # PID 1 so signals work.
         for u in jacob federica; do
           id "$u" >/dev/null 2>&1 || useradd -M -s /sbin/nologin "$u" 2>/dev/null || true
         done
+        getent group scans >/dev/null 2>&1 || groupadd scans
+        usermod -aG scans jacob 2>/dev/null || true
+        usermod -aG scans federica 2>/dev/null || true
         cp /config/smb.conf /etc/samba/smb.conf
         for u in jacob federica; do
           p="$(tr -d '\n' < "/secrets/smb-${u}-password")"
@@ -132,11 +135,12 @@ sidecars:
           fi
         done
         mkdir -p /consume/jacob /consume/federica
-        # Own each share dir by its user so SMB clients can write (root-owned
-        # dirs are read-only to the auth'd users). The router sidecar runs as
-        # root so it can still read/delete uploaded files.
-        chown jacob:jacob /consume/jacob
-        chown federica:federica /consume/federica
+        # Make share dirs group-owned by 'scans' (jacob+federica) and group
+        # writable so SMB clients can write. Router sidecar runs as root so it
+        # can still read/delete uploaded files regardless of ownership.
+        chgrp -R scans /consume/jacob /consume/federica
+        chmod g+rwx /consume/jacob /consume/federica
+        chmod g+s /consume/jacob /consume/federica
         exec smbd --foreground --no-process-group
     securityContext:
       runAsUser: 0

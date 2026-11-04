@@ -12,8 +12,9 @@ data:
       security = user
       map to guest = never
       passdb backend = smbpasswd
-      create mask = 0644
-      directory mask = 0755
+      create mask = 0664
+      directory mask = 0775
+      force group = scans
       follow symlinks = yes
       wide links = no
       load printers = no
@@ -21,8 +22,9 @@ data:
       printcap name = /dev/null
       disable spoolss = yes
       guest account = nobody
-      veto files = /.appledouble/.AppleDouble/.DS_Store/
-      delete veto files = no
+      # Hide macOS metadata/junk files; the router also filters them.
+      veto files = /.DS_Store/.Thumbs.db/.@__thumb/
+      delete veto files = yes
 
     [jacob]
       comment = Scans for Jacob
@@ -32,8 +34,9 @@ data:
       writeable = yes
       valid users = jacob
       guest ok = no
-      create mask = 0644
-      directory mask = 0755
+      force group = scans
+      create mask = 0664
+      directory mask = 0775
 
     [federica]
       comment = Scans for Federica
@@ -43,8 +46,9 @@ data:
       writeable = yes
       valid users = federica
       guest ok = no
-      create mask = 0644
-      directory mask = 0755
+      force group = scans
+      create mask = 0664
+      directory mask = 0775
 
   # Router sidecar entrypoint. Installs runtime deps, then on a new file in a
   # user's staging subfolder uploads it to Paperless with that user as owner,
@@ -64,10 +68,29 @@ data:
     mkdir -p /consume/jacob /consume/federica
     echo "router started $(date -Is)" >> "$LOG"
 
+    # Only process real document files (not macOS ._ sidecars or dotfiles).
+    is_doc() {
+      b="$(basename "$1")"
+      case "$b" in
+        ._*|.*) return 1 ;;
+      esac
+      case "$b" in
+        *.pdf|*.PDF|*.png|*.PNG|*.jpg|*.jpeg|*.JPG|*.JPEG|*.tif|*.tiff|*.TIF|*.TIFF|\
+        *.bmp|*.BMP|*.gif|*.GIF|*.webp|*.WEBP|*.heic|*.HEIC|*.doc|*.docx|*.odt|*.txt) return 0 ;;
+        *) return 1 ;;
+      esac
+    }
+
     post_file() {
       folder="$1"
       file="$2"
       [ -f "$file" ] || return 0
+      # Drop macOS AppleDouble sidecars (._*) and non-document files.
+      if ! is_doc "$file"; then
+        echo "$(date -Is) skipping non-document ${file##*/}" >> "$LOG"
+        rm -f "$file"
+        return 0
+      fi
       case "$folder" in
         jacob)    TOKEN="$(tr -d '\n' < /secrets/paperless-token-jacob)"
                   OWNER="jacobdanielrose" ;;
