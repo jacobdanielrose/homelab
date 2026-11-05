@@ -20,6 +20,22 @@ global:
           key: password
     - name: AUTHENTIK_TRUSTED_PROXIES
       value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+    # Outbound email via the Rostor Stalwart mail server (system service account).
+    - name: AUTHENTIK_EMAIL__HOST
+      value: "mail.rostor.cloud"
+    - name: AUTHENTIK_EMAIL__PORT
+      value: "587"
+    - name: AUTHENTIK_EMAIL__USERNAME
+      value: "system@rostor.cloud"
+    - name: AUTHENTIK_EMAIL__PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: authentik-secrets
+          key: email-smtp-password
+    - name: AUTHENTIK_EMAIL__USE_TLS
+      value: "true"
+    - name: AUTHENTIK_EMAIL__FROM
+      value: "system@rostor.cloud"
 
 server:
   ingress:

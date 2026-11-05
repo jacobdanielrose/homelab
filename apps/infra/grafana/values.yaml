@@ -24,6 +24,24 @@ grafana.ini:
   auth.anonymous:
     enabled: true
     org_role: Viewer
+  smtp:
+    enabled: true
+    host: mail.rostor.cloud:587
+    user: system@rostor.cloud
+    password: $__env{SMTP_PASSWORD}
+    from_address: system@rostor.cloud
+    from_name: Rostor Alerts
+    startTLS_policy: OpportunisticStartTLS
+    skip_verify: false
+
+# SMTP credentials for grafana.ini above, injected as an env var and
+# referenced via $__env{SMTP_PASSWORD}. Secret is managed by the SealedSecret
+# in this directory (apps/infra/grafana/sealed-secrets.yaml).
+secretValueFrom:
+  - secretKeyRef:
+      name: grafana-smtp
+      key: password
+    target: SMTP_PASSWORD
 
 datasources:
   datasources.yaml:

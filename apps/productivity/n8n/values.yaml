@@ -46,6 +46,26 @@ main:
         secretKeyRef:
           name: n8n-postgres-secret
           key: password
+    # Outbound email via the Rostor Stalwart mail server (system service account).
+    - name: N8N_EMAIL_MODE
+      value: "smtp"
+    - name: N8N_SMTP_HOST
+      value: "mail.rostor.cloud"
+    - name: N8N_SMTP_PORT
+      value: "587"
+    - name: N8N_SMTP_USER
+      value: "system@rostor.cloud"
+    - name: N8N_SMTP_PASS
+      valueFrom:
+        secretKeyRef:
+          name: n8n-smtp-secret
+          key: password
+    - name: N8N_SMTP_SENDER
+      value: "system@rostor.cloud"
+    - name: N8N_SMTP_SSL
+      value: "false"
+    - name: N8N_SMTP_STARTTLS
+      value: "true"
     - name: N8N_ENABLED_MODULES
       value: "instance-ai,agents"
     - name: N8N_INSTANCE_AI_SANDBOX_ENABLED
