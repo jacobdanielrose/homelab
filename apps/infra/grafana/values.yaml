@@ -26,12 +26,15 @@ grafana.ini:
     org_role: Viewer
   smtp:
     enabled: true
-    host: mail.rostor.cloud:587
+    host: mail.rostor.cloud:465
     user: system@rostor.cloud
     password: $__env{SMTP_PASSWORD}
     from_address: system@rostor.cloud
     from_name: Rostor Alerts
-    startTLS_policy: OpportunisticStartTLS
+    # Port 465 is SMTPS (implicit TLS on connect). Grafana's SMTP client
+    # fails on Stalwart over STARTTLS (587) with "Invalid challenge", but
+    # authenticates cleanly over implicit TLS. Disable STARTTLS explicitly.
+    startTLS_policy: ""
     skip_verify: false
 
 # SMTP credentials for grafana.ini above, injected as an env var and
