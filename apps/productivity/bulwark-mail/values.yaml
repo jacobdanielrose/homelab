@@ -64,3 +64,5 @@ resources:
 extraEnv:
   - name: TZ
     value: Europe/Berlin
+  - name: OAUTH_ALLOW_PRIVATE_ENDPOINTS
+    value: "true"
