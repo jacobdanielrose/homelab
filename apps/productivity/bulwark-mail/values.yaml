@@ -34,6 +34,7 @@ config:
     # Send anonymous visitors straight to Authentik (was autoSsoEnabled in
     # the admin dashboard config).
     autoSso: true
+    allowPrivateEndpoints: true
 
 secrets:
   # Secret is provisioned by the SealedSecret in this directory; the chart
@@ -64,5 +65,3 @@ resources:
 extraEnv:
   - name: TZ
     value: Europe/Berlin
-  - name: OAUTH_ALLOW_PRIVATE_ENDPOINTS
-    value: "true"
