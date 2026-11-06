@@ -5,7 +5,10 @@
 
 image:
   repository: ghcr.io/stalwartlabs/stalwart
-  tag: "v1.0.1"
+  # v1.0.3 (2026-11-04): latest release. v1.0.3 adds new permissions (e.g.
+  # sysEncryption*, S/MIME) which upgraded servers must be granted once via
+  # STALWART_UPDATE_ROLE_PERMISSIONS=true on a restart -- see the release notes.
+  tag: "v1.0.3"
   pullPolicy: IfNotPresent
 
 # Single-node deployment: one pod runs every task and listener.
