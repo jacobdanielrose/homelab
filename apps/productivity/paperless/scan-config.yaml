@@ -50,9 +50,24 @@ data:
       create mask = 0664
       directory mask = 0775
 
+    [shared]
+      comment = Shared scans - Rose-Torrigino Family
+      path = /consume/shared
+      browseable = yes
+      read only = no
+      writeable = yes
+      # Both household members can drop files here; docs get ingested with the
+      # Rose-Torrigino Family group able to view/change them (see router.sh).
+      valid users = jacob, federica
+      guest ok = no
+      force group = users
+      create mask = 0664
+      directory mask = 0775
+
   # Router sidecar entrypoint. Installs runtime deps, then on a new file in a
   # user's staging subfolder uploads it to Paperless with that user as owner,
-  # then removes the local copy (staged-only consume).
+  # then removes the local copy (staged-only consume). The 'shared' subfolder is
+  # ingested as a family document and shared with the Rose-Torrigino Family group.
   router.sh: |
     #!/bin/sh
     # Polls the share directories for new documents and POSTs them to Paperless
@@ -63,7 +78,11 @@ data:
     PAPERLESS="http://127.0.0.1:8000"
     LOG=/tmp/router.log
     POLL_INTERVAL=5
-    mkdir -p /consume/jacob /consume/federica
+    # Database id of the 'Rose-Torrigino Family' group (contains both
+    # jacobdanielrose and federicatorrigino).  Documents in the 'shared' folder
+    # are granted view/change permission to this group.
+    FAMILY_GROUP_ID=1
+    mkdir -p /consume/jacob /consume/federica /consume/shared
 
     is_doc() {
       b="$(basename "$1")"
@@ -91,6 +110,10 @@ data:
                   OWNER="jacobdanielrose" ;;
         federica) TOKEN="$(tr -d '\n' < /secrets/paperless-token-federica)"
                   OWNER="federicatorrigino" ;;
+        shared)   # Owner is forced to the posting token's user, so ingest with
+                  # jacob's token; then share the doc with the family group.
+                  TOKEN="$(tr -d '\n' < /secrets/paperless-token-jacob)"
+                  OWNER="jacobdanielrose" ;;
         *)        echo "$(date -Is) unknown folder $folder, skipping" >> "$LOG"; return 0 ;;
       esac
       base="$(basename "$file")"
@@ -101,6 +124,9 @@ data:
         -F "owner=${OWNER}" \
         "${PAPERLESS}/api/documents/post_document/")
       if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
+        if [ "$folder" = "shared" ]; then
+          grant_group_perms "$base" "$TOKEN"
+        fi
         rm -f "$file"; rm -f "/consume/${folder}/.$(basename "$file")"
         echo "$(date -Is) ingested + removed ${base}" >> "$LOG"
       else
@@ -108,9 +134,38 @@ data:
       fi
     }
 
+    # post_document is asynchronous (returns a task UUID), so after a shared
+    # upload we poll the documents API by original filename until the new doc
+    # appears, then grant the Rose-Torrigino Family group view+change access so
+    # both household members can read and manage it.
+    grant_group_perms() {
+      base="$1"
+      token="$2"
+      attempts=0
+      while [ "$attempts" -lt 15 ]; do
+        doc_id=$(curl -s -H "Authorization: Token ${token}" \
+          --get --data-urlencode "original_filename__icontains=${base}" \
+          "${PAPERLESS}/api/documents/" \
+          | grep -o '"id":[0-9]*' | grep -o '[0-9]*$' | sort -n | tail -1)
+        if [ -n "$doc_id" ]; then
+          curl -s -o /dev/null -X POST \
+            -H "Authorization: Token ${token}" \
+            -H 'Content-Type: application/json' \
+            -d "{\"documents\":[${doc_id}],\"method\":\"set_permissions\",\"parameters\":{\"set_permissions\":{\"view\":{\"groups\":[${FAMILY_GROUP_ID}]},\"change\":{\"groups\":[${FAMILY_GROUP_ID}]}},\"merge\":true}}" \
+            "${PAPERLESS}/api/documents/bulk_edit/"
+          echo "$(date -Is) shared family group (id ${FAMILY_GROUP_ID}) granted on ${base}" >> "$LOG"
+          return 0
+        fi
+        attempts=$((attempts+1))
+        sleep 2
+      done
+      echo "$(date -Is) WARN could not find doc for ${base} to grant family group perms" >> "$LOG"
+      return 1
+    }
+
     echo "router started $(date -Is) (poll every ${POLL_INTERVAL}s)" >> "$LOG"
     while true; do
-      for d in /consume/jacob /consume/federica; do
+      for d in /consume/jacob /consume/federica /consume/shared; do
         folder="$(basename "$d")"
         for f in "$d"/*; do
           [ -f "$f" ] || continue
