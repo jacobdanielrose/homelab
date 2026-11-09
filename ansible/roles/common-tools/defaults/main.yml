@@ -10,8 +10,10 @@ common_tools_packages:
   - wget
   - jq
   - unzip
-  - nc
-  - bind-utils
+  # netcat: nmap-ncat on Fedora/RHEL, netcat-openbsd on Debian/Ubuntu
+  - "{{ 'nmap-ncat' if ansible_facts.os_family == 'RedHat' else 'netcat-openbsd' }}"
+  # DNS tools: bind-utils on Fedora/RHEL, dnsutils on Debian/Ubuntu
+  - "{{ 'bind-utils' if ansible_facts.os_family == 'RedHat' else 'dnsutils' }}"
   - traceroute
   - mtr
   - rsync

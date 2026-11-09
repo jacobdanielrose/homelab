@@ -4,16 +4,18 @@
     name: chrony
     state: present
 
+# chrony config path differs by distro: Debian/Ubuntu use /etc/chrony/chrony.conf,
+# Fedora/RHEL use /etc/chrony.conf. ntp_config_path resolves the right one.
 - name: Ensure chrony config directory exists
   ansible.builtin.file:
-    path: /etc/chrony
+    path: "{{ ntp_config_path | dirname }}"
     state: directory
     mode: "0755"
 
 - name: Write chrony config
   ansible.builtin.template:
     src: chrony.conf.j2
-    dest: /etc/chrony/chrony.conf
+    dest: "{{ ntp_config_path }}"
     mode: "0644"
   notify: Restart chrony
 

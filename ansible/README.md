@@ -37,10 +37,10 @@ Two groups in `inventory.yml`:
 
 | Playbook | Runs on | What it does |
 |---|---|---|
-| `prepare.yml` | all | Common tools, /etc/hosts, chrony, sysctl tuning, SSH hardening, fail2ban, UFW, package upgrades, node_exporter |
+| `prepare.yml` | all | Common tools, /etc/hosts, chrony, sysctl tuning, SSH hardening, fail2ban, firewalld, package upgrades, node_exporter |
 | `k3s.yml` | k3s_servers, k3s_workers | k3s control plane → workers join → Longhorn disk prep → ArgoCD bootstrap |
 | `install-all.yml` | all | prepare.yml + k3s.yml combined |
-| `security.yml` | all | Reapply SSH hardening, fail2ban, UFW and show status |
+| `security.yml` | all | Reapply SSH hardening, fail2ban, firewalld and show status |
 | `update.yml` | all (rolling) | Package upgrades, kernel cleanup, reboot check |
 | `kubeconfig.yml` | k3s_servers | Fetch kubeconfig, replace localhost with master IP |
 
@@ -54,8 +54,8 @@ Two groups in `inventory.yml`:
 | `sysctl-tuning` | Disable swap, bridge-nf-call, inotify limits, vm.overcommit |
 | `linux-hardening` | Lock down SSH (keys only, no root, no passwords), deploy authorized keys |
 | `fail2ban` | 3 retries → 24h ban on SSH |
-| `ufw` | Firewall: SSH, Cockpit, k3s API, Flannel, monitoring |
-| `system-upgrade` | apt dist-upgrade, unattended-upgrades, reboot if needed |
+| `firewalld` | Firewall: SSH, Cockpit, k3s API, Flannel, DNS, monitoring; source-scoped rich rules |
+| `system-upgrade` | Package upgrades (apt **or** dnf), unattended updates, k3s-aware cordon/drain + reboot/uncordon for workers |
 | `node-exporter` | Prometheus node_exporter on port 9100 |
 | `k3s-control` | Install k3s control plane with config.yaml |
 | `k3s-agent` | Join worker to existing cluster |
@@ -71,7 +71,7 @@ Two groups in `inventory.yml`:
  4. sysctl-tuning     → kernel params, swap off
  5. linux-hardening   → SSH lockdown
  6. fail2ban          → brute-force protection
- 7. ufw               → firewall rules
+ 7. firewalld         → firewall rules
  8. system-upgrade    → packages + reboot
  9. node-exporter     → monitoring
 10. k3s-control       → control plane

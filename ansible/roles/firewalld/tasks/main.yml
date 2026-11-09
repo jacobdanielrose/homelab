@@ -40,6 +40,24 @@
   ansible.builtin.debug:
     var: _firewalld_status.stdout_lines
 
+- name: Add source-scoped rich rules
+  ansible.builtin.command:
+    cmd: >-
+      firewall-cmd --permanent
+      --add-rich-rule='rule family="ipv4" source address="{{ item.source }}"
+      port port="{{ item.port | regex_replace('/.*$', '') }}"
+      protocol="{{ item.port | regex_replace('^.*/', '') }}" accept'
+  loop: "{{ firewalld_rich_rules }}"
+  register: _firewalld_rich
+  changed_when: '"success" in _firewalld_rich.stdout'
+  failed_when: false
+
+- name: Reload firewalld after rich rules
+  ansible.builtin.command:
+    cmd: firewall-cmd --reload
+  changed_when: true
+  when: _firewalld_rich is changed
+
 - name: Add Kubernetes overlay interfaces to trusted zone
   ansible.builtin.command:
     cmd: "firewall-cmd --permanent --zone=trusted --add-interface={{ item }}"

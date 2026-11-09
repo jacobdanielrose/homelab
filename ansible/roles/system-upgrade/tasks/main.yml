@@ -1,60 +1,152 @@
 ---
-- name: Update apt cache
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 3600
+# ─── Debian / Ubuntu (apt) ───────────────────────────────────────────────
+- name: Package maintenance (apt)
   when: ansible_facts.pkg_mgr == "apt"
+  block:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
 
-- name: Upgrade all packages
-  ansible.builtin.apt:
-    upgrade: dist
-    autoremove: "{{ sysupgrade_remove_unused_dependencies }}"
-    autoclean: "{{ sysupgrade_autoclean }}"
-  when: ansible_facts.pkg_mgr == "apt"
+    - name: Upgrade all packages (apt)
+      ansible.builtin.apt:
+        upgrade: dist
+        autoremove: "{{ sysupgrade_remove_unused_dependencies }}"
+        autoclean: "{{ sysupgrade_autoclean }}"
+      when: sysupgrade_packages
 
-- name: Install unattended-upgrades
-  ansible.builtin.apt:
-    name: unattended-upgrades
-    state: present
-  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+    - name: Install unattended-upgrades
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: present
+      when: sysupgrade_unattended
 
-- name: Configure unattended-upgrades
-  ansible.builtin.template:
-    src: 50unattended-upgrades.j2
-    dest: /etc/apt/apt.conf.d/50unattended-upgrades
-    mode: "0644"
-  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+    - name: Configure unattended-upgrades
+      ansible.builtin.template:
+        src: 50unattended-upgrades.j2
+        dest: /etc/apt/apt.conf.d/50unattended-upgrades
+        mode: "0644"
+      when: sysupgrade_unattended
 
-- name: Enable periodic apt updates
-  ansible.builtin.copy:
-    content: |
-      APT::Periodic::Update-Package-Lists "1";
-      APT::Periodic::Download-Upgradeable-Packages "1";
-      APT::Periodic::AutocleanInterval "7";
-      APT::Periodic::Unattended-Upgrade "1";
-    dest: /etc/apt/apt.conf.d/10periodic
-    mode: "0644"
-  when: sysupgrade_unattended and ansible_facts.pkg_mgr == "apt"
+    - name: Enable periodic apt updates
+      ansible.builtin.copy:
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Download-Upgradeable-Packages "1";
+          APT::Periodic::AutocleanInterval "7";
+          APT::Periodic::Unattended-Upgrade "1";
+        dest: /etc/apt/apt.conf.d/10periodic
+        mode: "0644"
+      when: sysupgrade_unattended
 
-- name: Check if reboot is required
+# ─── Fedora / RHEL (dnf) ──────────────────────────────────────────────────
+- name: Package maintenance (dnf)
+  when: ansible_facts.pkg_mgr in ["dnf", "dnf5"]
+  block:
+    - name: Upgrade all packages (dnf)
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+        exclude: "{{ sysupgrade_blacklisted_packages | default([]) }}"
+      when: sysupgrade_packages
+
+    - name: Ensure needs-restarting is available (reboot detection)
+      ansible.builtin.dnf:
+        name: "{{ 'dnf5-plugins' if ansible_facts.pkg_mgr == 'dnf5' else 'dnf-utils' }}"
+        state: present
+      failed_when: false
+
+    - name: Remove unused dependencies (dnf)
+      ansible.builtin.dnf:
+        autoremove: true
+      when: sysupgrade_remove_unused_dependencies
+
+    - name: Install dnf-automatic for unattended upgrades
+      ansible.builtin.dnf:
+        name: dnf-automatic
+        state: present
+      when: sysupgrade_unattended
+
+    - name: Enable and start the dnf-automatic timer
+      ansible.builtin.systemd:
+        name: "{{ sysupgrade_dnf_automatic_timer }}"
+        enabled: true
+        state: started
+      when: sysupgrade_unattended
+
+# ─── Reboot handling (cross-distro) ───────────────────────────────────────
+- name: Check if reboot is required (Debian flag file)
   ansible.builtin.stat:
     path: /var/run/reboot-required
-  register: _reboot_required
+  register: _reboot_required_deb
+  when: sysupgrade_reboot and ansible_facts.pkg_mgr == "apt"
+
+- name: Check if reboot is required (dnf needs-restarting)
+  ansible.builtin.command:
+    cmd: needs-restarting -r
+  register: _reboot_required_dnf
+  changed_when: false
+  failed_when: false
+  when: sysupgrade_reboot and ansible_facts.pkg_mgr in ["dnf", "dnf5"]
+
+- name: Determine whether a reboot is needed
+  ansible.builtin.set_fact:
+    sysupgrade_needs_reboot: >-
+      {{ (_reboot_required_deb.stat.exists | default(false))
+         or ((_reboot_required_dnf.rc | default(0)) == 1) }}
   when: sysupgrade_reboot
+
+# ─── k3s-aware rolling reboot ──────────────────────────────────────────────
+# Only drain workers (never the control plane we delegate kubectl to), and only
+# when a reboot is actually required. Use serial in the playbook to go one node
+# at a time so Longhorn keeps quorum.
+- name: Resolve reboot/drain conditions
+  ansible.builtin.set_fact:
+    _sysupgrade_do_reboot: "{{ sysupgrade_reboot and (sysupgrade_needs_reboot | default(false)) }}"
+    _sysupgrade_is_worker: "{{ inventory_hostname in groups.get(sysupgrade_k3s_worker_group, []) }}"
+    _sysupgrade_control_host: "{{ groups.get(sysupgrade_k3s_control_group, []) | first | default('') }}"
+
+- name: Cordon and drain node before reboot (k3s worker)
+  ansible.builtin.command:
+    cmd: >-
+      k3s kubectl drain {{ inventory_hostname }}
+      --ignore-daemonsets --delete-emptydir-data --force
+      --timeout={{ sysupgrade_k3s_drain_timeout }}
+  delegate_to: "{{ _sysupgrade_control_host }}"
+  changed_when: true
+  when:
+    - _sysupgrade_do_reboot
+    - sysupgrade_k3s_drain
+    - _sysupgrade_is_worker
+    - _sysupgrade_control_host | length > 0
 
 - name: Reboot if required
   ansible.builtin.reboot:
     reboot_timeout: 600
     pre_reboot_delay: 30
-  when: >
-    _reboot_required is defined and _reboot_required.stat.exists
-    and sysupgrade_reboot
+  when: _sysupgrade_do_reboot
 
-- name: Remove old kernels
-  ansible.builtin.shell:
-    cmd: |
-      apt-get autoremove --purge -y
-      apt-get autoclean -y
-    warn: false
+- name: Wait for node to report Ready again (k3s worker)
+  ansible.builtin.command:
+    cmd: >-
+      k3s kubectl wait --for=condition=Ready
+      node/{{ inventory_hostname }} --timeout={{ sysupgrade_k3s_ready_timeout }}
+  delegate_to: "{{ _sysupgrade_control_host }}"
   changed_when: false
-  when: sysupgrade_remove_unused_dependencies and ansible_facts.pkg_mgr == "apt"
+  when:
+    - _sysupgrade_do_reboot
+    - sysupgrade_k3s_drain
+    - _sysupgrade_is_worker
+    - _sysupgrade_control_host | length > 0
+
+- name: Uncordon node after reboot (k3s worker)
+  ansible.builtin.command:
+    cmd: k3s kubectl uncordon {{ inventory_hostname }}
+  delegate_to: "{{ _sysupgrade_control_host }}"
+  changed_when: true
+  when:
+    - _sysupgrade_do_reboot
+    - sysupgrade_k3s_drain
+    - _sysupgrade_is_worker
+    - _sysupgrade_control_host | length > 0

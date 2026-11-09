@@ -12,3 +12,14 @@ sysupgrade_reboot_window: "now"
 
 sysupgrade_auto_reboot: false
 sysupgrade_unattended_mail_only_on_error: true
+
+# dnf-automatic timer (download-only by default; apply stays manual/safe for cluster nodes)
+sysupgrade_dnf_automatic_timer: dnf-automatic.timer
+
+# k3s awareness: cordon + drain a worker before rebooting it, then uncordon.
+# Protects running pods and Longhorn volume replicas during rolling reboots.
+sysupgrade_k3s_drain: true
+sysupgrade_k3s_control_group: k3s_servers
+sysupgrade_k3s_worker_group: k3s_workers
+sysupgrade_k3s_drain_timeout: "120s"
+sysupgrade_k3s_ready_timeout: "300s"

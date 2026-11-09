@@ -1,5 +1,7 @@
 ---
 ntp_timezone: "UTC"
+# Debian/Ubuntu: /etc/chrony/chrony.conf — Fedora/RHEL: /etc/chrony.conf
+ntp_config_path: "{{ '/etc/chrony/chrony.conf' if ansible_facts.os_family == 'Debian' else '/etc/chrony.conf' }}"
 ntp_servers:
   - "0.pool.ntp.org iburst"
   - "1.pool.ntp.org iburst"

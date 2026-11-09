@@ -19,6 +19,10 @@ firewalld_rules:
   - { port: "8053/tcp", zone: "public", state: "enabled", comment: "DNS admin UI" }
 
 firewalld_extra_rules: []
+
+# Source-scoped rich rules, e.g. allow only the cluster subnet to a host port.
+# Each item: { source: "CIDR", port: "PORT/proto", comment: "..." }
+firewalld_rich_rules: []
 firewalld_remove_ufw: true
 firewalld_trusted_interfaces:
   - flannel.1
