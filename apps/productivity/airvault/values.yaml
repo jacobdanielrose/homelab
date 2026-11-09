@@ -26,11 +26,10 @@ controllers:
           AIRVAULT_LOG_LEVEL: info
           AIRVAULT_MUX_LOG_LEVEL: warn
           TZ: Etc/UTC
-        # Optional auth token. Create a SealedSecret named `airvault-secret`
-        # with key AIRVAULT_AUTH_TOKEN, then uncomment below.
-        # envFrom:
-        #   - secretRef:
-        #       name: airvault-secret
+        # Auth token injected from the SealedSecret in sealed-secrets.yaml
+        envFrom:
+          - secretRef:
+              name: airvault-secret
         securityContext:
           # USB pairing needs raw access to the USB bus (char major 189).
           privileged: true

@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - certificates.yaml
   - media-pv.yaml
+  - sealed-secrets.yaml
