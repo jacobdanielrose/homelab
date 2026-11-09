@@ -17,3 +17,4 @@ resources:
   - paperless-gpt-app.yaml
   - bulwark-mail-app.yaml
   - stalwart-mail-app.yaml
+  - stirlingpdf-app.yaml
