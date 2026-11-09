@@ -18,3 +18,4 @@ resources:
   - bulwark-mail-app.yaml
   - stalwart-mail-app.yaml
   - stirlingpdf-app.yaml
+  - airvault-app.yaml
