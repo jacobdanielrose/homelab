@@ -138,9 +138,9 @@ sidecars:
         # and setgid so new files/children inherit the 'users' group.
         usermod -aG users jacob 2>/dev/null || true
         usermod -aG users federica 2>/dev/null || true
-        mkdir -p /consume/jacob /consume/federica
-        chown 1026:users /consume/jacob /consume/federica
-        chmod 2775 /consume/jacob /consume/federica
+        mkdir -p /consume/jacob /consume/federica /consume/shared
+        chown 1026:users /consume/jacob /consume/federica /consume/shared
+        chmod 2775 /consume/jacob /consume/federica /consume/shared
         exec smbd --foreground --no-process-group
     securityContext:
       runAsUser: 0
