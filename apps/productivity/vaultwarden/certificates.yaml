@@ -8,6 +8,5 @@ spec:
   dnsNames:
     - passwords.rostor.cloud
   issuerRef:
-    # STAGING while setting up — switch to letsencrypt-prod once validated.
-    name: letsencrypt-staging
+    name: letsencrypt-prod
     kind: ClusterIssuer
