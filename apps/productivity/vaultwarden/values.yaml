@@ -1,0 +1,59 @@
+# vaultwarden (guerzon chart) — https://github.com/guerzon/vaultwarden
+# Hosted at passwords.rostor.cloud
+# NOTE: currently using a Let's Encrypt STAGING certificate for initial setup.
+# To switch to prod, change the issuerRef in certificates.yaml to letsencrypt-prod
+# and restart the deployment (cert-manager will rotate the secret).
+
+image:
+  repository: vaultwarden/server
+  tag: "1.37.5-alpine"
+  pullPolicy: IfNotPresent
+
+replicas: 1
+
+# Admin token is loaded from a SealedSecret so it never lives in plaintext in Git.
+adminToken:
+  existingSecret: vaultwarden-admin-token
+  existingSecretKey: ADMIN_TOKEN
+
+# The app is only reachable internally behind Traefik at this domain.
+# DOMAIN is used by Vaultwarden for building absolute URLs (favicon, sends, etc.)
+domain: "https://passwords.rostor.cloud"
+
+# Register secret manager access (auto-login) is a nice convenience but requires
+# an admin-created org entry; enable via admin panel. Signups stay open for now.
+signupsAllowed: true
+signupsVerify: "true"
+
+# SQLite database, stored in the data volume created below.
+database:
+  type: default
+
+storage:
+  data:
+    name: vaultwarden-data
+    size: 10Gi
+    class: longhorn
+    path: /data
+    accessMode: ReadWriteOnce
+
+ingress:
+  enabled: true
+  class: traefik
+  # Disable the nginx-specific annotations bundled with the chart — Traefik
+  # ignores unknown annotations, but keep it clean.
+  nginxIngressAnnotations: false
+  tls: true
+  hostname: passwords.rostor.cloud
+  path: "/"
+  pathType: Prefix
+  # TLS certificate is provisioned by cert-manager (see certificates.yaml).
+  tlsSecret: vaultwarden-tls
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi

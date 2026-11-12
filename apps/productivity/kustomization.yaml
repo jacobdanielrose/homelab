@@ -19,3 +19,4 @@ resources:
   - stalwart-mail-app.yaml
   - stirlingpdf-app.yaml
   - airvault-app.yaml
+  - vaultwarden-app.yaml
