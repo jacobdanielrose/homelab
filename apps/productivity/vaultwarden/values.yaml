@@ -25,6 +25,21 @@ domain: "https://passwords.rostor.cloud"
 signupsAllowed: true
 signupsVerify: "true"
 
+# Outbound mail via the Rostor Stalwart mail server (system service account).
+# Password + username live in the sealed secret vaultwarden-smtp.
+smtp:
+  existingSecret: vaultwarden-smtp
+  host: mail.rostor.cloud
+  port: 587
+  security: starttls
+  from: system@rostor.cloud
+  fromName: Vaultwarden
+  authMechanism: Plain
+  username:
+    existingSecretKey: SMTP_USERNAME
+  password:
+    existingSecretKey: SMTP_PASSWORD
+
 # SQLite database, stored in the data volume created below.
 database:
   type: default
