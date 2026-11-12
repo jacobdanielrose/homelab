@@ -40,6 +40,25 @@ smtp:
   password:
     existingSecretKey: SMTP_PASSWORD
 
+# SSO via Authentik (same IdP as the rest of the homelab).
+# Client id/secret live in the sealed secret vaultwarden-sso.
+# NOTE: onlySSO stays false so master-password login remains available.
+sso:
+  enabled: true
+  existingSecret: vaultwarden-sso
+  clientId:
+    existingSecretKey: SSO_CLIENT_ID
+  clientSecret:
+    existingSecretKey: SSO_CLIENT_SECRET
+  # OIDC discovery endpoint, WITHOUT trailing '/.well-known/openid-configuration'
+  authority: "https://authentik.rostor.cloud/application/o/vaultwarden/"
+  scopes: "email profile"
+  signupsMatchEmail: true
+  ignoreEmailVerification: false
+  onlySSO: false
+  enforceSSO: false
+  pkce: true
+
 # SQLite database, stored in the data volume created below.
 database:
   type: default

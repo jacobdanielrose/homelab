@@ -5,3 +5,4 @@ resources:
   - certificates.yaml
   - sealed-secrets.yaml
   - sealed-secrets-smtp.yaml
+  - sealed-secrets-sso.yaml
