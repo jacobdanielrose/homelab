@@ -106,6 +106,17 @@ persistence:
     type: secret
     name: scan-gateway
     mountPath: "-"
+  # Custom init script (s6-overlay init-custom-init) that patches the built-in AI
+  # classification prompt so titles follow the document's language while tags
+  # stay mono-lingual. See ai-prompt-config.yaml. Runs as root before the
+  # webserver starts; idempotent and fails safe if the upstream template changes.
+  custom-init:
+    enabled: true
+    type: configMap
+    name: paperless-custom-init
+    mountPath: /custom-cont-init.d
+    readOnly: true
+    defaultMode: 0555
 
 # Samba + router sidecars injected into the Paperless pod. They share the same
 # consume volume (single pod, so no RWX needed) so scanned files dropped on the
