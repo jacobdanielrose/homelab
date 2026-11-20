@@ -68,6 +68,11 @@ data:
   # user's staging subfolder uploads it to Paperless with that user as owner,
   # then removes the local copy (staged-only consume). The 'shared' subfolder is
   # ingested as a family document and shared with the Rose-Torrigino Family group.
+  #
+  # Files already living in Paperless with the same name are auto-tagged with a
+  # 'needs-review' tag and shared with the family group read-only, instead of
+  # creating a silent gap in the family's view of a document (usually a
+  # duplicate scan or a missing permissions grant on someone else's upload).
   router.sh: |
     #!/bin/sh
     # Polls the share directories for new documents and POSTs them to Paperless
@@ -78,11 +83,32 @@ data:
     PAPERLESS="http://127.0.0.1:8000"
     LOG=/tmp/router.log
     POLL_INTERVAL=5
-    # Database id of the 'Rose-Torrigino Family' group (contains both
-    # jacobdanielrose and federicatorrigino).  Documents in the 'shared' folder
-    # are granted view/change permission to this group.
-    FAMILY_GROUP_ID=1
+    # 'Rose-Torrigino Family' group (contains both household members). Documents
+    # in the 'shared' folder are granted view/change permission to this group.
+    # Also granted on any metadata (tags/correspondents/types) the router creates,
+    # because metadata does NOT inherit the document's permissions.
+    FAMILY_GROUP_NAME="Rose-Torrigino Family"
+    FAMILY_GROUP_ID=""
     mkdir -p /consume/jacob /consume/federica /consume/shared
+
+    # Username of the user a posting token belongs to. Used so the router only
+    # grants permissions on documents it actually created (a mere filename match
+    # against someone else's document must never hand out write access).
+    token_owner() {
+      case "$1" in
+        *jacob*)    echo "jacobdanielrose" ;;
+        *federica*) echo "federicatorrigino" ;;
+        *)          echo "" ;;
+      esac
+    }
+
+    token_for() {
+      case "$1" in
+        jacob|shared) echo "$(tr -d '\n' < /secrets/paperless-token-jacob)" ;;
+        federica)     echo "$(tr -d '\n' < /secrets/paperless-token-federica)" ;;
+        *)            echo "" ;;
+      esac
+    }
 
     is_doc() {
       b="$(basename "$1")"
@@ -95,6 +121,119 @@ data:
       esac
     }
 
+    # ---------------------------------------------------------------- helpers
+
+    # Look up the family group's database id by name. Hardcoding it breaks if the
+    # group is ever recreated or the database is restored.
+    resolve_group() {
+      token="$(token_for jacob)"
+      [ -n "${FAMILY_GROUP_ID}" ] && return 0
+      FAMILY_GROUP_ID=$(curl -s -H "Authorization: Token ${token}" \
+        --get --data-urlencode "name__iexact=${FAMILY_GROUP_NAME}" \
+        "${PAPERLESS}/api/groups/" \
+        | grep -o '"id":[0-9]*' | head -1 | grep -o '[0-9]*$')
+      if [ -n "${FAMILY_GROUP_ID}" ]; then
+        echo "$(date -Is) resolved group '${FAMILY_GROUP_NAME}' -> id ${FAMILY_GROUP_ID}" >> "$LOG"
+        return 0
+      fi
+      echo "$(date -Is) WARN could not resolve group '${FAMILY_GROUP_NAME}'" >> "$LOG"
+      return 1
+    }
+
+    # Fetch one page of documents matching a filter, printing ids one per line.
+    # --fail avoids treating an HTML error page as data (grep would happily pull
+    # a random 'id' out of it).
+    find_docs() {
+      token="$1"; shift
+      curl -s --fail -H "Authorization: Token ${token}" --get "$@" \
+        "${PAPERLESS}/api/documents/" \
+        | grep -o '"id":[0-9]*' | grep -o '[0-9]*$'
+    }
+
+    # Look for a document the router itself just created, by original filename
+    # and owner. Retries because post_document is asynchronous.
+    wait_for_new_doc() {
+      ident="$1"            # original filename, or empty
+      owner="$2"
+      ident_field="$3"      # original_filename__icontains | title__icontains
+      token="$4"
+      attempts=0
+      while [ "$attempts" -lt 15 ]; do
+        if [ -n "${ident}" ]; then
+          ids=$(find_docs "$token" \
+            --data-urlencode "${ident_field}=${ident}" \
+            --data-urlencode "owner__username__iexact=${owner}" \
+            --data-urlencode "page_size=25")
+          for id in $ids; do
+            echo "$id"
+            return 0
+          done
+        fi
+        attempts=$((attempts+1))
+        sleep 2
+      done
+      return 1
+    }
+
+    # Look for a *pre-existing* document with the same name owned by anyone
+    # else. Used to detect a duplicate that is invisible to the family.
+    find_other_doc() {
+      ident="$1"
+      owner="$2"
+      ident_field="$3"
+      token="$4"
+      [ -n "${ident}" ] || return 1
+      ids=$(find_docs "$token" \
+        --data-urlencode "${ident_field}=${ident}" \
+        --data-urlencode "owner__id__none=${owner}" \
+        --data-urlencode "page_size=25")
+      for id in $ids; do
+        echo "$id"
+        return 0
+      done
+      return 1
+    }
+
+    # Create-or-reuse a tag by name so the router never makes duplicate tags.
+    ensure_tag() {
+      token="$1"; name="$2"
+      id=$(curl -s -H "Authorization: Token ${token}" \
+        --get --data-urlencode "name__iexact=${name}" \
+        "${PAPERLESS}/api/tags/" \
+        | grep -o '"id":[0-9]*' | head -1 | grep -o '[0-9]*$')
+      if [ -n "$id" ]; then
+        echo "$id"
+        return 0
+      fi
+      curl -s -X POST -H "Authorization: Token ${token}" \
+        -H 'Content-Type: application/json' \
+        -d "{\"name\": \"${name}\"}" \
+        "${PAPERLESS}/api/tags/" \
+        | grep -o '"id":[0-9]*' | head -1 | grep -o '[0-9]*$'
+    }
+
+    # Share a metadata object with the family group and attach it to a document.
+    grant_tag() {
+      token="$1"; doc_id="$2"; tag_id="$3"; name="$4"
+      [ -n "${tag_id}" ] || return 1
+      # Metadata has its own permissions and does NOT inherit the document's, so
+      # the group must be granted on the tag itself or it is silently stripped
+      # from the document response for every other member.
+      curl -s -o /dev/null -X PATCH \
+        -H "Authorization: Token ${token}" \
+        -H 'Content-Type: application/json' \
+        -d "{\"set_permissions\":{\"view\":{\"groups\":[${FAMILY_GROUP_ID}]},\"change\":{\"groups\":[${FAMILY_GROUP_ID}]}}}" \
+        "${PAPERLESS}/api/tags/${tag_id}/"
+      curl -s -o /dev/null -X PATCH \
+        -H "Authorization: Token ${token}" \
+        -H 'Content-Type: application/json' \
+        -d "{\"tags\":[${tag_id}]}" \
+        "${PAPERLESS}/api/documents/${doc_id}/"
+      echo "$(date -Is) tagged doc ${doc_id} with '${name}' (id ${tag_id}) and shared it with the family group" >> "$LOG"
+    }
+
+    # ---------------------------------------------------------------- posting
+
     post_file() {
       folder="$1"
       file="$2"
@@ -106,65 +245,93 @@ data:
         return 0
       fi
       case "$folder" in
-        jacob)    TOKEN="$(tr -d '\n' < /secrets/paperless-token-jacob)"
-                  OWNER="jacobdanielrose" ;;
-        federica) TOKEN="$(tr -d '\n' < /secrets/paperless-token-federica)"
-                  OWNER="federicatorrigino" ;;
+        jacob)    OWNER="jacobdanielrose" ;;
+        federica) OWNER="federicatorrigino" ;;
         shared)   # Owner is forced to the posting token's user, so ingest with
                   # jacob's token; then share the doc with the family group.
-                  TOKEN="$(tr -d '\n' < /secrets/paperless-token-jacob)"
                   OWNER="jacobdanielrose" ;;
         *)        echo "$(date -Is) unknown folder $folder, skipping" >> "$LOG"; return 0 ;;
       esac
+      TOKEN="$(token_for "$folder")"
       base="$(basename "$file")"
+
       echo "$(date -Is) posting to owner ${OWNER}: ${base}" >> "$LOG"
       code=$(curl -s -o /dev/null -w "%{http_code}" \
         -H "Authorization: Token ${TOKEN}" \
         -F "document=@${file}" \
         -F "owner=${OWNER}" \
         "${PAPERLESS}/api/documents/post_document/")
-      if [ "${code}" = "200" ] || [ "${code}" = "201" ]; then
-        if [ "$folder" = "shared" ]; then
-          grant_group_perms "$base" "$TOKEN"
-        fi
-        rm -f "$file"; rm -f "/consume/${folder}/.$(basename "$file")"
-        echo "$(date -Is) ingested + removed ${base}" >> "$LOG"
-      else
+      if [ "${code}" != "200" ] && [ "${code}" != "201" ]; then
         echo "$(date -Is) FAILED (http ${code}) ${base}" >> "$LOG"
+        return 0
       fi
+
+      if [ "$folder" = "shared" ]; then
+        # New family document: share the document and everything it created.
+        share_new_upload "$base" "$TOKEN" "$OWNER" "" ""
+      else
+        # Per-user upload. It stays private to that user unless Paperless already
+        # had a document of the same name (a duplicate, or the same file the other
+        # household member uploaded) -- in which case flag it for review so the
+        # family view never develops a silent hole.
+        other=$(find_other_doc "$base" "${OWNER}" "original_filename__icontains" "$TOKEN")
+        if [ -n "$other" ]; then
+          echo "$(date -Is) NOTE ${base} already exists as doc ${other} (owned by someone else); flagging for review" >> "$LOG"
+          share_new_upload "$base" "$TOKEN" "$OWNER" "needs-review" "view"
+        else
+          echo "$(date -Is) ingested + removed ${base} (private to ${OWNER})" >> "$LOG"
+        fi
+      fi
+
+      rm -f "$file"; rm -f "/consume/${folder}/.$(basename "$file")"
     }
 
-    # post_document is asynchronous (returns a task UUID), so after a shared
-    # upload we poll the documents API by original filename until the new doc
-    # appears, then grant the Rose-Torrigino Family group view+change access so
-    # both household members can read and manage it.
-    grant_group_perms() {
+    # Wait for the document this upload created, then grant the family group the
+    # requested access and (optionally) tag it. 'change' implies 'view'.
+    share_new_upload() {
       base="$1"
       token="$2"
-      attempts=0
-      while [ "$attempts" -lt 15 ]; do
-        doc_id=$(curl -s -H "Authorization: Token ${token}" \
-          --get --data-urlencode "original_filename__icontains=${base}" \
-          "${PAPERLESS}/api/documents/" \
-          | grep -o '"id":[0-9]*' | grep -o '[0-9]*$' | sort -n | tail -1)
-        if [ -n "$doc_id" ]; then
-          curl -s -o /dev/null -X POST \
-            -H "Authorization: Token ${token}" \
-            -H 'Content-Type: application/json' \
-            -d "{\"documents\":[${doc_id}],\"method\":\"set_permissions\",\"parameters\":{\"set_permissions\":{\"view\":{\"groups\":[${FAMILY_GROUP_ID}]},\"change\":{\"groups\":[${FAMILY_GROUP_ID}]}},\"merge\":true}}" \
-            "${PAPERLESS}/api/documents/bulk_edit/"
-          echo "$(date -Is) shared family group (id ${FAMILY_GROUP_ID}) granted on ${base}" >> "$LOG"
-          return 0
-        fi
-        attempts=$((attempts+1))
-        sleep 2
-      done
-      echo "$(date -Is) WARN could not find doc for ${base} to grant family group perms" >> "$LOG"
-      return 1
+      owner="$3"
+      tag_name="$4"
+      level="$5"          # "" (view+change) or "view"
+      doc_id=$(wait_for_new_doc "$base" "$owner" "original_filename__icontains" "$token")
+      if [ -z "$doc_id" ]; then
+        # Uploaded files often get their original filename replaced by the
+        # storage filename, so fall back to matching on the title.
+        stem="${base%.*}"
+        doc_id=$(wait_for_new_doc "$stem" "$owner" "title__icontains" "$token")
+      fi
+      if [ -z "$doc_id" ]; then
+        echo "$(date -Is) WARN could not find doc for ${base} to grant family group perms" >> "$LOG"
+        return 1
+      fi
+      if ! resolve_group; then
+        echo "$(date -Is) WARN skipping share of doc ${doc_id} (group unknown)" >> "$LOG"
+        return 1
+      fi
+      if [ "$level" = "view" ]; then
+        perms="{\"view\":{\"groups\":[${FAMILY_GROUP_ID}]},\"change\":{\"groups\":[]}}"
+      else
+        perms="{\"view\":{\"groups\":[${FAMILY_GROUP_ID}]},\"change\":{\"groups\":[${FAMILY_GROUP_ID}]}}"
+      fi
+      curl -s -o /dev/null -X POST \
+        -H "Authorization: Token ${token}" \
+        -H 'Content-Type: application/json' \
+        -d "{\"documents\":[${doc_id}],\"method\":\"set_permissions\",\"parameters\":{\"set_permissions\":${perms},\"merge\":true}}" \
+        "${PAPERLESS}/api/documents/bulk_edit/"
+      echo "$(date -Is) shared family group (id ${FAMILY_GROUP_ID}) granted ${level:-view+change} on ${base} (doc ${doc_id})" >> "$LOG"
+      if [ -n "$tag_name" ]; then
+        tag_id=$(ensure_tag "$token" "$tag_name")
+        grant_tag "$token" "$doc_id" "$tag_id" "$tag_name"
+      fi
+      return 0
     }
 
+    resolve_group || true
     echo "router started $(date -Is) (poll every ${POLL_INTERVAL}s)" >> "$LOG"
     while true; do
+      # Retry a failed lookup (e.g. Paperless still booting) on later passes.
+      [ -n "${FAMILY_GROUP_ID}" ] || resolve_group || true
       for d in /consume/jacob /consume/federica /consume/shared; do
         folder="$(basename "$d")"
         for f in "$d"/*; do
