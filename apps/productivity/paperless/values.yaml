@@ -6,6 +6,7 @@ image:
 env:
   TZ: Europe/Zurich
   PAPERLESS_URL: https://paperless.rostor.cloud
+  PAPERLESS_ALLOWED_HOSTS: paperless-paperless-ngx.paperless.svc,localhost
   PAPERLESS_TIME_ZONE: Europe/Zurich
   PAPERLESS_OCR_LANGUAGE: deu+eng+ita
   USERMAP_UID: "1026"
