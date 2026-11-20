@@ -76,22 +76,22 @@ spec:
               value: http://ollama.ollama.svc:11434
             - name: OLLAMA_MODEL
               value: mistral-nemo:12b
-            # Title-only: paperless-ai sets titles; the built-in Paperless AI
-            # keeps providing tag/correspondent/type suggestions. Leave every
-            # other ACTIVATE_* off so the two systems never fight over the
-            # same fields.
+            # paperless-ai handles everything: OCR, title, tags, correspondent,
+            # document type, date and custom fields. The built-in Paperless AI is
+            # disabled (see apps/productivity/paperless/values.yaml), so these
+            # never fight over a field.
             - name: ACTIVATE_TITLE
               value: "true"
             - name: ACTIVATE_TAGGING
-              value: "false"
+              value: "true"
             - name: ACTIVATE_CORRESPONDENTS
-              value: "false"
+              value: "true"
             - name: ACTIVATE_DOCUMENT_TYPE
-              value: "false"
+              value: "true"
             - name: ACTIVATE_CUSTOM_FIELDS
-              value: "false"
+              value: "true"
             - name: ACTIVATE_DOCUMENT_DATE
-              value: "false"
+              value: "true"
             # Only process documents carrying this tag, so it does not compete
             # with paperless-gpt (which uses its own tags).
             - name: PROCESS_PREDEFINED_DOCUMENTS
