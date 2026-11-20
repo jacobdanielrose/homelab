@@ -38,7 +38,9 @@ env:
         key: PAPERLESS_SOCIALACCOUNT_PROVIDERS
 
   # Built-in AI classification (replaces paperless-ai)
-  PAPERLESS_AI_ENABLED: "true"
+  # Built-in AI is disabled: paperless-ai handles OCR and all suggestion fields.
+  # Keep the LLM config here (harmless), but master switch is off.
+  PAPERLESS_AI_ENABLED: "false"
   PAPERLESS_AI_LLM_BACKEND: ollama
   PAPERLESS_AI_LLM_ENDPOINT: http://ollama.ollama.svc:11434
   PAPERLESS_AI_LLM_MODEL: mistral-nemo:12b
