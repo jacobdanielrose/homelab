@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://this-is-tobi.github.io/helm-charts
       chart: homepage
-      targetRevision: 0.1.0
+      targetRevision: 0.3.0
       helm:
         valueFiles:
           - $values/apps/infra/homepage/values.yaml
