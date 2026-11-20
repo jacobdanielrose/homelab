@@ -75,7 +75,12 @@ spec:
             - name: OLLAMA_API_URL
               value: http://ollama.ollama.svc:11434
             - name: OLLAMA_MODEL
-              value: mistral-nemo:12b
+              value: qwen3:14b
+            # Qwen3 defaults to a slow reasoning mode on CPU; turn it off so
+            # classification is quick. Fallback if classification quality is
+            # still lacking: qwen3:30b (18.6GB, fits this node, ~2x slower).
+            - name: OLLAMA_THINK
+              value: "off"
             # paperless-ai handles everything: OCR, title, tags, correspondent,
             # document type, date and custom fields. The built-in Paperless AI is
             # disabled (see apps/productivity/paperless/values.yaml), so these
