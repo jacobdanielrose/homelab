@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: paperless-custom-init
+  namespace: paperless
+data:
+  # Runs from /custom-cont-init.d as root, before the webserver starts
+  # (s6-overlay init-custom-init). Patches the built-in AI classification prompt
+  # so that:
+  #   - the suggested TITLE follows the document's own language, restricted to
+  #     English / German / Italian / Spanish (the household's languages)
+  #   - tags / document types / storage paths stay in ONE language, so the
+  #     taxonomy doesn't fragment into per-language duplicates
+  #
+  # The "determine the language first" wording matters: without it the model
+  # drifts to English (or French) on short documents that carry little language
+  # signal. Verified against mistral-nemo:12b on short invoices, receipts and
+  # Swiss-Italian documents with French addresses.
+  #
+  # Paperless-ngx has no prompt-override setting and no AI plugin (only
+  # `paperless_ngx.parsers` and `paperless_ngx.date_parsers` entry points exist),
+  # so editing the packaged Jinja2 template is the only way to steer it.
+  #
+  # The patch is idempotent and fails safe: if the upstream template is reworded
+  # the anchor check fails and the template is left untouched rather than
+  # corrupted. Re-verify after every Paperless-ngx upgrade.
+  patch-ai-prompt.sh: |
+    #!/bin/bash
+    # Patch the built-in AI classification prompt.
+    set -uo pipefail
+
+    TEMPLATE=/usr/src/paperless/src/paperless_ai/prompts/classification.j2
+    MARKER="# paperless-homelab: language rules"
+    ANCHOR='- dates: up to 3 relevant dates in YYYY-MM-DD format'
+
+    # Language for tags / document types / storage paths. Change this one line
+    # if you'd rather have the taxonomy in German (or any other language).
+    TAXONOMY_LANGUAGE="English"
+
+    log() { echo "[ai-prompt] $*"; }
+
+    if [ ! -f "$TEMPLATE" ]; then
+      log "template not found at $TEMPLATE - skipping (upstream layout changed?)"
+      exit 0
+    fi
+
+    if grep -qF "$MARKER" "$TEMPLATE"; then
+      log "already patched, nothing to do"
+      exit 0
+    fi
+
+    if ! grep -qF -- "$ANCHOR" "$TEMPLATE"; then
+      log "anchor line not found - upstream template changed, skipping patch"
+      exit 0
+    fi
+
+    TMP="$(mktemp)"
+    if ! awk -v marker="$MARKER" -v anchor="$ANCHOR" -v lang="$TAXONOMY_LANGUAGE" '
+      { print }
+      $0 == anchor && !done {
+        print ""
+        print marker
+        print "Language rules:"
+        print "- First determine which language the document is written in. It is almost certainly one of: English, German, Italian, Spanish."
+        print "- Write the title in exactly that language. Do not translate it."
+        print "- Only if the document is clearly in none of those four languages, use the actual language of the document."
+        print "- Write tags, document_types and storage_paths in " lang " only, regardless of the document language, so the taxonomy stays consistent across documents."
+        print "- Correspondents keep their original proper names."
+        done = 1
+      }
+    ' "$TEMPLATE" > "$TMP"; then
+      log "awk failed - leaving template untouched"
+      rm -f "$TMP"
+      exit 0
+    fi
+
+    if ! grep -qF "$MARKER" "$TMP"; then
+      log "patch did not apply - leaving template untouched"
+      rm -f "$TMP"
+      exit 0
+    fi
+
+    # Overwrite in place so the original inode/ownership is preserved.
+    cat "$TMP" > "$TEMPLATE"
+    rm -f "$TMP"
+    log "patched $TEMPLATE (taxonomy language: $TAXONOMY_LANGUAGE)"
