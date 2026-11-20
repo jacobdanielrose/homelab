@@ -14,6 +14,7 @@ resources:
   - searxng-app.yaml
   - karakeep-app.yaml
   - paperless-app.yaml
+  - paperless-ai-app.yaml
   - paperless-gpt-app.yaml
   - bulwark-mail-app.yaml
   - stalwart-mail-app.yaml
