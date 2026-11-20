@@ -104,6 +104,22 @@ spec:
               value: ai-processed
             - name: SCAN_INTERVAL
               value: "*/30 * * * *"
+            # OCR (PaddleOCR). Documents are almost exclusively printed, so
+            # PaddleOCR is a better fit than paperless-gpt's vision-LLM OCR.
+            # 'poor' mode runs OCR only when Paperless has no/garbled text and
+            # replaces it only when the OCR reads it better (with undo); a clean
+            # digital text layer is never overwritten.
+            - name: OCR_ENABLED
+              value: "true"
+            - name: OCR_MODE
+              value: poor
+            # latin model covers the household languages (de/en/it/es)
+            - name: OCR_LANGUAGE
+              value: latin
+            - name: OCR_QUALITY
+              value: balanced
+            - name: OCR_DEVICE
+              value: cpu
           volumeMounts:
             - name: data
               mountPath: /app/data
