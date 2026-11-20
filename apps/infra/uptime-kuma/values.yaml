@@ -10,6 +10,18 @@ image:
 database:
   type: sqlite
 
+# ── Security context ──────────────────────────────────────────────────────
+# Chart 1.6.2 defaults to running as root with ALL capabilities dropped.
+# Without CAP_DAC_OVERRIDE, root cannot write the existing data files, which
+# are owned by UID 1000 (node) from the previous chart. Run as 1000 instead so
+# the container matches the data ownership (and stays non-root).
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
 # ── Persistence ───────────────────────────────────────────────────────────
 persistence:
   enabled: true
