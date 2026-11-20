@@ -108,15 +108,45 @@ persistence:
     mountPath: "-"
   # Custom init script (s6-overlay init-custom-init) that patches the built-in AI
   # classification prompt so titles follow the document's language while tags
-  # stay mono-lingual. See ai-prompt-config.yaml. Runs as root before the
-  # webserver starts; idempotent and fails safe if the upstream template changes.
-  custom-init:
+  # stay mono-lingual. See ai-prompt-config.yaml.
+  #
+  # The script cannot be mounted straight into /custom-cont-init.d: ConfigMap
+  # volumes are created 0777, and s6's tamper check refuses to run anything from
+  # a world-writable directory (it logs "write permissions for others" and
+  # silently skips every script). So the ConfigMap is mounted at a neutral path
+  # and an initContainer copies it into a properly-permissioned emptyDir.
+  ai-prompt-src:
     enabled: true
     type: configMap
     name: paperless-custom-init
+    mountPath: "-"
+  custom-init:
+    enabled: true
+    type: emptyDir
     mountPath: /custom-cont-init.d
-    readOnly: true
-    defaultMode: 0555
+
+# Copies the AI prompt patch into /custom-cont-init.d with root ownership and
+# 0755/0555 permissions so s6's tamper check accepts it. Uses the app image so
+# no extra image has to be pulled.
+initContainers:
+  fix-custom-init:
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.3.4
+    command:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        cp /ai-prompt-src/patch-ai-prompt.sh /custom-cont-init.d/patch-ai-prompt.sh
+        chown root:root /custom-cont-init.d /custom-cont-init.d/patch-ai-prompt.sh
+        chmod 0755 /custom-cont-init.d
+        chmod 0555 /custom-cont-init.d/patch-ai-prompt.sh
+        echo "[fix-custom-init] installed patch-ai-prompt.sh"
+    volumeMounts:
+      - name: ai-prompt-src
+        mountPath: /ai-prompt-src
+        readOnly: true
+      - name: custom-init
+        mountPath: /custom-cont-init.d
 
 # Samba + router sidecars injected into the Paperless pod. They share the same
 # consume volume (single pod, so no RWX needed) so scanned files dropped on the
