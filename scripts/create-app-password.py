@@ -9,11 +9,11 @@ Usage:
     python3 scripts/create-app-password.py --list
 
     # Create an app password for a user
-    python3 scripts/create-app-password.py jacobdanielrose@rostor.cloud \
+    python3 scripts/create-app-password.py user@example.com \
         --description "Thunderbird on laptop"
 
     # Specify a different namespace/pod
-    python3 scripts/create-app-password.py jacobdanielrose@rostor.cloud \
+    python3 scripts/create-app-password.py user@example.com \
         --namespace stalwart-mail \
         --pod stalwart-mail-stalwart-0 \
         --description "My device"
@@ -46,21 +46,50 @@ def get_admin_creds(namespace):
     return decoded
 
 
+def _curl_config(url, creds, payload):
+    """Build a curl config file body.
+
+    The config is fed to curl on stdin so the recovery-admin credential never
+    appears in any process's argv (visible via `ps` inside the pod) and never
+    passes through a shell, which removes the quoting/injection hazard of
+    interpolating it into `sh -c`.
+    """
+
+    def q(value):
+        # curl config: double-quoted string; escape backslash, quote, and
+        # control characters curl understands (\t \n \r \v).
+        escaped = (
+            value.replace("\\", "\\\\")
+            .replace('"', '\\"')
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+            .replace("\v", "\\v")
+        )
+        return f'"{escaped}"'
+
+    return "\n".join([
+        f"url = {q(url)}",
+        f"user = {q(creds)}",
+        'header = "Content-Type: application/json"',
+        f"data-binary = {q(json.dumps(payload))}",
+    ]) + "\n"
+
+
 def kubectl_exec(pod, namespace, payload, creds=None):
     """Run a JMAP API call inside the Stalwart pod via kubectl exec."""
     if creds is None:
         creds = get_admin_creds(namespace)
+    config = _curl_config("http://localhost:8080/jmap/", creds, payload)
     cmd = [
-        "kubectl", "exec",
+        "kubectl", "exec", "-i",
         "-n", namespace,
         pod, "--",
-        "sh", "-c",
-        f'curl -s http://localhost:8080/jmap/ '
-        f'-u "{creds}" '
-        f'-H "Content-Type: application/json" '
-        f'-d \'{json.dumps(payload)}\''
+        "curl", "-s", "--config", "-",
     ]
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    result = subprocess.run(
+        cmd, input=config, capture_output=True, text=True, timeout=30
+    )
     if result.returncode != 0:
         print(f"Error: kubectl exec failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
