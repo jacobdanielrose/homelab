@@ -7,9 +7,15 @@ data:
   # Runs from /custom-cont-init.d as root, before the webserver starts
   # (s6-overlay init-custom-init). Patches the built-in AI classification prompt
   # so that:
-  #   - the suggested TITLE follows the document's own language
+  #   - the suggested TITLE follows the document's own language, restricted to
+  #     English / German / Italian / Spanish (the household's languages)
   #   - tags / document types / storage paths stay in ONE language, so the
   #     taxonomy doesn't fragment into per-language duplicates
+  #
+  # The "determine the language first" wording matters: without it the model
+  # drifts to English (or French) on short documents that carry little language
+  # signal. Verified against mistral-nemo:12b on short invoices, receipts and
+  # Swiss-Italian documents with French addresses.
   #
   # Paperless-ngx has no prompt-override setting and no AI plugin (only
   # `paperless_ngx.parsers` and `paperless_ngx.date_parsers` entry points exist),
@@ -55,7 +61,9 @@ data:
         print ""
         print marker
         print "Language rules:"
-        print "- Write the title in the same language as the document content. Never translate it."
+        print "- First determine which language the document is written in. It is almost certainly one of: English, German, Italian, Spanish."
+        print "- Write the title in exactly that language. Do not translate it."
+        print "- Only if the document is clearly in none of those four languages, use the actual language of the document."
         print "- Write tags, document_types and storage_paths in " lang " only, regardless of the document language, so the taxonomy stays consistent across documents."
         print "- Correspondents keep their original proper names."
         done = 1
