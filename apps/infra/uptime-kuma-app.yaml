@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://repo.helmforge.dev
       chart: uptime-kuma
-      targetRevision: 1.5.17
+      targetRevision: 1.6.2
       helm:
         valueFiles:
           - $values/apps/infra/uptime-kuma/values.yaml
