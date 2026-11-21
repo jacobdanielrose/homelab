@@ -15,7 +15,7 @@ ingress:
   enabled: false
 storageclass:
   name: longhorn
-  dataStorageSize: 10Gi
+  dataStorageSize: 30Gi
   logStorageSize: 2Gi
 resources:
   limits:
