@@ -22,6 +22,9 @@ service:
   enabled: true
   type: ClusterIP
 
+rbac:
+  enabled: true
+
 ingress:
   enabled: false
 
