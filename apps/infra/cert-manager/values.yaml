@@ -1,2 +1,14 @@
 crds:
   enabled: true
+
+# Technitium runs a Primary zone for rostor.cloud, so it answers as the
+# authoritative nameserver for the zone. cert-manager's DNS-01 self-check
+# queries the authoritative NS for the _acme-challenge TXT record, but those
+# records are created in Cloudflare, not Technitium — so the check never
+# passes and Challenges hang in "pending" forever.
+#
+# Point the self-check at public resolvers instead of cluster DNS. This only
+# affects ACME propagation checks; nothing else in the cluster is impacted.
+extraArgs:
+  - --dns01-recursive-nameservers-only
+  - --dns01-recursive-nameservers=1.1.1.1:53,8.8.8.8:53
