@@ -30,10 +30,9 @@ spec:
     # by the chart.
     - group: apps
       kind: StatefulSet
-      jqPathExpressions:
-        - .spec.volumeClaimTemplates[].status
-        - .spec.volumeClaimTemplates[].spec.volumeMode
-        - .spec.template.metadata.annotations["kubectl.kubernetes.io/restartedAt"]
+      jsonPointers:
+        - /spec/volumeClaimTemplates
+        - /spec/template/metadata/annotations/kubectl.kubernetes.io~1restartedAt
   syncPolicy:
     automated:
       prune: true
