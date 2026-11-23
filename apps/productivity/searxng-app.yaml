@@ -15,6 +15,15 @@ spec:
     - repoURL: https://github.com/jacobdanielrose/homelab.git
       targetRevision: HEAD
       ref: values
+    # Local path source for the SealedSecret that pins the valkey password.
+    # Without this, ArgoCD renders the chart with `helm template` (offline),
+    # so the chart's `lookup` returns nothing and `randAlphaNum` mints a new
+    # valkey password on EVERY sync. Valkey restarts with the new password
+    # while already-running SearXNG pods keep the old one, producing
+    # intermittent HTTP 500s (one bad replica behind Traefik).
+    - repoURL: https://github.com/jacobdanielrose/homelab.git
+      targetRevision: HEAD
+      path: apps/productivity/searxng
   destination:
     server: https://kubernetes.default.svc
     namespace: searxng

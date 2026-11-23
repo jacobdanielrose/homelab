@@ -64,3 +64,12 @@ valkey:
   architecture: standalone
   persistence:
     enabled: false
+  auth:
+    # Use the password pinned in sealed-secrets.yaml. If we let the chart
+    # generate one, ArgoCD's offline `helm template` render makes the chart's
+    # `lookup` return empty, so `randAlphaNum` mints a NEW password on every
+    # sync. Valkey then restarts with the new password while the running
+    # SearXNG pods still hold the old one -> auth failures -> HTTP 500 on
+    # whichever replica is stale (Traefik round-robins, so ~50% error rate).
+    existingSecret: searxng-valkey
+    existingSecretPasswordKey: valkey-password
