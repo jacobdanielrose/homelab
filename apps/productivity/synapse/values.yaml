@@ -75,6 +75,9 @@ matrixAuthenticationService:
     - name: oidc-secret
       mountPath: /secrets/mas-oidc-secret
       readOnly: true
+  # NOTE: matrix-stack >= 26.11.2 runs `tpl` over this config block, so literal
+  # double braces must be written in the quoted-brace form below. Do not put raw
+  # braces anywhere inside `config: |` or the chart fails to render.
   additional:
     0-authentik:
       config: |
@@ -90,13 +93,13 @@ matrixAuthenticationService:
               claims_imports:
                 localpart:
                   action: require
-                  template: "{{ user.preferred_username }}"
+                  template: "{{ "{{" }} user.preferred_username {{ "}}" }}"
                 displayname:
                   action: suggest
-                  template: "{{ user.name }}"
+                  template: "{{ "{{" }} user.name {{ "}}" }}"
                 email:
                   action: suggest
-                  template: "{{ user.email }}"
+                  template: "{{ "{{" }} user.email {{ "}}" }}"
 
 hookshot:
   enabled: false

@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: oci://oci.trueforge.org/truecharts/navidrome
       chart: navidrome
-      targetRevision: 23.4.0
+      targetRevision: 24.1.4
       helm:
         valueFiles:
           - $values/apps/media/navidrome/values.yaml

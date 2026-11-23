@@ -9,7 +9,7 @@ spec:
     # HelmForge chart repository (public, no credentials required).
     - repoURL: https://repo.helmforge.dev
       chart: bulwark-mail
-      targetRevision: 1.2.0
+      targetRevision: 1.3.2
       helm:
         valueFiles:
           - $values/apps/productivity/bulwark-mail/values.yaml
