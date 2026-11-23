@@ -31,6 +31,7 @@ spec:
     - group: apps
       kind: StatefulSet
       jsonPointers:
+        - /spec/replicas
         - /spec/template/spec/securityContext
   syncPolicy:
     automated:
