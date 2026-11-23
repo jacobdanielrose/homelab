@@ -13,7 +13,7 @@ controllers:
           # --- SSO / Authentik OIDC ---
           DOCKER_ENABLE_SECURITY: "true"
           SECURITY_ENABLELOGIN: "true"
-          SECURITY_LOGINMETHOD: all
+          SECURITY_LOGINMETHOD: oauth2
           SECURITY_OAUTH2_ENABLED: "true"
           SECURITY_OAUTH2_PROVIDER: authentik
           SECURITY_OAUTH2_ISSUER: https://authentik.rostor.cloud/application/o/stirlingpdf/

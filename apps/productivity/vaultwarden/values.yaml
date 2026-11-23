@@ -55,8 +55,8 @@ sso:
   scopes: "email profile"
   signupsMatchEmail: true
   ignoreEmailVerification: false
-  onlySSO: false
-  enforceSSO: false
+  onlySSO: true
+  enforceSSO: true
   pkce: true
 
 # SQLite database, stored in the data volume created below.

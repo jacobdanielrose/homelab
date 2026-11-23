@@ -35,6 +35,7 @@ env:
   PAPERLESS_ACCOUNT_EMAIL_VERIFICATION: "none"
   PAPERLESS_SOCIAL_AUTO_SIGNUP: "true"
   PAPERLESS_LOGOUT_REDIRECT_URL: https://authentik.rostor.cloud/application/o/paperless/end-session/
+  PAPERLESS_DISABLE_REGULAR_LOGIN: "true"
   PAPERLESS_SOCIALACCOUNT_PROVIDERS:
     valueFrom:
       secretKeyRef:

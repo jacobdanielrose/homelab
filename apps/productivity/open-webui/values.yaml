@@ -40,6 +40,8 @@ extraEnvVars:
       secretKeyRef:
         name: ollama-api-key
         key: OLLAMA_API_KEY
+  - name: ENABLE_LOGIN_FORM
+    value: "false"
 
 sso:
   enabled: true

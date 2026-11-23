@@ -10,7 +10,7 @@ image:
 
 env:
   TZ: "Europe/Zurich"
-  AUTH_PROVIDERS: "credentials,oidc"
+  AUTH_PROVIDERS: "oidc"
   AUTH_OIDC_ISSUER: "https://authentik.rostor.cloud/application/o/homarr/"
   AUTH_OIDC_CLIENT_NAME: "Authentik"
   # `groups` is required so Homarr can sync its groups from Authentik on login
