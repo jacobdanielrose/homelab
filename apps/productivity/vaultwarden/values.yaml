@@ -52,7 +52,7 @@ sso:
     existingSecretKey: SSO_CLIENT_SECRET
   # OIDC discovery endpoint, WITHOUT trailing '/.well-known/openid-configuration'
   authority: "https://authentik.rostor.cloud/application/o/vaultwarden/"
-  scopes: "email profile"
+  scopes: "email profile groups"
   signupsMatchEmail: true
   ignoreEmailVerification: false
   onlySSO: true

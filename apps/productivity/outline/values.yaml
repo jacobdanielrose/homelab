@@ -82,6 +82,7 @@ auth:
       - openid
       - email
       - profile
+      - groups
 
 logging:
   level: info

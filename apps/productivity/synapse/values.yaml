@@ -89,7 +89,7 @@ matrixAuthenticationService:
               client_id: "f7GUxUBYNDhb49dosT3WRLeavsKviyDz3A6BhFJ3"
               client_secret_file: /secrets/mas-oidc-secret/client_secret
               token_endpoint_auth_method: client_secret_basic
-              scope: "openid profile email"
+              scope: "openid profile email groups"
               claims_imports:
                 localpart:
                   action: require

@@ -18,7 +18,7 @@ controllers:
           SECURITY_OAUTH2_PROVIDER: authentik
           SECURITY_OAUTH2_ISSUER: https://authentik.rostor.cloud/application/o/stirlingpdf/
           SECURITY_OAUTH2_CLIENTID: x09dttUfpDyc0JipDJBTR8CVAwA6bTMFSjNOXnfl
-          SECURITY_OAUTH2_SCOPES: "openid, profile, email"
+          SECURITY_OAUTH2_SCOPES: "openid, profile, email, groups"
           SECURITY_OAUTH2_USEASUSERNAME: email
           SECURITY_OAUTH2_AUTOCREATEUSER: "true"
           SECURITY_OAUTH2_REDIRECTBASEURL: https://stirlingpdf.rostor.cloud
