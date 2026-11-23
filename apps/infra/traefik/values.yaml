@@ -33,6 +33,16 @@ ports:
       default: true
     exposedPort: 9100
     protocol: TCP
+  # Traefik API/dashboard entrypoint. Deliberately NOT exposed on the
+  # LoadBalancer Service (the chart default) — that would publish the
+  # unauthenticated API to the LAN. In-cluster consumers reach it through the
+  # dedicated ClusterIP Service in extraObjects below instead.
+  traefik:
+    port: 8080
+    expose:
+      default: false
+    exposedPort: 8080
+    protocol: TCP
 
 ingressClass:
   enabled: true
@@ -73,3 +83,46 @@ metrics:
       enabled: true
       labels:
         app.kubernetes.io/instance: traefik-traefik
+
+# In-cluster access to the Traefik API.
+#
+# The dashboard IngressRoute above only serves the API on the websecure
+# entrypoint behind Host(`traefik.rostor.lab`) with a selfsigned cert, which
+# in-cluster clients (e.g. the Homarr Traefik integration) cannot use. These
+# two objects give it a plain-HTTP ClusterIP address instead:
+#   http://traefik-api.traefik.svc.cluster.local:8080
+#
+extraObjects:
+  # ClusterIP-only Service on the `traefik` entrypoint. Kept separate from the
+  # LoadBalancer Service so the API is never published to the LAN.
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: traefik-api
+      namespace: traefik
+    spec:
+      type: ClusterIP
+      selector:
+        app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: traefik-traefik
+      ports:
+        - name: traefik
+          port: 8080
+          targetPort: traefik
+          protocol: TCP
+  # The `traefik` entrypoint has no router by default, so it 404s. Route
+  # everything on it to the internal API service.
+  - apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: traefik-api-internal
+      namespace: traefik
+    spec:
+      entryPoints:
+        - traefik
+      routes:
+        - kind: Rule
+          match: PathPrefix(`/`)
+          services:
+            - kind: TraefikService
+              name: api@internal
