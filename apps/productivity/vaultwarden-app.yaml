@@ -33,6 +33,7 @@ spec:
       jsonPointers:
         - /spec/replicas
         - /spec/template/spec/securityContext
+        - /spec/volumeClaimTemplates
   syncPolicy:
     automated:
       prune: true

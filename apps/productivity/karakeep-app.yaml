@@ -45,3 +45,4 @@ spec:
         - /spec/replicas
         - /spec/template/spec/securityContext
         - /spec/persistentVolumeClaimRetentionPolicy
+        - /spec/volumeClaimTemplates
