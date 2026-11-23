@@ -24,6 +24,16 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: stalwart-mail
+  ignoreDifferences:
+    # The API server adds status/apiVersion/kind/volumeMode to volumeClaimTemplates
+    # and records manual `kubectl rollout restart` timestamps; neither is rendered
+    # by the chart.
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.volumeClaimTemplates[].status
+        - .spec.volumeClaimTemplates[].spec.volumeMode
+        - .spec.template.metadata.annotations["kubectl.kubernetes.io/restartedAt"]
   syncPolicy:
     automated:
       prune: true

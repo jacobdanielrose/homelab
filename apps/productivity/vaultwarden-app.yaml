@@ -26,6 +26,12 @@ spec:
       kind: PersistentVolumeClaim
       jsonPointers:
         - /spec/volumeName
+    # The chart renders no pod-level securityContext; the API server defaults it
+    # to an empty map, which ArgoCD reports as a permanent diff.
+    - group: apps
+      kind: StatefulSet
+      jqPathExpressions:
+        - .spec.template.spec.securityContext
   syncPolicy:
     automated:
       prune: true

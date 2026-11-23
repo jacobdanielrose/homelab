@@ -21,6 +21,13 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: synapse
+  ignoreDifferences:
+    # The chart hardcodes the second relabeling without `action`, so the CRD
+    # defaults it to `replace` and ArgoCD sees a permanent diff.
+    - group: monitoring.coreos.com
+      kind: ServiceMonitor
+      jqPathExpressions:
+        - .spec.endpoints[].relabelings[].action
   syncPolicy:
     automated:
       prune: true

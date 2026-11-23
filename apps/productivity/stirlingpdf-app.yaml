@@ -33,3 +33,6 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+    managedNamespaceMetadata:
+      labels:
+        app.kubernetes.io/name: stirlingpdf
