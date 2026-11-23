@@ -10,7 +10,6 @@ spec:
       chart: kube-prometheus-stack
       targetRevision: 93.9.0
       helm:
-        includeCrds: true
         valueFiles:
           - $values/apps/infra/prometheus/values.yaml
     - repoURL: https://github.com/jacobdanielrose/homelab.git
