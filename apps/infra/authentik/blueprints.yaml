@@ -1,0 +1,39 @@
+---
+# Declarative authentik configuration.
+#
+# The authentik Helm chart mounts this ConfigMap at
+# /blueprints/mounted/cm-authentik-blueprints and the blueprint importer
+# discovers every key ending in .yaml. See `blueprints.configMaps` in
+# values.yaml.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprints
+  namespace: authentik
+data:
+  invitation-flow.yaml: |
+    version: 1
+    metadata:
+      name: homelab-invitation-flow
+      labels:
+        blueprints.goauthentik.io/description: >-
+          Post-enrollment routing and group membership for invited users.
+    entries:
+      # Users created by the invitation flow get type=external, so they cannot
+      # open the authentik user interface. With no default application they land
+      # on "Interface can only be accessed by internal users" and have nowhere
+      # to go. Point the default brand at the dashboard instead.
+      - model: authentik_brands.brand
+        identifiers:
+          domain: authentik-default
+        attrs:
+          default_application: !Find [authentik_core.application, [slug, homarr]]
+
+      # Almost every application is gated on the family group, so a freshly
+      # enrolled user with no groups would be denied everywhere. Add invitees to
+      # the group as part of enrollment.
+      - model: authentik_stages_user_write.userwritestage
+        identifiers:
+          name: invitation-enrollment-user-write-enrollment-with-invitation
+        attrs:
+          create_users_group: !Find [authentik_core.group, [name, Rose-Torrigino Family]]

@@ -19,6 +19,9 @@ loki:
   compactor:
     # Required for retention with object storage (S3/rustfs).
     delete_request_store: s3
+  image:
+    # Override default tag 3.6.11 -> 3.7.10 (latest patch/minor)
+    tag: 3.7.10
   storage:
     type: s3
     bucketNames:

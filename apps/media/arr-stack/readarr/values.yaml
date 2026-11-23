@@ -23,7 +23,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/faustvii/readarr
-          tag: 0.9.1
+          tag: 0.10.0
         env:
           TZ: Europe/Zurich
           READARR__API_KEY:

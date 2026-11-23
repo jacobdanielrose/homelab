@@ -22,6 +22,11 @@ machine-learning:
       enabled: false
   controllers:
     main:
+      containers:
+        main:
+          image:
+            # Override chart default v3.2.0 -> v3.4.2
+            tag: v3.4.2
       pod:
         affinity:
           nodeAffinity:
@@ -42,6 +47,9 @@ controllers:
             - "authentik.rostor.lab"
     containers:
       main:
+        image:
+          # Override chart default v3.2.0 -> v3.4.2
+          tag: v3.4.2
         resources:
           requests:
             cpu: 500m

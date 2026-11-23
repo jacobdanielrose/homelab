@@ -1,14 +1,14 @@
-# Values for the homelab `stalwart` chart (0.1.x, Stalwart v1.0.x).
+# Values for the homelab `stalwart` chart (0.1.x, Stalwart v1.1.x).
 # Chart source: https://git.rostor.cloud/jacobdanielrose/stalwart
 # Schema differs from the previous wrenix chart -- see the notes at the
 # bottom of this file.
 
 image:
   repository: ghcr.io/stalwartlabs/stalwart
-  # v1.0.3 (2026-11-04): latest release. v1.0.3 adds new permissions (e.g.
-  # sysEncryption*, S/MIME) which upgraded servers must be granted once via
-  # STALWART_UPDATE_ROLE_PERMISSIONS=true on a restart -- see the release notes.
-  tag: "v1.0.3"
+  # v1.1.1 (2026-11-22): latest release. Upgraded servers may need to grant
+  # new role permissions once via STALWART_UPDATE_ROLE_PERMISSIONS=true on
+  # a restart -- see the release notes.
+  tag: "v1.1.1"
   pullPolicy: IfNotPresent
 
 # Single-node deployment: one pod runs every task and listener.

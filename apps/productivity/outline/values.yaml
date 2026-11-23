@@ -4,6 +4,7 @@ url: "https://wiki.rostor.cloud"
 
 image:
   repository: outlinewiki/outline
+  tag: "1.13.0"
   pullPolicy: IfNotPresent
 
 ingress:

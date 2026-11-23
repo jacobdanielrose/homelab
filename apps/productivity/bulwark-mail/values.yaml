@@ -9,7 +9,7 @@
 
 image:
   repository: ghcr.io/bulwarkmail/webmail
-  tag: "1.15.0-always"
+  tag: "1.21.3-always"
   pullPolicy: IfNotPresent
 
 config:
