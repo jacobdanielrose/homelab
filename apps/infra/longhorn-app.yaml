@@ -28,3 +28,15 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+  ignoreDifferences:
+    # Longhorn normalises these server-side and the result can never match the
+    # manifest: the nfsOptions query string is percent-encoded, pollInterval is
+    # rewritten as a Go duration (5m -> 5m0s), and syncRequestedAt is stamped by
+    # the controller on every sync request. Left alone this is a permanent
+    # OutOfSync.
+    - group: longhorn.io
+      kind: BackupTarget
+      jsonPointers:
+        - /spec/backupTargetURL
+        - /spec/pollInterval
+        - /spec/syncRequestedAt
