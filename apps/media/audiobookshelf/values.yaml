@@ -1,3 +1,10 @@
+# Recreate, not RollingUpdate: audiobookshelf mounts RWO Longhorn volumes
+# (config, metadata, backup). A rolling update starts the new pod before the old
+# one exits; it lands on another node, can't attach the volume, and hangs in
+# ContainerCreating until ProgressDeadlineExceeded (ArgoCD shows Degraded).
+deploymentStrategy:
+  type: Recreate
+
 ingress:
   enabled: true
   className: traefik

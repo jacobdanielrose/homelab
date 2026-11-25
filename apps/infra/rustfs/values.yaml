@@ -5,6 +5,11 @@ replicaCount: 1
 mode:
   standalone:
     enabled: true
+    # Recreate, not RollingUpdate: rustfs data/logs are RWO Longhorn volumes. The
+    # chart default (maxSurge 0 / maxUnavailable 1) happens to avoid the deadlock,
+    # but Recreate states the intent explicitly.
+    strategy:
+      type: Recreate
   distributed:
     enabled: false
 # S3 credentials (also referenced by apps/infra/loki/values.yaml)

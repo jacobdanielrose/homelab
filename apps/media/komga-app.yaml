@@ -26,6 +26,17 @@ spec:
       kind: PersistentVolumeClaim
       jsonPointers:
         - /spec/volumeName
+    # The komga chart hardcodes the Deployment strategy (no values knob), so
+    # Recreate is applied out-of-band:
+    #   kubectl -n komga patch deploy komga-komga --type=merge \
+    #     -p '{"spec":{"strategy":{"type":"Recreate","rollingUpdate":null}}}'
+    # Needed because komga-config-pvc is ReadWriteOnce: a rolling update puts the
+    # new pod on a different node, it cannot attach the volume, and the rollout
+    # hangs until ProgressDeadlineExceeded. Reapply after a namespace rebuild.
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/strategy
   syncPolicy:
     automated:
       prune: true

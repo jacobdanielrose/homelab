@@ -1,5 +1,12 @@
 replicaCount: 1
 
+# Recreate, not RollingUpdate. The data volume is ReadWriteOnce on Longhorn, so a
+# rolling update spawns the new pod on a different node before the old one dies;
+# the new pod can never attach the volume and the rollout hangs in
+# ContainerCreating until ProgressDeadlineExceeded (ArgoCD shows Degraded).
+strategy:
+  type: Recreate
+
 url: "https://wiki.rostor.cloud"
 
 image:

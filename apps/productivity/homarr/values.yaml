@@ -1,5 +1,11 @@
 replicaCount: 1
 
+# Recreate, not RollingUpdate: homarr-database is a RWO Longhorn volume. A rolling
+# update starts the new pod before the old one exits; it lands on another node,
+# can't attach the volume, and hangs in ContainerCreating until
+# ProgressDeadlineExceeded (ArgoCD shows Degraded).
+strategyType: Recreate
+
 image:
   tag: v2.14.0
 
