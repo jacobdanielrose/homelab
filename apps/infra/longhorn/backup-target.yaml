@@ -16,4 +16,4 @@ spec:
   # NFS needs no credentials; empty string stops a stale S3/CIFS secret from
   # being picked up.
   credentialSecret: ""
-  pollInterval: "300"
+  pollInterval: 5m
