@@ -61,10 +61,16 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
+    # `tag` is NOT redundant with `digest`: the nextcloud chart renders its
+    # `postgresql-isready` init container from registry/repository:tag only and
+    # ignores the digest. Dropping `tag` falls back to the chart default
+    # (17.5.0-debian-12-r3), which Bitnami has deleted from Docker Hub, so the
+    # pod never starts. That container only runs pg_isready, so a floating tag
+    # is harmless there — the server itself is pinned by digest below.
+    tag: latest
     # Pinned by digest — bitnami/postgresql publishes no semver tags, and
-    # `latest` skews per node via the local image cache. Baking a PG minor
-    # version into a data directory that a different node then reads can fail
-    # outright. This digest is PostgreSQL 18.7, what master is running now.
+    # `latest` skews per node via the local image cache. This digest is
+    # PostgreSQL 18.7, what master is running now.
     digest: sha256:2b159820ab3aee5655746887aae740402153ef937968370ff4e03461822b4ba9
   auth:
     username: nextcloud
