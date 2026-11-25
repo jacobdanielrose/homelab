@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - ingress.yaml
   - certificates.yaml
-  - backup-target.yaml
   - recurring-jobs.yaml
