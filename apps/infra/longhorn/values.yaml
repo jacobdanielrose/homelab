@@ -4,12 +4,6 @@ defaultSettings:
   storageReservedPercentageForDefaultDisk: "5"
   systemManagedComponentsNodeSelector: "longhorn.io/storage-node:true"
   defaultDataPath: "/var/lib/longhorn"
-  # Backups land on the Synology NAS (NFSv4.1). The share must be exported with
-  # "No mapping" squash — Longhorn mounts it as root.
-  # Longhorn creates a backupstore/ subdirectory inside this share itself.
-  backupTarget: "nfs://192.168.3.164:/volume1/k8s-backup?nfsOptions=vers=4.1,hard,timeo=600,retrans=2"
-  # NFS needs no credentials; empty stops any stale S3/CIFS secret being used.
-  backupTargetCredentialSecret: ""
 
 persistence:
   defaultClassReplicaCount: 2

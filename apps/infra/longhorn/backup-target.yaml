@@ -1,0 +1,19 @@
+# Longhorn backupstore on the Synology NAS (NFSv4.1).
+#
+# In Longhorn 1.13+ the backup target is a native CRD (backuptargets.longhorn.io),
+# not a generic Setting. The Helm chart installs the CRD; the backup target object
+# is auto-created by longhorn-manager if missing — but with an empty URL. This CR
+# declares it explicitly so GitOps owns the value.
+apiVersion: longhorn.io/v1beta2
+kind: BackupTarget
+metadata:
+  name: default
+  namespace: longhorn-system
+spec:
+  # The share must be exported with "No mapping" squash — Longhorn mounts as root.
+  # Longhorn creates a backupstore/ subdirectory inside this share automatically.
+  backupTargetURL: "nfs://192.168.3.164:/volume1/k8s-backup?nfsOptions=vers=4.1,hard,timeo=600,retrans=2"
+  # NFS needs no credentials; empty string stops a stale S3/CIFS secret from
+  # being picked up.
+  credentialSecret: ""
+  pollInterval: "300"
