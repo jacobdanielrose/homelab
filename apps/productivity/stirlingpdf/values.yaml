@@ -4,7 +4,7 @@ controllers:
       main:
         image:
           repository: docker.io/stirlingtools/stirling-pdf
-          tag: latest
+          tag: 3.5.0
         env:
           DISABLE_ADDITIONAL_FEATURES: "false"
           LANGS: en_GB

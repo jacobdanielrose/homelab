@@ -20,7 +20,8 @@ controllers:
       main:
         image:
           repository: ghcr.io/wizier/airvault
-          tag: latest
+          # 0.7.0 == what `latest` resolved to on 2026-11-25.
+          tag: 0.7.0
         env:
           AIRVAULT_PORT: "8080"
           AIRVAULT_LOG_LEVEL: info

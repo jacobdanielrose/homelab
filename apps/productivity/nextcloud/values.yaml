@@ -61,7 +61,11 @@ postgresql:
   image:
     registry: docker.io
     repository: bitnami/postgresql
-    tag: latest
+    # Pinned by digest — bitnami/postgresql publishes no semver tags, and
+    # `latest` skews per node via the local image cache. Baking a PG minor
+    # version into a data directory that a different node then reads can fail
+    # outright. This digest is PostgreSQL 18.7, what master is running now.
+    digest: sha256:2b159820ab3aee5655746887aae740402153ef937968370ff4e03461822b4ba9
   auth:
     username: nextcloud
     existingSecret: nextcloud-secrets
@@ -88,7 +92,12 @@ redis:
   image:
     registry: docker.io
     repository: bitnami/redis
-    tag: latest
+    # Bitnami publishes no semver tags for this repo (only `latest` and
+    # sha256-*), and `latest` skews per node: an older cached copy on one node
+    # runs an older Redis, which then fails to read the AOF/RDB written by the
+    # newer version on another node (`Can't handle RDB format version 15`).
+    # Pinned to the digest currently running on master (Redis 8.10.2).
+    digest: sha256:33dbb7a4be39e73f0d5178e9040061ecb708946f55169657aa6897ba0a2c71d9
   auth:
     enabled: true
     existingSecret: nextcloud-secrets

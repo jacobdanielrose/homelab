@@ -160,7 +160,7 @@ initContainers:
 # SMB shares are ingested by the Paperless main container / API router.
 sidecars:
   samba:
-    image: docker.io/dperson/samba:latest
+    image: docker.io/dperson/samba@sha256:66088b78a19810dd1457a8f39340e95e663c728083efa5fe7dc0d40b2478e869
     command:
       - /bin/sh
       - -c
@@ -240,7 +240,10 @@ redis:
   image:
     registry: docker.io
     repository: bitnami/redis
-    tag: latest
+    # Pinned by digest — bitnami/redis publishes no semver tags, and `latest`
+    # skews per node via the local image cache (see nextcloud). Note this is
+    # Redis 8.8.1 while nextcloud runs 8.10.2, so their on-disk AOF/RDB formats
+    # differ; keep each app on its own consistent digest.
     digest: sha256:08863c2c3f4e051fb6139b38fa223e9c13be5033326a59bead182860d899bf98
   auth:
     enabled: true
