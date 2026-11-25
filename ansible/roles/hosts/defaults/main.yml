@@ -2,3 +2,20 @@
 hosts_entries: []
 hosts_manage_loopback: true
 hosts_keep_managed_header: true
+
+# Ordered resolver list written to the node's NetworkManager profile.
+#
+# Order matters: the first entry is queried first, later entries are only used
+# when the earlier one times out. Keep the in-cluster DNS server first so
+# *.lab names resolve, and put a plain upstream (router) last so that image
+# pulls and node-level lookups still work when in-cluster DNS is down.
+#
+# Without a fallback the nodes have a single point of failure: in-cluster DNS
+# runs inside the cluster, so a cluster outage also blocks the image pulls
+# needed to repair the cluster. See docs/issues.md.
+#
+# Empty by default — set it in inventory.yml (which is gitignored), e.g.
+#   hosts_dns_servers:
+#     - "10.43.0.10"
+#     - "192.168.1.1"
+hosts_dns_servers: []

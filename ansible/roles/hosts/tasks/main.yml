@@ -20,3 +20,79 @@
     - "127.0.0.1 localhost"
     - "::1 localhost ip6-localhost ip6-loopback"
   when: hosts_manage_loopback
+
+# ---------------------------------------------------------------------------
+# Node resolver with fallback
+#
+# The nodes resolve through in-cluster DNS, which itself runs inside the
+# cluster. That is a circular dependency: if the cluster is down, image pulls
+# fail, and the cluster cannot be repaired. Adding a plain upstream as a second
+# resolver breaks the loop.
+#
+# resolv.conf is owned by NetworkManager on these hosts, so edit the connection
+# profile rather than the file. Explicit servers are placed ahead of DHCP ones,
+# so the in-cluster resolver keeps priority.
+# ---------------------------------------------------------------------------
+
+- name: Check whether NetworkManager is in use
+  ansible.builtin.stat:
+    path: /usr/bin/nmcli
+  register: hosts_nmcli_bin
+  when: hosts_dns_servers | length > 0
+
+- name: Configure resolver fallback
+  when:
+    - hosts_dns_servers | length > 0
+    - hosts_nmcli_bin.stat.exists | default(false)
+  block:
+    - name: List active NetworkManager connections
+      ansible.builtin.command:
+        argv:
+          - nmcli
+          - --terse
+          - --fields
+          - NAME,DEVICE
+          - connection
+          - show
+          - --active
+      register: hosts_nm_active
+      changed_when: false
+      check_mode: false
+
+    - name: Resolve the connection profile for the default interface
+      ansible.builtin.set_fact:
+        hosts_nm_conn: >-
+          {{ (hosts_nm_active.stdout_lines
+              | select('search', ':' ~ ansible_facts.default_ipv4.interface ~ '$')
+              | map('regex_replace', ':.*$', '')
+              | list
+              | first) | default('', true) }}
+
+    - name: Warn when no connection profile matched the default interface
+      ansible.builtin.debug:
+        msg: >-
+          No NetworkManager profile found for {{ ansible_facts.default_ipv4.interface }};
+          resolver fallback not applied on {{ inventory_hostname }}.
+      when: hosts_nm_conn | length == 0
+
+    - name: Apply ordered DNS servers to the primary connection
+      community.general.nmcli:
+        conn_name: "{{ hosts_nm_conn }}"
+        type: ethernet
+        dns4: "{{ hosts_dns_servers }}"
+        state: present
+      when: hosts_nm_conn | length > 0
+      register: hosts_nm_dns
+
+    # "nmcli device reapply" pushes the new DNS config without tearing the link
+    # down, so an in-progress play does not lose SSH.
+    - name: Reapply network configuration
+      ansible.builtin.command:
+        argv:
+          - nmcli
+          - device
+          - reapply
+          - "{{ ansible_facts.default_ipv4.interface }}"
+      when:
+        - hosts_nm_conn | length > 0
+        - hosts_nm_dns is changed
