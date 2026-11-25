@@ -17,4 +17,3 @@ resources:
   - hass-app.yaml
   - promtail-app.yaml
   - uptime-kuma-app.yaml
-  - homepage-app.yaml
