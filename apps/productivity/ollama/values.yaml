@@ -15,17 +15,27 @@ ollama:
   models:
     pull:
       # ── Embedding ──────────────────────────────────────────
-      - nomic-embed-text:v1.5        # ~1GB — used by sure & karakeep, always fits
-      # ── Text (12B, concurrent-safe with vision) ───────────
-      # ~8GB — pairs with any vision model (~13GB total, 3GB headroom)
-      - mistral-nemo:12b             # default for sure, n8n, karakeep, paperless
+      - nomic-embed-text:v1.5        # 274MB — used by sure & karakeep, always fits
+      # ── Text (12B — the only model that co-loads cleanly) ──
+      - mistral-nemo:12b             # 7.5GB / 7126 MiB VRAM, ~20 tok/s — default for
+                                     # sure, n8n, karakeep, paperless; co-loads with
+                                     # qwen3-vl:8b (12.3GB combined, both 100% GPU)
       # ── Text (14B, standalone — one at a time) ────────────
-      # Each ~9GB, fill 16GB solo. Pick the specialist you need.
+      # 9.5-9.7GB / ~9.0 GiB VRAM, ~10-11 tok/s. Fits solo with ~4GB spare:
+      # co-loads with a 3.6GB vision model, never with another 14B.
       - qwen3:14b                    # all-rounder: chat, doc analysis, general
       - qwen2.5-coder:14b            # coding specialist (left as-is — do not change)
       - deepseek-r1:14b              # reasoning specialist: math, logic, complex tasks
       # ── Vision ─────────────────────────────────────────────
-      - qwen3-vl:8b                  # ~6GB — vision understanding & OCR (karakeep, paperless-gpt)
+      - qwen3-vl:8b                  # 5.8GB / 5179 MiB VRAM, ~17 tok/s — vision & OCR
+                                     # (karakeep, paperless-gpt); pairs with mistral-nemo
+      # Measured on the Arc Pro B50: 16303 MiB reported, ~14.6 GiB free at idle.
+      # Ollama stays 100% GPU up to ~12.3 GB of combined footprint (weights + KV
+      # + compute) at the default 4096 ctx: nemo + qwen3-vl:8b = 12.3GB (fits)
+      # and 14B + qwen3-vl:4b = 12.3GB (fits), but 14B + qwen3-vl:8b = 14.4GB
+      # gets evicted instead.
+      # Raising num_ctx above 4096 grows the KV cache (+1-2GB per ~12k tokens)
+      # and breaks the co-load pairs, so leave ctx at the default for shared apps.
 
 persistentVolume:
   enabled: true
