@@ -1,0 +1,46 @@
+# Internal CA for *.example.lab (placeholder — see docs/ for real domain).
+#
+# Problem this solves: the `selfsigned` ClusterIssuer uses `selfSigned: {}`,
+# which makes *every* Certificate its own independent root. There is no shared
+# anchor to import into a client trust store, so every internal UI throws a
+# browser warning and re-warns on every renewal.
+#
+# `rostor-internal` is a real CA: one root keypair signs every internal leaf
+# certificate. Import the root once per client and all current *and future*
+# internal services are trusted, including across renewals.
+#
+# To install the root on a workstation/browser, see
+# runbooks/trust-internal-ca.md.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: rostor-internal-ca
+  namespace: cert-manager
+spec:
+  isCA: true
+  commonName: rostor-internal-ca
+  secretName: rostor-internal-ca-keypair
+  # 10y root, renewed 1y before expiry. The root is only re-imported when it
+  # actually rotates, so keep this long.
+  duration: 87600h
+  renewBefore: 8760h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+    # Keep the same key material across renewals. With `Always` the key rotates
+    # on renewal and every previously distributed root copy stops matching.
+    rotationPolicy: Never
+  # Bootstrapped by the plain `selfsigned` issuer — a CA cannot sign itself
+  # through the CA issuer it backs.
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: rostor-internal
+spec:
+  ca:
+    secretName: rostor-internal-ca-keypair

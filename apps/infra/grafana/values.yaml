@@ -4,7 +4,7 @@ ingress:
   hosts:
     - grafana.rostor.lab
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned
+    cert-manager.io/cluster-issuer: rostor-internal
   tls:
     - hosts:
         - grafana.rostor.lab
