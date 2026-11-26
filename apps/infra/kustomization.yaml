@@ -14,6 +14,7 @@ resources:
   - sealed-secrets-app.yaml
   - longhorn-app.yaml
   - metallb-app.yaml
+  - intel-gpu-app.yaml
   - hass-app.yaml
   - promtail-app.yaml
   - uptime-kuma-app.yaml

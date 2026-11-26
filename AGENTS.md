@@ -219,6 +219,21 @@ Variants seen in the repo:
 - The control-plane node is small (~8 GB / 4c) — avoid memory-heavy pods there.
 - Full table: `docs/resource-limits.md`.
 
+### GPU
+- Exactly one GPU in the cluster: **Intel Arc Pro B50 (Battlemage G21)** on
+  `rostor-worker-node-1`, bound to the **`xe` KMD** (not `i915`).
+- Exposed by the Intel GPU device plugin (`apps/infra/intel-gpu/`, plain
+  Kustomize, pinned `intel/intel-gpu-plugin:0.37.1`) as **`gpu.intel.com/xe`**,
+  time-sliced 2 ways (`-shared-dev-num=2`) so two pods can share the card.
+- A `hostPath: /dev/dri` mount alone does **not** work: the pod's device cgroup
+  denies the render node, `open()` returns EPERM and Vulkan/Level-Zero report
+  zero devices. Always request the extended resource instead.
+- Ollama drives the card through **Vulkan** (`OLLAMA_VULKAN=1`) and is pinned to
+  `rostor-worker-node-1`. The otwld chart's `ollama.gpu` block only understands
+  `nvidia`/`amd`, so the GPU is requested in `resources.limits` directly.
+- There is **no NVIDIA stack** (no device plugin, no container toolkit); the
+  `nvidia` / `nvidia-experimental` RuntimeClasses come from k3s and are unused.
+
 ### Enabling / disabling an app
 - An app is deployed **only** if its `{service}-app.yaml` is listed under
   `resources:` in the category `kustomization.yaml`.
@@ -307,6 +322,9 @@ python3 scripts/create-app-password.py user@example.com \
   `apps/media/arr-stack/`, not top-level apps.
 - `docs/` is gitignored, so it can lag behind the manifests. **Manifests are the
   source of truth**; docs are commentary.
+- `docs/kubernetes.md` and `docs/issues.md` are stale on `rostor-worker-node-1`:
+  it now *does* have a Longhorn disk (replicas split 96/96 with worker-node-0)
+  and it holds the cluster's only GPU (Intel Arc Pro B50).
 - `docs/scripts.md` lists backup/restore scripts that have been **removed** from
   `scripts/`. Only `create-app-password.py` remains.
 

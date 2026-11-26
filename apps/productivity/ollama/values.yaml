@@ -32,6 +32,20 @@ persistentVolume:
   storageClass: longhorn
   size: 200Gi
 
+# Intel Arc Pro B50 (Battlemage G21) lives on rostor-worker-node-1 and is served
+# by the intel-gpu device plugin (apps/infra/intel-gpu) as gpu.intel.com/xe.
+# Ollama reaches it through Vulkan, not CUDA/ROCm — hence OLLAMA_VULKAN below.
+# The chart's ollama.gpu block only understands nvidia/amd, so the resource is
+# requested directly in resources.limits instead.
+resources:
+  requests:
+    cpu: 500m
+    memory: 4Gi
+  limits:
+    gpu.intel.com/xe: 1
+    # Headroom for mmap'd weights if a model does not fit in the 16 GB VRAM.
+    memory: 32Gi
+
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
@@ -40,9 +54,12 @@ affinity:
             - key: kubernetes.io/hostname
               operator: In
               values:
-                - rostor-worker-node-0
+                - rostor-worker-node-1
 
 extraEnv:
+  # Enable the bundled Vulkan backend (Intel Arc). Without this Ollama runs CPU-only.
+  - name: OLLAMA_VULKAN
+    value: "1"
   - name: OLLAMA_API_KEY
     valueFrom:
       secretKeyRef:
