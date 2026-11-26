@@ -8,5 +8,5 @@ spec:
   dnsNames:
     - downloads.rostor.lab
   issuerRef:
-    name: selfsigned
+    name: rostor-internal
     kind: ClusterIssuer

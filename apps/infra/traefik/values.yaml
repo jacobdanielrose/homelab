@@ -87,9 +87,9 @@ metrics:
 # In-cluster access to the Traefik API.
 #
 # The dashboard IngressRoute above only serves the API on the websecure
-# entrypoint behind Host(`traefik.rostor.lab`) with a selfsigned cert, which
-# in-cluster clients (e.g. the Homarr Traefik integration) cannot use. These
-# two objects give it a plain-HTTP ClusterIP address instead:
+# entrypoint behind Host(`traefik.rostor.lab`) with a rostor-internal (private CA)
+# cert, which in-cluster clients (e.g. the Homarr Traefik integration) cannot
+# use. These two objects give it a plain-HTTP ClusterIP address instead:
 #   http://traefik-api.traefik.svc.cluster.local:8080
 #
 extraObjects:

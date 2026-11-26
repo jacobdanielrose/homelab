@@ -8,7 +8,7 @@
 #   dnsNames:
 #     - audiobooks.rostor.lab
 #   issuerRef:
-#     name: selfsigned
+#     name: rostor-internal
 #     kind: ClusterIssuer
 ---
 apiVersion: cert-manager.io/v1

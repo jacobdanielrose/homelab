@@ -6,7 +6,7 @@ ingress:
   enabled: true
   className: traefik
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned
+    cert-manager.io/cluster-issuer: rostor-internal
   hosts:
     - host: n8n.rostor.lab
       paths:

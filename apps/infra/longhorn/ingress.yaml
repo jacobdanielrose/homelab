@@ -4,7 +4,7 @@ metadata:
   name: longhorn
   namespace: longhorn-system
   annotations:
-    cert-manager.io/cluster-issuer: selfsigned
+    cert-manager.io/cluster-issuer: rostor-internal
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
 spec:
   ingressClassName: traefik
